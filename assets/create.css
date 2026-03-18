@@ -1,0 +1,363 @@
+/* =============================================
+   CREATE FORM — create.css
+   ============================================= */
+
+/* Back button in topbar */
+.back-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 8px;
+  color: var(--text-secondary); text-decoration: none;
+  transition: background var(--transition), color var(--transition);
+  margin-right: 8px; flex-shrink: 0;
+}
+.back-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.topbar__left { display: flex; align-items: center; }
+
+/* =============================================
+   FORM LAYOUT
+   ============================================= */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.form-col { display: flex; flex-direction: column; gap: 20px; }
+
+/* =============================================
+   FORM SECTION
+   ============================================= */
+.form-section {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+
+.form-section--sticky {
+  position: sticky;
+  top: calc(var(--topbar-h) + 28px);
+}
+
+.form-section__header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-section__icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.form-section__icon--blue   { background: var(--primary-light); color: var(--primary); }
+.form-section__icon--yellow { background: var(--yellow-light);  color: var(--orange); }
+.form-section__icon--red    { background: var(--red-light);     color: var(--red); }
+
+.form-section__title    { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.form-section__optional { font-size: 12px; font-weight: 400; color: var(--text-hint); margin-left: 4px; }
+
+/* =============================================
+   FORM ELEMENTS
+   ============================================= */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.form-group:last-child { margin-bottom: 0; }
+
+.form-label {
+  font-size: 13px; font-weight: 500; color: var(--text-primary);
+}
+
+.required { color: var(--red); margin-left: 2px; }
+
+.form-hint { font-size: 11px; color: var(--text-hint); margin-top: 2px; }
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text-primary);
+  background: #fff;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
+}
+
+.form-input--readonly {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+.form-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+.form-select { cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235f6368' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
+}
+
+/* =============================================
+   CATEGORY RADIO BUTTONS
+   ============================================= */
+.category-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.category-option { cursor: pointer; }
+.category-option input[type="radio"] { display: none; }
+
+.category-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px; font-weight: 500; color: var(--text-secondary);
+  background: #fff;
+  transition: all var(--transition);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.category-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+.category-option input[type="radio"]:checked + .category-btn {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* =============================================
+   RISK ASSESSMENT OPTIONS
+   ============================================= */
+.risk-options { display: flex; flex-direction: column; gap: 8px; }
+
+.risk-option { cursor: pointer; }
+.risk-option input[type="radio"] { display: none; }
+
+.risk-btn {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.risk-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+
+.risk-option input[type="radio"]:checked + .risk-btn {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.risk-code {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--bg-hover);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: var(--text-primary);
+  flex-shrink: 0;
+  transition: background var(--transition), color var(--transition);
+}
+
+.risk-option input[type="radio"]:checked + .risk-btn .risk-code {
+  background: var(--primary);
+  color: #fff;
+}
+
+.risk-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+
+.risk-option input[type="radio"]:checked + .risk-btn .risk-label {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* =============================================
+   RISK RESULT
+   ============================================= */
+.risk-result {
+  margin: 20px 0;
+  min-height: 80px;
+  border-radius: 10px;
+  border: 2px dashed var(--border);
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+  padding: 16px;
+}
+
+.risk-result__placeholder {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: var(--text-hint); font-size: 13px; text-align: center; line-height: 1.5;
+}
+
+.risk-result__badge {
+  width: 100%; padding: 14px;
+  border-radius: 8px; text-align: center;
+  font-size: 18px; font-weight: 700; letter-spacing: 0.3px;
+  animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Risk level colors */
+.risk-result.risk-low     { border-color: var(--green);  border-style: solid; background: var(--green-light); }
+.risk-result.risk-medium  { border-color: #00a4ef;       border-style: solid; background: #e3f4fd; }
+.risk-result.risk-high    { border-color: var(--yellow); border-style: solid; background: var(--yellow-light); }
+.risk-result.risk-extreme { border-color: var(--red);    border-style: solid; background: var(--red-light); }
+
+.risk-badge--low     { background: var(--green-light);  color: var(--green); }
+.risk-badge--medium  { background: #e3f4fd;             color: #007ab8; }
+.risk-badge--high    { background: var(--yellow-light); color: #b06000; }
+.risk-badge--extreme { background: var(--red-light);    color: var(--red); }
+
+/* =============================================
+   RISK MATRIX TABLE
+   ============================================= */
+.matrix-wrap { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+.matrix-title { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+
+.matrix-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.matrix-table th { padding: 6px 8px; text-align: center; font-weight: 600; color: var(--text-secondary); background: var(--bg-hover); }
+.matrix-table td { padding: 6px 8px; text-align: center; font-weight: 700; border: 2px solid #fff; border-radius: 4px; transition: transform 0.1s; cursor: default; }
+
+.matrix-row-label { background: var(--bg-hover); color: var(--text-secondary); font-weight: 600; }
+
+.matrix-l { background: #c8e6c9; color: #1b5e20; }
+.matrix-m { background: #b3e5fc; color: #01579b; }
+.matrix-h { background: #fff9c4; color: #795500; }
+.matrix-e { background: #ffcdd2; color: #b71c1c; }
+
+/* Highlighted cell when user selects */
+.matrix-cell--active { transform: scale(1.15); box-shadow: 0 0 0 2px #202124; border-radius: 4px; z-index: 1; position: relative; }
+
+/* =============================================
+   PHOTO UPLOAD
+   ============================================= */
+.upload-area {
+  position: relative;
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.upload-area:hover { border-color: var(--primary); background: var(--primary-light); }
+.upload-area.dragover { border-color: var(--primary); background: var(--primary-light); }
+
+.upload-input {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+
+.upload-icon { color: var(--text-hint); margin: 0 auto 10px; display: block; }
+.upload-text { font-size: 14px; color: var(--text-secondary); }
+.upload-link { color: var(--primary); font-weight: 500; cursor: pointer; }
+.upload-hint { font-size: 12px; color: var(--text-hint); margin-top: 4px; }
+
+.photo-preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+
+.photo-thumb {
+  position: relative; width: 72px; height: 72px;
+  border-radius: 8px; overflow: hidden; border: 2px solid var(--border);
+}
+
+.photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.photo-thumb__remove {
+  position: absolute; top: 2px; right: 2px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(0,0,0,0.6); color: #fff;
+  border: none; cursor: pointer; font-size: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* =============================================
+   FORM ACTIONS
+   ============================================= */
+.form-actions {
+  display: flex; justify-content: flex-end; gap: 12px;
+  margin-top: 24px; padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 24px; border-radius: 8px;
+  font-family: var(--font); font-size: 14px; font-weight: 600;
+  cursor: pointer; text-decoration: none;
+  transition: background var(--transition), box-shadow var(--transition), transform 0.1s;
+  border: none;
+}
+
+.btn:active { transform: scale(0.98); }
+
+.btn--cancel {
+  background: #fff; color: var(--text-secondary);
+  border: 1.5px solid var(--border);
+}
+.btn--cancel:hover { background: var(--bg-hover); }
+
+.btn--submit {
+  background: var(--primary); color: #fff;
+  box-shadow: 0 2px 6px rgba(26,115,232,0.3);
+}
+.btn--submit:hover { background: var(--primary-dark); }
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 1024px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .form-section--sticky { position: static; }
+}
+
+@media (max-width: 640px) {
+  .form-row { grid-template-columns: 1fr; }
+  .category-group { flex-direction: column; }
+}
+
+/* =============================================
+   ALERT
+   ============================================= */
+.alert {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 14px; font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.alert--error {
+  background: var(--red-light);
+  color: var(--red);
+  border: 1px solid rgba(217,48,37,0.2);
+}
+
+/* Matrix scroll on small screens */
+.matrix-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
