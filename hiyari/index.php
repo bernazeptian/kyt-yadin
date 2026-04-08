@@ -173,7 +173,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
           <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
         </svg>
       </a>
-      <?php if ($role <= 2): ?>
+      <?php if ($role <= 2 && isset($_SESSION['user_id'])): ?>
         <a href="../master/index" class="nav-item" data-tooltip="Master Data">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <line x1="8" y1="6" x2="21" y2="6" />
