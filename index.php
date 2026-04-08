@@ -2,7 +2,7 @@
 session_start();
 require_once 'config/db.php';
 
-$role = (int)($_SESSION['role'] ?? 0);
+$role = (int) ($_SESSION['role'] ?? 0);
 
 // ── Hiyari Hatto Summary ──────────────────────
 $hiyari_summary = $pdo->query("
@@ -50,86 +50,92 @@ $reports = $pdo->query("
 ")->fetchAll();
 
 // ── Calculate trend ───────────────────────────
-$this_month = (int)($hiyari_summary['this_month'] ?? 0);
-$last_month = (int)($hiyari_summary['last_month'] ?? 0);
+$this_month = (int) ($hiyari_summary['this_month'] ?? 0);
+$last_month = (int) ($hiyari_summary['last_month'] ?? 0);
 
 if ($last_month == 0) {
-    $trend_pct = $this_month > 0 ? 100 : 0;
-    $trend_dir = 'up';
+  $trend_pct = $this_month > 0 ? 100 : 0;
+  $trend_dir = 'up';
 } else {
-    $trend_pct = round((($this_month - $last_month) / $last_month) * 100);
-    $trend_dir = $trend_pct >= 0 ? 'up' : 'down';
-    $trend_pct = abs($trend_pct);
+  $trend_pct = round((($this_month - $last_month) / $last_month) * 100);
+  $trend_dir = $trend_pct >= 0 ? 'up' : 'down';
+  $trend_pct = abs($trend_pct);
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard — KYT Yadin</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="assets/dashboard.css"/>
-  <link rel="stylesheet" href="assets/notifications.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="assets/dashboard.css" />
+  <link rel="stylesheet" href="assets/notifications.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar__logo">
-      <img src="assets/logo.png" alt="Yanmar" class="sidebar__logo-img"/>
+      <img src="assets/logo.png" alt="Yanmar" class="sidebar__logo-img" />
     </div>
     <nav class="sidebar__nav">
       <a href="index" class="nav-item nav-item--active" data-tooltip="Dashboard">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
-          <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
+          <rect x="14" y="14" width="7" height="7" rx="1" />
         </svg>
       </a>
       <a href="hiyari/index" class="nav-item" data-tooltip="Hiyari Hatto">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
         </svg>
       </a>
       <a href="kyt/index" class="nav-item" data-tooltip="KYT">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 11l3 3L22 4"/>
-          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          <path d="M9 11l3 3L22 4" />
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
         </svg>
       </a>
       <?php if ($role <= 2): ?>
-      <a href="master/index" class="nav-item" data-tooltip="Master Data">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <line x1="8" y1="6"  x2="21" y2="6"/>
-          <line x1="8" y1="12" x2="21" y2="12"/>
-          <line x1="8" y1="18" x2="21" y2="18"/>
-          <line x1="3" y1="6"  x2="3.01" y2="6"/>
-          <line x1="3" y1="12" x2="3.01" y2="12"/>
-          <line x1="3" y1="18" x2="3.01" y2="18"/>
-        </svg>
-      </a>
+          <a href="master/index" class="nav-item" data-tooltip="Master Data">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="8" y1="6" x2="21" y2="6" />
+              <line x1="8" y1="12" x2="21" y2="12" />
+              <line x1="8" y1="18" x2="21" y2="18" />
+              <line x1="3" y1="6" x2="3.01" y2="6" />
+              <line x1="3" y1="12" x2="3.01" y2="12" />
+              <line x1="3" y1="18" x2="3.01" y2="18" />
+            </svg>
+          </a>
       <?php endif; ?>
     </nav>
     <div class="sidebar__bottom">
       <?php if (isset($_SESSION['user_id'])): ?>
-      <a href="auth/logout" class="nav-item nav-item--logout" data-tooltip="Sign Out">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-          <polyline points="16 17 21 12 16 7"/>
-          <line x1="21" y1="12" x2="9" y2="12"/>
-        </svg>
-      </a>
+          <a href="auth/logout" class="nav-item nav-item--logout" data-tooltip="Sign Out">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </a>
       <?php else: ?>
-      <a href="auth/login" class="nav-item" data-tooltip="Sign In">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-          <polyline points="10 17 15 12 10 7"/>
-          <line x1="15" y1="12" x2="3" y2="12"/>
-        </svg>
-      </a>
+          <a href="auth/login" class="nav-item" data-tooltip="Sign In">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+              <polyline points="10 17 15 12 10 7" />
+              <line x1="15" y1="12" x2="3" y2="12" />
+            </svg>
+          </a>
       <?php endif; ?>
     </div>
   </aside>
@@ -140,67 +146,68 @@ if ($last_month == 0) {
       <div class="topbar__left">
         <h1 class="topbar__title">Dashboard</h1>
         <?php if (isset($_SESSION['name'])): ?>
-        <p class="topbar__sub">Welcome back, <strong><?php echo htmlspecialchars($_SESSION['name']); ?></strong></p>
+            <p class="topbar__sub">Welcome back, <strong><?php echo htmlspecialchars($_SESSION['name']); ?></strong></p>
         <?php else: ?>
-        <p class="topbar__sub">Welcome to KYT Yadin</p>
+            <p class="topbar__sub">Welcome to KYT Yadin</p>
         <?php endif; ?>
       </div>
       <div class="topbar__right">
         <div class="topbar__date"><?php echo date('l, d F Y'); ?></div>
 
         <?php if (isset($_SESSION['user_id'])): ?>
-        <!-- Notification Bell -->
-        <div style="position:relative">
-          <div class="notif-btn" id="notifBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-            </svg>
-            <span class="notif-badge" id="notifBadge">0</span>
-          </div>
-          <div class="notif-dropdown" id="notifDropdown">
-            <div class="notif-header">
-              <span class="notif-header__title">Notifications</span>
-              <button class="notif-mark-all" id="markAllRead">Mark all read</button>
-            </div>
-            <div class="notif-list" id="notifList">
-              <p class="notif-empty">Loading...</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Avatar -->
-        <div style="position:relative">
-          <div class="topbar__avatar" id="avatarBtn">
-            <?php echo strtoupper(substr($_SESSION['name'] ?? 'U', 0, 1)); ?>
-          </div>
-          <div class="avatar-dropdown" id="avatarDropdown">
-            <div class="avatar-dropdown__info">
-              <div class="avatar-dropdown__avatar">
-                <?php echo strtoupper(substr($_SESSION['name'] ?? 'U', 0, 1)); ?>
+            <!-- Notification Bell -->
+            <div style="position:relative">
+              <div class="notif-btn" id="notifBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                <span class="notif-badge" id="notifBadge">0</span>
               </div>
-              <div>
-                <div class="avatar-dropdown__name"><?php echo htmlspecialchars($_SESSION['name'] ?? 'User'); ?></div>
-                <div class="avatar-dropdown__id">ID: <?php echo htmlspecialchars($_SESSION['employee_id'] ?? '—'); ?></div>
-                <div class="avatar-dropdown__role">
-                  <?php
-                    $roleNames = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
-                    echo $roleNames[$role] ?? 'User';
-                  ?>
+              <div class="notif-dropdown" id="notifDropdown">
+                <div class="notif-header">
+                  <span class="notif-header__title">Notifications</span>
+                  <button class="notif-mark-all" id="markAllRead">Mark all read</button>
+                </div>
+                <div class="notif-list" id="notifList">
+                  <p class="notif-empty">Loading...</p>
                 </div>
               </div>
             </div>
-            <div class="avatar-dropdown__divider"></div>
-            <a href="auth/logout" class="avatar-dropdown__logout">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                <polyline points="16 17 21 12 16 7"/>
-                <line x1="21" y1="12" x2="9" y2="12"/>
-              </svg>
-              Sign Out
-            </a>
-          </div>
-        </div>
+
+            <!-- Avatar -->
+            <div style="position:relative">
+              <div class="topbar__avatar" id="avatarBtn">
+                <?php echo strtoupper(substr($_SESSION['name'] ?? 'U', 0, 1)); ?>
+              </div>
+              <div class="avatar-dropdown" id="avatarDropdown">
+                <div class="avatar-dropdown__info">
+                  <div class="avatar-dropdown__avatar">
+                    <?php echo strtoupper(substr($_SESSION['name'] ?? 'U', 0, 1)); ?>
+                  </div>
+                  <div>
+                    <div class="avatar-dropdown__name"><?php echo htmlspecialchars($_SESSION['name'] ?? 'User'); ?></div>
+                    <div class="avatar-dropdown__id">ID: <?php echo htmlspecialchars($_SESSION['employee_id'] ?? '—'); ?>
+                    </div>
+                    <div class="avatar-dropdown__role">
+                      <?php
+                      $roleNames = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
+                      echo $roleNames[$role] ?? 'User';
+                      ?>
+                    </div>
+                  </div>
+                </div>
+                <div class="avatar-dropdown__divider"></div>
+                <a href="auth/logout" class="avatar-dropdown__logout">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                  Sign Out
+                </a>
+              </div>
+            </div>
         <?php endif; ?>
 
       </div>
@@ -212,15 +219,16 @@ if ($last_month == 0) {
       <div class="tabs">
         <button class="tab tab--active" data-tab="hiyari">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
           </svg>
           Hiyari Hatto
         </button>
         <button class="tab" data-tab="kyt">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <path d="M9 11l3 3L22 4"/>
-            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            <path d="M9 11l3 3L22 4" />
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
           </svg>
           KYT
         </button>
@@ -233,13 +241,13 @@ if ($last_month == 0) {
           <div class="card card--blue" style="--delay:0.05s">
             <div class="card__icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
               </svg>
             </div>
             <div class="card__body">
               <span class="card__label">Total Reports</span>
-              <span class="card__value" data-count="<?php echo (int)$hiyari_summary['total']; ?>">0</span>
+              <span class="card__value" data-count="<?php echo (int) $hiyari_summary['total']; ?>">0</span>
             </div>
             <div class="card__trend card__trend--<?php echo $trend_dir === 'up' ? 'up' : 'warn'; ?>">
               <?php echo $trend_dir === 'up' ? '↑' : '↓'; ?> <?php echo $trend_pct; ?>% this month
@@ -249,13 +257,14 @@ if ($last_month == 0) {
           <div class="card card--red" style="--delay:0.10s">
             <div class="card__icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
             </div>
             <div class="card__body">
               <span class="card__label">Open</span>
-              <span class="card__value" data-count="<?php echo (int)$hiyari_summary['open']; ?>">0</span>
+              <span class="card__value" data-count="<?php echo (int) $hiyari_summary['open']; ?>">0</span>
             </div>
             <div class="card__trend card__trend--warn">Needs attention</div>
           </div>
@@ -263,13 +272,14 @@ if ($last_month == 0) {
           <div class="card card--yellow" style="--delay:0.15s">
             <div class="card__icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
               </svg>
             </div>
             <div class="card__body">
               <span class="card__label">In Progress</span>
-              <span class="card__value" data-count="<?php echo (int)$hiyari_summary['in_progress']; ?>">0</span>
+              <span class="card__value" data-count="<?php echo (int) $hiyari_summary['in_progress']; ?>">0</span>
             </div>
             <div class="card__trend card__trend--neutral">Being reviewed</div>
           </div>
@@ -277,12 +287,12 @@ if ($last_month == 0) {
           <div class="card card--green" style="--delay:0.20s">
             <div class="card__icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="20 6 9 17 4 12"/>
+                <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
             <div class="card__body">
               <span class="card__label">Closed</span>
-              <span class="card__value" data-count="<?php echo (int)$hiyari_summary['closed']; ?>">0</span>
+              <span class="card__value" data-count="<?php echo (int) $hiyari_summary['closed']; ?>">0</span>
             </div>
             <div class="card__trend card__trend--up">↑ 8% this month</div>
           </div>
@@ -318,29 +328,40 @@ if ($last_month == 0) {
             <table class="table">
               <thead>
                 <tr>
-                  <th>Report No.</th><th>Date</th><th>Department</th>
-                  <th>Category</th><th>Risk</th><th>Status</th><th></th>
+                  <th>Report No.</th>
+                  <th>Date</th>
+                  <th>Department</th>
+                  <th>Category</th>
+                  <th>Risk</th>
+                  <th>Status</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 <?php if (empty($reports)): ?>
-                <tr><td colspan="7" style="text-align:center;color:var(--text-hint);padding:24px">No reports yet</td></tr>
+                    <tr>
+                      <td colspan="7" style="text-align:center;color:var(--text-hint);padding:24px">No reports yet</td>
+                    </tr>
                 <?php else: ?>
-                <?php foreach ($reports as $r):
-                  $catLabels = ['near_miss' => 'Near Miss', 'unsafe_act' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
-                  $statusClass = ['open' => 'badge--open', 'in_progress' => 'badge--progress', 'closed' => 'badge--closed'];
-                  $statusLabel = ['open' => 'Open', 'in_progress' => 'In Progress', 'closed' => 'Closed'];
-                ?>
-                <tr>
-                  <td><span class="report-num"><?php echo htmlspecialchars($r['report_number']); ?></span></td>
-                  <td><?php echo date('d M Y', strtotime($r['report_date'])); ?></td>
-                  <td><?php echo htmlspecialchars($r['dept_name'] ?? '—'); ?></td>
-                  <td><?php echo $catLabels[$r['category']] ?? $r['category']; ?></td>
-                  <td><span class="badge badge--<?php echo $r['risk_level']; ?>"><?php echo ucfirst($r['risk_level']); ?></span></td>
-                  <td><span class="badge <?php echo $statusClass[$r['status']] ?? ''; ?>"><?php echo $statusLabel[$r['status']] ?? ucfirst($r['status']); ?></span></td>
-                  <td><a href="hiyari/view?id=<?php echo $r['id']; ?>" class="action-link">View</a></td>
-                </tr>
-                <?php endforeach; ?>
+                    <?php foreach ($reports as $r):
+                      $catLabels = ['near_miss' => 'Near Miss', 'unsafe_act' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
+                      $statusClass = ['open' => 'badge--open', 'in_progress' => 'badge--progress', 'closed' => 'badge--closed'];
+                      $statusLabel = ['open' => 'Open', 'in_progress' => 'In Progress', 'closed' => 'Closed'];
+                      ?>
+                        <tr>
+                          <td><span class="report-num"><?php echo htmlspecialchars($r['report_number']); ?></span></td>
+                          <td><?php echo date('d M Y', strtotime($r['report_date'])); ?></td>
+                          <td><?php echo htmlspecialchars($r['dept_name'] ?? '—'); ?></td>
+                          <td><?php echo $catLabels[$r['category']] ?? $r['category']; ?></td>
+                          <td><span
+                              class="badge badge--<?php echo $r['risk_level']; ?>"><?php echo ucfirst($r['risk_level']); ?></span>
+                          </td>
+                          <td><span
+                              class="badge <?php echo $statusClass[$r['status']] ?? ''; ?>"><?php echo $statusLabel[$r['status']] ?? ucfirst($r['status']); ?></span>
+                          </td>
+                          <td><a href="hiyari/view?id=<?php echo $r['id']; ?>" class="action-link">View</a></td>
+                        </tr>
+                    <?php endforeach; ?>
                 <?php endif; ?>
               </tbody>
             </table>
@@ -355,8 +376,8 @@ if ($last_month == 0) {
           <div class="card card--blue" style="--delay:0.05s">
             <div class="card__icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 11l3 3L22 4"/>
-                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                <path d="M9 11l3 3L22 4" />
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
               </svg>
             </div>
             <div class="card__body">
@@ -368,7 +389,7 @@ if ($last_month == 0) {
           <div class="card card--green" style="--delay:0.10s">
             <div class="card__icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="20 6 9 17 4 12"/>
+                <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
             <div class="card__body">
@@ -380,8 +401,8 @@ if ($last_month == 0) {
           <div class="card card--yellow" style="--delay:0.15s">
             <div class="card__icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 6 12 12 16 14"/>
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
               </svg>
             </div>
             <div class="card__body">
@@ -393,9 +414,9 @@ if ($last_month == 0) {
           <div class="card card--blue" style="--delay:0.20s">
             <div class="card__icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="20" x2="18" y2="10"/>
-                <line x1="12" y1="20" x2="12" y2="4"/>
-                <line x1="6" y1="20" x2="6" y2="14"/>
+                <line x1="18" y1="20" x2="18" y2="10" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="6" y1="20" x2="6" y2="14" />
               </svg>
             </div>
             <div class="card__body">
@@ -436,10 +457,21 @@ if ($last_month == 0) {
           <div class="table-wrap">
             <table class="table">
               <thead>
-                <tr><th>Activity No.</th><th>Date</th><th>Department</th><th>Location</th><th>Participants</th><th>Status</th><th></th></tr>
+                <tr>
+                  <th>Activity No.</th>
+                  <th>Date</th>
+                  <th>Department</th>
+                  <th>Location</th>
+                  <th>Participants</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
               </thead>
               <tbody>
-                <tr><td colspan="7" style="text-align:center;color:var(--text-hint);padding:24px">KYT module coming soon</td></tr>
+                <tr>
+                  <td colspan="7" style="text-align:center;color:var(--text-hint);padding:24px">KYT module coming soon
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -452,23 +484,24 @@ if ($last_month == 0) {
 
   <!-- Pass PHP data to JS -->
   <script>
-  window.HIYARI_DATA = {
-    near_miss:        <?php echo (int)($category_data['near_miss']        ?? 0); ?>,
-    unsafe_act:       <?php echo (int)($category_data['unsafe_act']       ?? 0); ?>,
-    unsafe_condition: <?php echo (int)($category_data['unsafe_condition'] ?? 0); ?>,
-    dept_labels: <?php echo json_encode(array_column($dept_data, 'name')); ?>,
-    dept_values: <?php echo json_encode(array_map('intval', array_column($dept_data, 'total'))); ?>,
-  };
-  window.KYT_DATA = {
-    completed:   0,
-    pending:     0,
-    dept_labels: [],
-    dept_values: [],
-  };
-  const BASE_URL = '/kyt-yadin';
+    window.HIYARI_DATA = {
+      near_miss: <?php echo (int) ($category_data['near_miss'] ?? 0); ?>,
+      unsafe_act: <?php echo (int) ($category_data['unsafe_act'] ?? 0); ?>,
+      unsafe_condition: <?php echo (int) ($category_data['unsafe_condition'] ?? 0); ?>,
+      dept_labels: <?php echo json_encode(array_column($dept_data, 'name')); ?>,
+      dept_values: <?php echo json_encode(array_map('intval', array_column($dept_data, 'total'))); ?>,
+    };
+    window.KYT_DATA = {
+      completed: 0,
+      pending: 0,
+      dept_labels: [],
+      dept_values: [],
+    };
+    const BASE_URL = '/kyt-yadin';
   </script>
   <script src="assets/avatar.js"></script>
   <script src="assets/notifications.js"></script>
   <script src="assets/dashboard.js"></script>
 </body>
+
 </html>
