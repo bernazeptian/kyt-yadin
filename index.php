@@ -107,35 +107,35 @@ if ($last_month == 0) {
         </svg>
       </a>
       <?php if ($role <= 2): ?>
-          <a href="master/index" class="nav-item" data-tooltip="Master Data">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <line x1="8" y1="6" x2="21" y2="6" />
-              <line x1="8" y1="12" x2="21" y2="12" />
-              <line x1="8" y1="18" x2="21" y2="18" />
-              <line x1="3" y1="6" x2="3.01" y2="6" />
-              <line x1="3" y1="12" x2="3.01" y2="12" />
-              <line x1="3" y1="18" x2="3.01" y2="18" />
-            </svg>
-          </a>
+        <a href="master/index" class="nav-item" data-tooltip="Master Data">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="8" y1="6" x2="21" y2="6" />
+            <line x1="8" y1="12" x2="21" y2="12" />
+            <line x1="8" y1="18" x2="21" y2="18" />
+            <line x1="3" y1="6" x2="3.01" y2="6" />
+            <line x1="3" y1="12" x2="3.01" y2="12" />
+            <line x1="3" y1="18" x2="3.01" y2="18" />
+          </svg>
+        </a>
       <?php endif; ?>
     </nav>
     <div class="sidebar__bottom">
       <?php if (isset($_SESSION['user_id'])): ?>
-          <a href="auth/logout" class="nav-item nav-item--logout" data-tooltip="Sign Out">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
-          </a>
+        <a href="auth/logout" class="nav-item nav-item--logout" data-tooltip="Sign Out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </a>
       <?php else: ?>
-          <a href="auth/login" class="nav-item" data-tooltip="Sign In">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-              <polyline points="10 17 15 12 10 7" />
-              <line x1="15" y1="12" x2="3" y2="12" />
-            </svg>
-          </a>
+        <a href="auth/login" class="nav-item" data-tooltip="Sign In">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+            <polyline points="10 17 15 12 10 7" />
+            <line x1="15" y1="12" x2="3" y2="12" />
+          </svg>
+        </a>
       <?php endif; ?>
     </div>
   </aside>
@@ -146,68 +146,68 @@ if ($last_month == 0) {
       <div class="topbar__left">
         <h1 class="topbar__title">Dashboard</h1>
         <?php if (isset($_SESSION['name'])): ?>
-            <p class="topbar__sub">Welcome back, <strong><?php echo htmlspecialchars($_SESSION['name']); ?></strong></p>
+          <p class="topbar__sub">Welcome back, <strong><?php echo htmlspecialchars($_SESSION['name']); ?></strong></p>
         <?php else: ?>
-            <p class="topbar__sub">Welcome to KYT Yadin</p>
+          <p class="topbar__sub">Welcome to KYT Yadin</p>
         <?php endif; ?>
       </div>
       <div class="topbar__right">
         <div class="topbar__date"><?php echo date('l, d F Y'); ?></div>
 
         <?php if (isset($_SESSION['user_id'])): ?>
-            <!-- Notification Bell -->
-            <div style="position:relative">
-              <div class="notif-btn" id="notifBtn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                </svg>
-                <span class="notif-badge" id="notifBadge">0</span>
+          <!-- Notification Bell -->
+          <div style="position:relative">
+            <div class="notif-btn" id="notifBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              <span class="notif-badge" id="notifBadge">0</span>
+            </div>
+            <div class="notif-dropdown" id="notifDropdown">
+              <div class="notif-header">
+                <span class="notif-header__title">Notifications</span>
+                <button class="notif-mark-all" id="markAllRead">Mark all read</button>
               </div>
-              <div class="notif-dropdown" id="notifDropdown">
-                <div class="notif-header">
-                  <span class="notif-header__title">Notifications</span>
-                  <button class="notif-mark-all" id="markAllRead">Mark all read</button>
-                </div>
-                <div class="notif-list" id="notifList">
-                  <p class="notif-empty">Loading...</p>
-                </div>
+              <div class="notif-list" id="notifList">
+                <p class="notif-empty">Loading...</p>
               </div>
             </div>
+          </div>
 
-            <!-- Avatar -->
-            <div style="position:relative">
-              <div class="topbar__avatar" id="avatarBtn">
-                <?php echo strtoupper(substr($_SESSION['name'] ?? 'U', 0, 1)); ?>
-              </div>
-              <div class="avatar-dropdown" id="avatarDropdown">
-                <div class="avatar-dropdown__info">
-                  <div class="avatar-dropdown__avatar">
-                    <?php echo strtoupper(substr($_SESSION['name'] ?? 'U', 0, 1)); ?>
+          <!-- Avatar -->
+          <div style="position:relative">
+            <div class="topbar__avatar" id="avatarBtn">
+              <?php echo strtoupper(substr($_SESSION['name'] ?? 'U', 0, 1)); ?>
+            </div>
+            <div class="avatar-dropdown" id="avatarDropdown">
+              <div class="avatar-dropdown__info">
+                <div class="avatar-dropdown__avatar">
+                  <?php echo strtoupper(substr($_SESSION['name'] ?? 'U', 0, 1)); ?>
+                </div>
+                <div>
+                  <div class="avatar-dropdown__name"><?php echo htmlspecialchars($_SESSION['name'] ?? 'User'); ?></div>
+                  <div class="avatar-dropdown__id">ID: <?php echo htmlspecialchars($_SESSION['employee_id'] ?? '—'); ?>
                   </div>
-                  <div>
-                    <div class="avatar-dropdown__name"><?php echo htmlspecialchars($_SESSION['name'] ?? 'User'); ?></div>
-                    <div class="avatar-dropdown__id">ID: <?php echo htmlspecialchars($_SESSION['employee_id'] ?? '—'); ?>
-                    </div>
-                    <div class="avatar-dropdown__role">
-                      <?php
-                      $roleNames = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
-                      echo $roleNames[$role] ?? 'User';
-                      ?>
-                    </div>
+                  <div class="avatar-dropdown__role">
+                    <?php
+                    $roleNames = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
+                    echo $roleNames[$role] ?? 'User';
+                    ?>
                   </div>
                 </div>
-                <div class="avatar-dropdown__divider"></div>
-                <a href="auth/logout" class="avatar-dropdown__logout">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" y1="12" x2="9" y2="12" />
-                  </svg>
-                  Sign Out
-                </a>
               </div>
+              <div class="avatar-dropdown__divider"></div>
+              <a href="auth/logout" class="avatar-dropdown__logout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Sign Out
+              </a>
             </div>
+          </div>
         <?php endif; ?>
 
       </div>
@@ -339,29 +339,29 @@ if ($last_month == 0) {
               </thead>
               <tbody>
                 <?php if (empty($reports)): ?>
-                    <tr>
-                      <td colspan="7" style="text-align:center;color:var(--text-hint);padding:24px">No reports yet</td>
-                    </tr>
+                  <tr>
+                    <td colspan="7" style="text-align:center;color:var(--text-hint);padding:24px">No reports yet</td>
+                  </tr>
                 <?php else: ?>
-                    <?php foreach ($reports as $r):
-                      $catLabels = ['near_miss' => 'Near Miss', 'unsafe_act' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
-                      $statusClass = ['open' => 'badge--open', 'in_progress' => 'badge--progress', 'closed' => 'badge--closed'];
-                      $statusLabel = ['open' => 'Open', 'in_progress' => 'In Progress', 'closed' => 'Closed'];
-                      ?>
-                        <tr>
-                          <td><span class="report-num"><?php echo htmlspecialchars($r['report_number']); ?></span></td>
-                          <td><?php echo date('d M Y', strtotime($r['report_date'])); ?></td>
-                          <td><?php echo htmlspecialchars($r['dept_name'] ?? '—'); ?></td>
-                          <td><?php echo $catLabels[$r['category']] ?? $r['category']; ?></td>
-                          <td><span
-                              class="badge badge--<?php echo $r['risk_level']; ?>"><?php echo ucfirst($r['risk_level']); ?></span>
-                          </td>
-                          <td><span
-                              class="badge <?php echo $statusClass[$r['status']] ?? ''; ?>"><?php echo $statusLabel[$r['status']] ?? ucfirst($r['status']); ?></span>
-                          </td>
-                          <td><a href="hiyari/view?id=<?php echo $r['id']; ?>" class="action-link">View</a></td>
-                        </tr>
-                    <?php endforeach; ?>
+                  <?php foreach ($reports as $r):
+                    $catLabels = ['near_miss' => 'Near Miss', 'unsafe_act' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
+                    $statusClass = ['open' => 'badge--open', 'in_progress' => 'badge--progress', 'closed' => 'badge--closed'];
+                    $statusLabel = ['open' => 'Open', 'in_progress' => 'In Progress', 'closed' => 'Closed'];
+                    ?>
+                    <tr>
+                      <td><span class="report-num"><?php echo htmlspecialchars($r['report_number']); ?></span></td>
+                      <td><?php echo date('d M Y', strtotime($r['report_date'])); ?></td>
+                      <td><?php echo htmlspecialchars($r['dept_name'] ?? '—'); ?></td>
+                      <td><?php echo $catLabels[$r['category']] ?? $r['category']; ?></td>
+                      <td><span
+                          class="badge badge--<?php echo $r['risk_level']; ?>"><?php echo ucfirst($r['risk_level']); ?></span>
+                      </td>
+                      <td><span
+                          class="badge <?php echo $statusClass[$r['status']] ?? ''; ?>"><?php echo $statusLabel[$r['status']] ?? ucfirst($r['status']); ?></span>
+                      </td>
+                      <td><a href="hiyari/view?id=<?php echo $r['id']; ?>" class="action-link">View</a></td>
+                    </tr>
+                  <?php endforeach; ?>
                 <?php endif; ?>
               </tbody>
             </table>

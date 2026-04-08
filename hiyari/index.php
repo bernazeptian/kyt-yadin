@@ -3,7 +3,7 @@ session_start();
 require_once '../config/db.php';
 
 if (!isset($_SESSION['user_id'])) {
-  header('Location: ../auth/login.php');
+  header('Location: ../auth/login');
   exit;
 }
 
@@ -149,10 +149,10 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
   ═══════════════════════════════════════ -->
   <aside class="sidebar">
     <div class="sidebar__logo">
-      <img src="assets/logo.png" alt="Yanmar" class="sidebar__logo-img" />
+      <img src="../assets/logo.png" alt="Yanmar" class="sidebar__logo-img" />
     </div>
     <nav class="sidebar__nav">
-      <a href="index" class="nav-item" data-tooltip="Dashboard">
+      <a href="../index" class="nav-item" data-tooltip="Dashboard">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="3" y="3" width="7" height="7" rx="1" />
           <rect x="14" y="3" width="7" height="7" rx="1" />
@@ -160,7 +160,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
           <rect x="14" y="14" width="7" height="7" rx="1" />
         </svg>
       </a>
-      <a href="hiyari/index" class="nav-item nav-item--active" data-tooltip="Hiyari Hatto">
+      <a href="../iyari/index" class="nav-item nav-item--active" data-tooltip="Hiyari Hatto">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
           <line x1="12" y1="9" x2="12" y2="13" />
@@ -174,7 +174,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
         </svg>
       </a>
       <?php if ($role <= 2): ?>
-        <a href="master/index" class="nav-item" data-tooltip="Master Data">
+        <a href="../master/index" class="nav-item" data-tooltip="Master Data">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <line x1="8" y1="6" x2="21" y2="6" />
             <line x1="8" y1="12" x2="21" y2="12" />
@@ -188,7 +188,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
     </nav>
     <div class="sidebar__bottom">
       <?php if (isset($_SESSION['user_id'])): ?>
-        <a href="auth/logout" class="nav-item nav-item--logout" data-tooltip="Sign Out">
+        <a href="../auth/logout" class="nav-item nav-item--logout" data-tooltip="Sign Out">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
             <polyline points="16 17 21 12 16 7" />
@@ -221,7 +221,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
       </div>
       <div class="topbar__right">
         <div class="topbar__date"><?php echo date('l, d F Y'); ?></div>
-        <a href="create.php" class="btn-new">
+        <a href="create" class="btn-new">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
@@ -248,7 +248,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
 
       <!-- ── Summary Mini Cards ── -->
       <div class="summary-row">
-        <a href="index.php" class="mini-card <?php echo !$filter_status ? 'mini-card--active' : ''; ?>">
+        <a href="index" class="mini-card <?php echo !$filter_status ? 'mini-card--active' : ''; ?>">
           <span class="mini-card__val"><?php echo $summary['total']; ?></span>
           <span class="mini-card__label">Total</span>
         </a>
@@ -359,7 +359,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
             <span class="table-box__title">Reports</span>
             <span class="table-count"><?php echo $total_records; ?> records</span>
           </div>
-          <a href="create.php" class="table-box__link">
+          <a href="create" class="table-box__link">
             + New Report
           </a>
         </div>
@@ -374,7 +374,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
               <polyline points="10 9 9 9 8 9" />
             </svg>
             <p>No reports found</p>
-            <a href="create.php" class="btn-new" style="margin-top:12px">Create First Report</a>
+            <a href="create" class="btn-new" style="margin-top:12px">Create First Report</a>
           </div>
         <?php else: ?>
           <div class="table-wrap">
@@ -422,7 +422,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
                     </td>
                     <td><?php echo htmlspecialchars($r['reporter_name'] ?? '—'); ?></td>
                     <td>
-                      <a href="view.php?id=<?php echo $r['id']; ?>" class="action-link">View</a>
+                      <a href="view?id=<?php echo $r['id']; ?>" class="action-link">View</a>
                     </td>
                   </tr>
                 <?php endforeach; ?>
