@@ -167,12 +167,6 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
           <line x1="12" y1="17" x2="12.01" y2="17" />
         </svg>
       </a>
-      <a href="kyt/index" class="nav-item" data-tooltip="KYT">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 11l3 3L22 4" />
-          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-        </svg>
-      </a>
       <?php if ($role <= 2 && isset($_SESSION['user_id'])): ?>
         <a href="../master/index" class="nav-item" data-tooltip="Master Data">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
