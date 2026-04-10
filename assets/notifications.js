@@ -6,10 +6,10 @@ const Notifications = {
 
   // ── Init ─────────────────────────────────
   async init() {
-    this.bellBtn    = document.getElementById('notifBtn');
-    this.bellBadge  = document.getElementById('notifBadge');
-    this.dropdown   = document.getElementById('notifDropdown');
-    this.list       = document.getElementById('notifList');
+    this.bellBtn = document.getElementById('notifBtn');
+    this.bellBadge = document.getElementById('notifBadge');
+    this.dropdown = document.getElementById('notifDropdown');
+    this.list = document.getElementById('notifList');
     this.markAllBtn = document.getElementById('markAllRead');
 
     if (!this.bellBtn) return;
@@ -46,7 +46,7 @@ const Notifications = {
   // ── Load notifications from server ───────
   async load() {
     try {
-      const res  = await fetch('../api/notifications_get');
+      const res = await fetch('/api/notifications_get');
       const data = await res.json();
 
       // Update badge
@@ -81,7 +81,7 @@ const Notifications = {
 
   // ── Mark single notification as read ─────
   async markRead(id, url) {
-    await fetch('../api/notifications_read', {
+    await fetch('/api/notifications_read', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: 'id=' + id,
@@ -125,7 +125,7 @@ const Notifications = {
       });
 
       // Save subscription to server
-      await fetch('../api/push_subscribe', {
+      await fetch('/api/push_subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(sub),
@@ -140,17 +140,17 @@ const Notifications = {
   // ── Helper: time ago ─────────────────────
   timeAgo(dateStr) {
     const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
-    if (diff < 60)     return 'Just now';
-    if (diff < 3600)   return Math.floor(diff / 60) + 'm ago';
-    if (diff < 86400)  return Math.floor(diff / 3600) + 'h ago';
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
     return Math.floor(diff / 86400) + 'd ago';
   },
 
   // ── Helper: VAPID key convert ─────────────
   urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-    const raw     = window.atob(base64);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const raw = window.atob(base64);
     return new Uint8Array([...raw].map(c => c.charCodeAt(0)));
   }
 };
