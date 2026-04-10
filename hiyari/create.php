@@ -4,7 +4,7 @@ require_once '../config/db.php';
 
 // Redirect if not logged in
 if (!isset($_SESSION['user_id'])) {
-  header('Location: ../auth/login.php');
+  header('Location: ../auth/login');
   exit;
 }
 
@@ -107,7 +107,7 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
 
     <header class="topbar">
       <div class="topbar__left">
-        <a href="index.php" class="back-btn">
+        <a href="index" class="back-btn">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
             <polyline points="15 18 9 12 15 6" />
           </svg>
@@ -145,7 +145,7 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
         </div>
       <?php endif; ?>
 
-      <form method="POST" action="store.php" enctype="multipart/form-data" id="reportForm">
+      <form method="POST" action="store" enctype="multipart/form-data" id="reportForm">
 
         <div class="form-grid">
 

@@ -1,29 +1,42 @@
 <?php
 session_start();
 require_once '../config/db.php';
-if (!isset($_SESSION['user_id']) || (int)$_SESSION['role'] !== 1) { header('Location: ../index.php'); exit; }
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') { header('Location: index.php?tab=users'); exit; }
+if (!isset($_SESSION['user_id']) || (int) $_SESSION['role'] !== 1) {
+    header('Location: ../index');
+    exit;
+}
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: index?tab=users');
+    exit;
+}
 
 $employee_id = trim($_POST['employee_id'] ?? '');
-$name        = trim($_POST['name']        ?? '');
-$email       = trim($_POST['email']       ?? '');
-$password    = $_POST['password']          ?? '';
-$role        = (int)($_POST['role']        ?? 4);
-$is_active   = isset($_POST['is_active'])   ? 1 : 0;
+$name = trim($_POST['name'] ?? '');
+$email = trim($_POST['email'] ?? '');
+$password = $_POST['password'] ?? '';
+$role = (int) ($_POST['role'] ?? 4);
+$is_active = isset($_POST['is_active']) ? 1 : 0;
 
 if (!$employee_id || !$name || !$email || !$password) {
-    header('Location: index.php?tab=users&error=failed'); exit;
+    header('Location: index?tab=users&error=failed');
+    exit;
 }
 
 // Check duplicate employee_id
 $check = $pdo->prepare("SELECT id FROM users WHERE employee_id = :emp_id");
 $check->execute([':emp_id' => $employee_id]);
-if ($check->fetch()) { header('Location: index.php?tab=users&error=emp_exists'); exit; }
+if ($check->fetch()) {
+    header('Location: index?tab=users&error=emp_exists');
+    exit;
+}
 
 // Check duplicate email
 $check2 = $pdo->prepare("SELECT id FROM users WHERE email = :email");
 $check2->execute([':email' => $email]);
-if ($check2->fetch()) { header('Location: index.php?tab=users&error=email_exists'); exit; }
+if ($check2->fetch()) {
+    header('Location: index.?tab=users&error=email_exists');
+    exit;
+}
 
 try {
     $hashed = password_hash($password, PASSWORD_BCRYPT);
@@ -33,14 +46,14 @@ try {
     ");
     $stmt->execute([
         ':employee_id' => $employee_id,
-        ':name'        => $name,
-        ':email'       => $email,
-        ':password'    => $hashed,
-        ':role'        => $role,
-        ':is_active'   => $is_active,
+        ':name' => $name,
+        ':email' => $email,
+        ':password' => $hashed,
+        ':role' => $role,
+        ':is_active' => $is_active,
     ]);
-    header('Location: index.php?tab=users&success=user_added');
+    header('Location: index?tab=users&success=user_added');
 } catch (PDOException $e) {
-    header('Location: index.php?tab=users&error=failed');
+    header('Location: index?tab=users&error=failed');
 }
 exit;

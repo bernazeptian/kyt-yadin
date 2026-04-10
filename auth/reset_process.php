@@ -3,22 +3,22 @@ session_start();
 require_once '../config/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: login.php');
+    header('Location: login');
     exit;
 }
 
-$token            = $_POST['token']            ?? '';
-$password         = $_POST['password']         ?? '';
+$token = $_POST['token'] ?? '';
+$password = $_POST['password'] ?? '';
 $password_confirm = $_POST['password_confirm'] ?? '';
 
 if (!$token || !$password || !$password_confirm) {
-    header('Location: reset.php?token=' . urlencode($token) . '&error=1');
+    header('Location: reset?token=' . urlencode($token) . '&error=1');
     exit;
 }
 
 // Check passwords match
 if ($password !== $password_confirm) {
-    header('Location: reset.php?token=' . urlencode($token) . '&error=mismatch');
+    header('Location: reset?token=' . urlencode($token) . '&error=mismatch');
     exit;
 }
 
@@ -28,7 +28,7 @@ $stmt->execute([':token' => $token]);
 $user = $stmt->fetch();
 
 if (!$user) {
-    header('Location: reset.php?token=' . urlencode($token));
+    header('Location: reset?token=' . urlencode($token));
     exit;
 }
 
@@ -43,9 +43,9 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([
     ':password' => $hashed,
-    ':id'       => $user['id'],
+    ':id' => $user['id'],
 ]);
 
 // Redirect to login with success message
-header('Location: login.php?reset=success');
+header('Location: login?reset=success');
 exit;

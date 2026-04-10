@@ -428,7 +428,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
               <?php endif; ?>
 
               <?php if ($is_admin): ?>
-                <form method="POST" action="action_store.php" class="add-action-form">
+                <form method="POST" action="action_store" class="add-action-form">
                   <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
                   <div class="form-group">
                     <label class="form-label">Add Corrective Action</label>
@@ -483,7 +483,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                 <h2 class="view-card__title">Update Status</h2>
               </div>
               <div class="view-card__body">
-                <form method="POST" action="status_update.php">
+                <form method="POST" action="status_update">
                   <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
                   <div class="status-btns">
                     <button type="submit" name="status" value="open"
@@ -561,7 +561,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
 
               <!-- Add Comment — reporter, admin, or assigned user -->
               <?php if ($is_admin || $is_reporter || $is_assigned): ?>
-                <form method="POST" action="comment_store.php" class="comment-form">
+                <form method="POST" action="comment_store" class="comment-form">
                   <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
                   <div class="comment-input-wrap">
                     <div class="comment-form__avatar">

@@ -4,7 +4,7 @@ require_once '../config/db.php';
 
 // Only superadmin and admin can access
 if (!isset($_SESSION['user_id']) || (int) $_SESSION['role'] > 2) {
-  header('Location: ../index.php');
+  header('Location: ../index');
   exit;
 }
 
@@ -224,7 +224,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
             <div class="master-form-box__header">
               <h2 class="master-form-box__title">Add Department</h2>
             </div>
-            <form method="POST" action="dept_store.php">
+            <form method="POST" action="dept_store">
               <div class="form-group">
                 <label class="form-label">Department Code <span class="required">*</span></label>
                 <input type="text" name="code" class="form-input" placeholder="e.g. PROD" required maxlength="10"
@@ -241,7 +241,8 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
                   <option value="">-- Select PIC --</option>
                   <?php foreach ($users as $u): ?>
                     <option value="<?php echo $u['id']; ?>">
-                      <?php echo htmlspecialchars($u['name'] . ' (' . $u['employee_id'] . ')'); ?></option>
+                      <?php echo htmlspecialchars($u['name'] . ' (' . $u['employee_id'] . ')'); ?>
+                    </option>
                   <?php endforeach; ?>
                 </select>
               </div>
@@ -311,7 +312,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
                               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                             </svg>
                           </button>
-                          <a href="dept_delete.php?id=<?php echo $d['id']; ?>" class="action-btn action-btn--delete"
+                          <a href="dept_delete?id=<?php echo $d['id']; ?>" class="action-btn action-btn--delete"
                             onclick="return confirm('Delete this department?')" title="Delete">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
                               height="15">
@@ -342,7 +343,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
             <div class="master-form-box__header">
               <h2 class="master-form-box__title">Add Location</h2>
             </div>
-            <form method="POST" action="loc_store.php">
+            <form method="POST" action="loc_store">
               <div class="form-group">
                 <label class="form-label">Location Code <span class="required">*</span></label>
                 <input type="text" name="code" class="form-input" placeholder="e.g. LOC001" required maxlength="10"
@@ -417,7 +418,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
                               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                             </svg>
                           </button>
-                          <a href="loc_delete.php?id=<?php echo $l['id']; ?>" class="action-btn action-btn--delete"
+                          <a href="loc_delete?id=<?php echo $l['id']; ?>" class="action-btn action-btn--delete"
                             onclick="return confirm('Delete this location?')" title="Delete">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
                               height="15">
@@ -449,7 +450,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
               <div class="master-form-box__header">
                 <h2 class="master-form-box__title">Add User</h2>
               </div>
-              <form method="POST" action="user_store.php">
+              <form method="POST" action="user_store">
                 <div class="form-group">
                   <label class="form-label">Employee ID <span class="required">*</span></label>
                   <input type="text" name="employee_id" class="form-input" placeholder="e.g. EMP001" required
@@ -544,8 +545,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                               </svg>
                             </button>
-                            <a href="user_reset_pw.php?id=<?php echo $u['id']; ?>" class="action-btn"
-                              style="color:var(--orange)"
+                            <a href="user_reset_pw?id=<?php echo $u['id']; ?>" class="action-btn" style="color:var(--orange)"
                               onclick="return confirm('Reset password for <?php echo htmlspecialchars($u['name']); ?>?')"
                               title="Reset Password">
                               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
@@ -555,7 +555,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
                               </svg>
                             </a>
                             <?php if ($u['id'] != $_SESSION['user_id']): ?>
-                              <a href="user_delete.php?id=<?php echo $u['id']; ?>" class="action-btn action-btn--delete"
+                              <a href="user_delete?id=<?php echo $u['id']; ?>" class="action-btn action-btn--delete"
                                 onclick="return confirm('Delete user <?php echo htmlspecialchars($u['name']); ?>?')"
                                 title="Delete">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
@@ -595,7 +595,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
           </svg>
         </button>
       </div>
-      <form method="POST" action="dept_update.php">
+      <form method="POST" action="dept_update">
         <input type="hidden" name="id" id="editDeptId" />
         <div class="form-group">
           <label class="form-label">Department Code <span class="required">*</span></label>
@@ -612,7 +612,8 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
             <option value="">-- Select PIC --</option>
             <?php foreach ($users as $u): ?>
               <option value="<?php echo $u['id']; ?>">
-                <?php echo htmlspecialchars($u['name'] . ' (' . $u['employee_id'] . ')'); ?></option>
+                <?php echo htmlspecialchars($u['name'] . ' (' . $u['employee_id'] . ')'); ?>
+              </option>
             <?php endforeach; ?>
           </select>
         </div>
@@ -647,7 +648,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
           </svg>
         </button>
       </div>
-      <form method="POST" action="loc_update.php">
+      <form method="POST" action="loc_update">
         <input type="hidden" name="id" id="editLocId" />
         <div class="form-group">
           <label class="form-label">Location Code <span class="required">*</span></label>
@@ -689,7 +690,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
           </svg>
         </button>
       </div>
-      <form method="POST" action="user_update.php">
+      <form method="POST" action="user_update">
         <input type="hidden" name="id" id="editUserId" />
         <div class="form-group">
           <label class="form-label">Employee ID <span class="required">*</span></label>

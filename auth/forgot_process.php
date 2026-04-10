@@ -5,14 +5,14 @@ require_once '../config/mail.php';
 
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: forgot.php');
+    header('Location: forgot');
     exit;
 }
 
 $email = trim($_POST['email'] ?? '');
 
 if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    header('Location: forgot.php?error=notfound');
+    header('Location: forgot?error=notfound');
     exit;
 }
 
@@ -25,13 +25,13 @@ if (!$user) {
     exit;
 }
 
-$token   = bin2hex(random_bytes(32));
+$token = bin2hex(random_bytes(32));
 $expires = date('Y-m-d H:i:s', strtotime('+1 hour'));
 
 $stmt = $pdo->prepare("UPDATE users SET reset_token = :token, reset_expires = :expires WHERE id = :id");
 $stmt->execute([':token' => $token, ':expires' => $expires, ':id' => $user['id']]);
 
-$reset_link = APP_URL . '/auth/reset.php?token=' . $token;
+$reset_link = APP_URL . '/auth/reset?token=' . $token;
 $body = "<p>Click here to reset: <a href='{$reset_link}'>{$reset_link}</a></p>";
 
 // ← CHANGE THIS to show exact error instead of redirecting
@@ -43,5 +43,5 @@ if (!$sent) {
     die('❌ Mail failed! Check error log at: C:\xampp\php\logs\php_error_log');
 }
 
-header('Location: forgot.php?sent=1');
+header('Location: forgot?sent=1');
 exit;
