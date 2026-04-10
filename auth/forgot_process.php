@@ -38,10 +38,10 @@ $body = "<p>Click here to reset: <a href='{$reset_link}'>{$reset_link}</a></p>";
 $sent = sendMail($user['email'], 'Reset Your KYT Yadin Password', $body);
 
 if (!$sent) {
-    // Get PHPMailer specific error
-    $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-    die('❌ Mail failed! Check error log at: C:\xampp\php\logs\php_error_log');
+    // sendMail() already echoed the PHPMailer error above
+    die('❌ Mail failed. Check the error printed above or PHP error logs.');
 }
+
 
 header('Location: forgot?sent=1');
 exit;
