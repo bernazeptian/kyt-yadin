@@ -12,7 +12,7 @@ define('MAIL_USERNAME', 'yadinsage@gmail.com');
 define('MAIL_PASSWORD', 'xlpj zuxq cxju ariw');
 define('MAIL_FROM_NAME', 'KYT Yadin System');
 define('MAIL_FROM_EMAIL', 'yadinsage@gmail.com');
-define('APP_URL', 'http://localhost/kyt-yadin/kyt-yadin');
+define('APP_URL', 'http://kyt.yadin.com');
 
 
 function sendMail(string $to, string $subject, string $body): bool
