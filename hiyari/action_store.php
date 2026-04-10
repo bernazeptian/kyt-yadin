@@ -35,7 +35,7 @@ try {
 
         $title   = 'New Corrective Action Assigned';
         $message = 'You have been assigned a corrective action for report ' . ($report['report_number'] ?? '') . ': ' . substr($description, 0, 80) . '...';
-        $url     = '/kyt-yadin/hiyari/view?id=' . $report_id;
+        $url     = '/hiyari/view?id=' . $report_id;
 
         // In-app notification
         createNotification($pdo, $assigned_to, $title, $message, 'warning', $url);

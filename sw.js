@@ -3,8 +3,8 @@ self.addEventListener('push', function(e) {
     const data = e.data ? e.data.json() : {};
     const title   = data.title   || 'KYT Yadin';
     const message = data.message || 'You have a new notification';
-    const url     = data.url     || '/kyt-yadin/index';
-    const icon    = data.icon    || '/kyt-yadin/assets/logo.png';
+    const url     = data.url     || '/index';
+    const icon    = data.icon    || '/assets/logo.png';
 
     e.waitUntil(
         self.registration.showNotification(title, {
@@ -20,6 +20,6 @@ self.addEventListener('push', function(e) {
 self.addEventListener('notificationclick', function(e) {
     e.notification.close();
     e.waitUntil(
-        clients.openWindow(e.notification.data.url || '/kyt-yadin/index')
+        clients.openWindow(e.notification.data.url || '/index')
     );
 });

@@ -50,7 +50,7 @@ function sendPushNotification(PDO $pdo, int $user_id, string $title, string $mes
                 'title'   => $title,
                 'message' => $message,
                 'url'     => $url,
-                'icon'    => '/kyt-yadin/assets/logo.png',
+                'icon'    => '/assets/logo.png',
             ]);
 
             $endpoint = $sub['endpoint'];

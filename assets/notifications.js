@@ -108,7 +108,7 @@ const Notifications = {
     }
 
     try {
-      const reg = await navigator.serviceWorker.register('/kyt-yadin/sw.js');
+      const reg = await navigator.serviceWorker.register('/sw.js');
       console.log('SW registered');
 
       const permission = await Notification.requestPermission();
