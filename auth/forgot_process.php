@@ -34,11 +34,9 @@ $stmt->execute([':token' => $token, ':expires' => $expires, ':id' => $user['id']
 $reset_link = APP_URL . '/auth/reset?token=' . $token;
 $body = "<p>Click here to reset: <a href='{$reset_link}'>{$reset_link}</a></p>";
 
-// ← CHANGE THIS to show exact error instead of redirecting
 $sent = sendMail($user['email'], 'Reset Your KYT Yadin Password', $body);
 
 if (!$sent) {
-    // sendMail() already echoed the PHPMailer error above
     die('❌ Mail failed. Check the error printed above or PHP error logs.');
 }
 
