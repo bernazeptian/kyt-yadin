@@ -5,13 +5,13 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 // ── SMTP Configuration ──
-define('MAIL_HOST', 'smtp.gmail.com');
+define('MAIL_HOST', 'mail.yanmar.co.id');
 define('MAIL_PORT', 465);        // ← 587 for TLS, 465 for SSL
 define('MAIL_ENCRYPTION', 'ssl');      // ← tls or ssl
-define('MAIL_USERNAME', 'yadinsage@gmail.com');
-define('MAIL_PASSWORD', 'xlpj zuxq cxju ariw');
+define('MAIL_USERNAME', 'noreply@yanmar.co.id');
+define('MAIL_PASSWORD', 'duaribu25');
 define('MAIL_FROM_NAME', 'KYT Yadin System');
-define('MAIL_FROM_EMAIL', 'yadinsage@gmail.com');
+define('MAIL_FROM_EMAIL', 'noreply@yanmar.co.id');
 define('APP_URL', 'http://kyt.yadin.com');
 
 
