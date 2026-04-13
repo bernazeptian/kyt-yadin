@@ -119,7 +119,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="../assets/dashboard.css" />
-  <link rel="stylesheet" href="../assets/view.css" />
+  <link rel="stylesheet" href="../assets/view.css?v=2" />
 </head>
 
 <body>
