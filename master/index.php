@@ -31,7 +31,7 @@ $locations = $pdo->query("
 $users = $pdo->query("SELECT id, name, employee_id FROM users WHERE is_active = 1 ORDER BY name")->fetchAll();
 
 // ── ALL USERS for users tab ────────────────────────
-$all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, created_at FROM users ORDER BY created_at DESC")->fetchAll();
+$all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, is_active, created_at FROM users ORDER BY created_at DESC")->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -470,6 +470,23 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
                     minlength="8" />
                 </div>
                 <div class="form-group">
+                  <label class="form-label">Position</label>
+                  <select name="position" class="form-select">
+                    <option value="">-- Select Position --</option>
+                    <option value="President Director">President Director</option>
+                    <option value="Director">Director</option>
+                    <option value="General Manager">General Manager</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Deputy Manager">Deputy Manager</option>
+                    <option value="Assistant Manager">Assistant Manager</option>
+                    <option value="Supervisor">Supervisor</option>
+                    <option value="Staff">Staff</option>
+                    <option value="Foreman">Foreman</option>
+                    <option value="Assistant Foreman">Assistant Foreman</option>
+                    <option value="Operator">Operator</option>
+                  </select>
+                </div>
+                <div class="form-group">
                   <label class="form-label">Role <span class="required">*</span></label>
                   <select name="role" class="form-select" required>
                     <option value="">-- Select Role --</option>
@@ -515,6 +532,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
                         <th>Employee ID</th>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>Position</th>
                         <th>Role</th>
                         <th>Status</th>
                         <th></th>
@@ -530,6 +548,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
                           <td><strong><?php echo htmlspecialchars($u['name']); ?></strong></td>
                           <td style="font-size:12px;color:var(--text-secondary)"><?php echo htmlspecialchars($u['email']); ?>
                           </td>
+                          <td style="font-size:12px;"><?php echo htmlspecialchars($u['position'] ?? '—'); ?></td>
                           <td><span
                               class="badge <?php echo $roleBadges[(int) $u['role']] ?? 'badge--low'; ?>"><?php echo $roleLabels[(int) $u['role']] ?? 'Staff'; ?></span>
                           </td>
@@ -703,6 +722,23 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, role, is_active, 
         <div class="form-group">
           <label class="form-label">Email <span class="required">*</span></label>
           <input type="email" name="email" id="editUserEmail" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Position</label>
+          <select name="position" id="editUserPosition" class="form-select">
+            <option value="">-- Select Position --</option>
+            <option value="President Director">President Director</option>
+            <option value="Director">Director</option>
+            <option value="General Manager">General Manager</option>
+            <option value="Manager">Manager</option>
+            <option value="Deputy Manager">Deputy Manager</option>
+            <option value="Assistant Manager">Assistant Manager</option>
+            <option value="Supervisor">Supervisor</option>
+            <option value="Staff">Staff</option>
+            <option value="Foreman">Foreman</option>
+            <option value="Assistant Foreman">Assistant Foreman</option>
+            <option value="Operator">Operator</option>
+          </select>
         </div>
         <div class="form-group">
           <label class="form-label">Role <span class="required">*</span></label>

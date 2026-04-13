@@ -14,6 +14,7 @@ $employee_id = trim($_POST['employee_id'] ?? '');
 $name = trim($_POST['name'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
+$position = trim($_POST['position'] ?? '');
 $role = (int) ($_POST['role'] ?? 4);
 $is_active = isset($_POST['is_active']) ? 1 : 0;
 
@@ -41,14 +42,15 @@ if ($check2->fetch()) {
 try {
     $hashed = password_hash($password, PASSWORD_BCRYPT);
     $stmt = $pdo->prepare("
-        INSERT INTO users (employee_id, name, email, password, role, is_active, created_at, updated_at)
-        VALUES (:employee_id, :name, :email, :password, :role, :is_active, NOW(), NOW())
+        INSERT INTO users (employee_id, name, email, password, position, role, is_active, created_at, updated_at)
+        VALUES (:employee_id, :name, :email, :password, :position, :role, :is_active, NOW(), NOW())
     ");
     $stmt->execute([
         ':employee_id' => $employee_id,
         ':name' => $name,
         ':email' => $email,
         ':password' => $hashed,
+        ':position' => $position ?: null,
         ':role' => $role,
         ':is_active' => $is_active,
     ]);

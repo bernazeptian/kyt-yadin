@@ -14,6 +14,7 @@ $id = (int) ($_POST['id'] ?? 0);
 $employee_id = trim($_POST['employee_id'] ?? '');
 $name = trim($_POST['name'] ?? '');
 $email = trim($_POST['email'] ?? '');
+$position = trim($_POST['position'] ?? '');
 $role = (int) ($_POST['role'] ?? 4);
 $is_active = isset($_POST['is_active']) ? 1 : 0;
 
@@ -42,13 +43,14 @@ try {
     $stmt = $pdo->prepare("
         UPDATE users
         SET employee_id = :employee_id, name = :name, email = :email,
-            role = :role, is_active = :is_active, updated_at = NOW()
+            position = :position, role = :role, is_active = :is_active, updated_at = NOW()
         WHERE id = :id
     ");
     $stmt->execute([
         ':employee_id' => $employee_id,
         ':name' => $name,
         ':email' => $email,
+        ':position' => $position ?: null,
         ':role' => $role,
         ':is_active' => $is_active,
         ':id' => $id,

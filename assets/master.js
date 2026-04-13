@@ -28,7 +28,7 @@ if (alertMsg) {
 }
 
 // ── Modal helpers ─────────────────────────────
-function openModal(id)  { document.getElementById(id).classList.add('show'); }
+function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
 // Close modal on overlay click
@@ -48,32 +48,33 @@ document.addEventListener('keydown', (e) => {
 // ── Edit Department ───────────────────────────
 function openEditDept(data) {
   console.log(data); // ← add this
-  document.getElementById('editDeptId').value      = data.id;
-  document.getElementById('editDeptCode').value    = data.code;
-  document.getElementById('editDeptName').value    = data.name;
-  document.getElementById('editDeptHead').value    = data.head_id  ?? '';
-  document.getElementById('editDeptDesc').value    = data.description ?? '';
+  document.getElementById('editDeptId').value = data.id;
+  document.getElementById('editDeptCode').value = data.code;
+  document.getElementById('editDeptName').value = data.name;
+  document.getElementById('editDeptHead').value = data.head_id ?? '';
+  document.getElementById('editDeptDesc').value = data.description ?? '';
   document.getElementById('editDeptActive').checked = data.is_active == 1;
   openModal('editDeptModal');
 }
 
 // ── Edit Location ─────────────────────────────
 function openEditLoc(data) {
-  document.getElementById('editLocId').value       = data.id;
-  document.getElementById('editLocCode').value     = data.code;
-  document.getElementById('editLocName').value     = data.name;
-  document.getElementById('editLocDesc').value     = data.description ?? '';
+  document.getElementById('editLocId').value = data.id;
+  document.getElementById('editLocCode').value = data.code;
+  document.getElementById('editLocName').value = data.name;
+  document.getElementById('editLocDesc').value = data.description ?? '';
   document.getElementById('editLocActive').checked = data.is_active == 1;
   openModal('editLocModal');
 }
 
 // ── Edit User ─────────────────────────────────
 function openEditUser(data) {
-  document.getElementById('editUserId').value        = data.id;
-  document.getElementById('editUserEmpId').value     = data.employee_id;
-  document.getElementById('editUserName').value      = data.name;
-  document.getElementById('editUserEmail').value     = data.email;
-  document.getElementById('editUserRole').value      = data.role;
-  document.getElementById('editUserActive').checked  = data.is_active == 1;
+  document.getElementById('editUserId').value = data.id;
+  document.getElementById('editUserEmpId').value = data.employee_id;
+  document.getElementById('editUserName').value = data.name;
+  document.getElementById('editUserEmail').value = data.email;
+  document.getElementById('editUserPosition').value = data.position ?? '';
+  document.getElementById('editUserRole').value = data.role;
+  document.getElementById('editUserActive').checked = data.is_active == 1;
   openModal('editUserModal');
 }
