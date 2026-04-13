@@ -116,7 +116,7 @@
 
 /* Category badges */
 .badge--near_miss        { background: #e8f0fe; color: #1a73e8; }
-.badge--unsafe_act       { background: var(--red-light); color: var(--red); }
+.badge--unsafe_action       { background: var(--red-light); color: var(--red); }
 .badge--unsafe_condition { background: var(--orange-light); color: var(--orange); }
 
 /* Risk badges */

@@ -27,14 +27,14 @@ $kyt_summary = $pdo->query("
         SUM(MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW())) AS this_month,
         SUM(MONTH(created_at) = MONTH(NOW() - INTERVAL 1 MONTH) AND YEAR(created_at) = YEAR(NOW() - INTERVAL 1 MONTH)) AS last_month
     FROM hiyari_reports
-    WHERE category IN ('unsafe_act', 'unsafe_condition')
+    WHERE category IN ('unsafe_action', 'unsafe_condition')
 ")->fetch();
 
 // ── Category Distribution ─────────────────────
 $category_data = $pdo->query("
     SELECT
         SUM(category = 'near_miss')        AS near_miss,
-        SUM(category = 'unsafe_act')       AS unsafe_act,
+        SUM(category = 'unsafe_action')       AS unsafe_action,
         SUM(category = 'unsafe_condition') AS unsafe_condition
     FROM hiyari_reports
 ")->fetch();
@@ -53,7 +53,7 @@ $dept_data = $pdo->query("
 $kyt_dept_data = $pdo->query("
     SELECT d.name, COUNT(r.id) AS total
     FROM departments d
-    LEFT JOIN hiyari_reports r ON r.department_id = d.id AND r.category IN ('unsafe_act', 'unsafe_condition')
+    LEFT JOIN hiyari_reports r ON r.department_id = d.id AND r.category IN ('unsafe_action', 'unsafe_condition')
     GROUP BY d.id, d.name
     ORDER BY total DESC
     LIMIT 6
@@ -84,7 +84,7 @@ $kyt_reports = $pdo->query("
     LEFT JOIN departments d ON r.department_id = d.id
     LEFT JOIN locations   l ON r.location_id   = l.id
     LEFT JOIN users       u ON r.created_by    = u.id
-    WHERE r.category IN ('unsafe_act', 'unsafe_condition')
+    WHERE r.category IN ('unsafe_action', 'unsafe_condition')
     ORDER BY r.created_at DESC
     LIMIT 5
 ")->fetchAll();
@@ -378,7 +378,7 @@ $trend_dir = $hiyari_trend['dir'];
                   </tr>
                 <?php else: ?>
                   <?php foreach ($reports as $r):
-                    $catLabels = ['near_miss' => 'Near Miss', 'unsafe_act' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
+                    $catLabels = ['near_miss' => 'Near Miss', 'unsafe_action' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
                     $statusClass = ['open' => 'badge--open', 'in_progress' => 'badge--progress', 'closed' => 'badge--closed'];
                     $statusLabel = ['open' => 'Open', 'in_progress' => 'In Progress', 'closed' => 'Closed'];
                     ?>
@@ -515,7 +515,7 @@ $trend_dir = $hiyari_trend['dir'];
                   </tr>
                 <?php else: ?>
                   <?php foreach ($kyt_reports as $r):
-                    $catLabels = ['near_miss' => 'Near Miss', 'unsafe_act' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
+                    $catLabels = ['near_miss' => 'Near Miss', 'unsafe_action' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
                     $statusClass = ['open' => 'badge--open', 'in_progress' => 'badge--progress', 'closed' => 'badge--closed'];
                     $statusLabel = ['open' => 'Open', 'in_progress' => 'In Progress', 'closed' => 'Closed'];
                     ?>
@@ -544,7 +544,7 @@ $trend_dir = $hiyari_trend['dir'];
   <script>
     window.HIYARI_DATA = {
       near_miss: <?php echo (int) ($category_data['near_miss'] ?? 0); ?>,
-      unsafe_act: <?php echo (int) ($category_data['unsafe_act'] ?? 0); ?>,
+      unsafe_action: <?php echo (int) ($category_data['unsafe_action'] ?? 0); ?>,
       unsafe_condition: <?php echo (int) ($category_data['unsafe_condition'] ?? 0); ?>,
       dept_labels: <?php echo json_encode(array_column($dept_data, 'name')); ?>,
       dept_values: <?php echo json_encode(array_map('intval', array_column($dept_data, 'total'))); ?>,

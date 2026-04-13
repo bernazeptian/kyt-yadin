@@ -100,7 +100,7 @@ $risk_config = [
 
 $cat_labels = [
   'near_miss' => 'Near Miss',
-  'unsafe_act' => 'Unsafe Act',
+  'unsafe_action' => 'Unsafe Act',
   'unsafe_condition' => 'Unsafe Condition',
 ];
 

@@ -223,7 +223,7 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
                     </span>
                   </label>
                   <label class="category-option">
-                    <input type="radio" name="category" value="unsafe_act" />
+                    <input type="radio" name="category" value="unsafe_action" />
                     <span class="category-btn">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
                         height="16">

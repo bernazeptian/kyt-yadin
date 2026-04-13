@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // These are set in index.php before loading this script
   const hiyariData = window.HIYARI_DATA || {
     near_miss: 0,
-    unsafe_act: 0,
+    unsafe_action: 0,
     unsafe_condition: 0,
     dept_labels: [],
     dept_values: [],
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Filter out zero values
     const catAll = [
       { label: "Near Miss",        value: hiyariData.near_miss,        bg: "#fce8e6", border: "#d93025" },
-      { label: "Unsafe Act",       value: hiyariData.unsafe_act,       bg: "#fef3e2", border: "#e37400" },
+      { label: "Unsafe Act",       value: hiyariData.unsafe_action,       bg: "#fef3e2", border: "#e37400" },
       { label: "Unsafe Condition", value: hiyariData.unsafe_condition, bg: "#e8f0fe", border: "#1a73e8" },
     ].filter(c => c.value > 0);
 

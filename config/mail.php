@@ -86,7 +86,7 @@ function sendExtremeRiskAlert(PDO $pdo, array $report): void
     $location      = htmlspecialchars($report['loc_name'] ?? '—');
     $category_map  = [
         'near_miss'        => 'Near Miss',
-        'unsafe_act'       => 'Unsafe Act',
+        'unsafe_action'       => 'Unsafe Act',
         'unsafe_condition' => 'Unsafe Condition',
     ];
     $category    = $category_map[$report['category'] ?? ''] ?? ucfirst($report['category'] ?? '—');

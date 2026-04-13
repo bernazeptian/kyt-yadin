@@ -46,7 +46,7 @@ $where = ["1=1"];
 $params = [];
 
 if ($filter_type === 'kyt') {
-    $where[] = "r.category IN ('unsafe_act', 'unsafe_condition')";
+    $where[] = "r.category IN ('unsafe_action', 'unsafe_condition')";
 } else {
     $where[] = "r.category = 'near_miss'";
 }
@@ -122,7 +122,7 @@ $reports = $stmt->fetchAll();
 $departments = $pdo->query("SELECT id, name FROM departments ORDER BY name")->fetchAll();
 
 // Summary counts
-$summary_condition = ($filter_type === 'kyt') ? "category IN ('unsafe_act', 'unsafe_condition')" : "category = 'near_miss'";
+$summary_condition = ($filter_type === 'kyt') ? "category IN ('unsafe_action', 'unsafe_condition')" : "category = 'near_miss'";
 $summary = $pdo->query("
     SELECT
         COUNT(*) AS total,
@@ -315,7 +315,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
               <?php if ($filter_type === 'hiyari'): ?>
                 <option value="near_miss" <?php echo $filter_category === 'near_miss' ? 'selected' : '' ?>>Near Miss</option>
               <?php else: ?>
-                <option value="unsafe_act" <?php echo $filter_category === 'unsafe_act' ? 'selected' : '' ?>>Unsafe Act</option>
+                <option value="unsafe_action" <?php echo $filter_category === 'unsafe_action' ? 'selected' : '' ?>>Unsafe Act</option>
                 <option value="unsafe_condition" <?php echo $filter_category === 'unsafe_condition' ? 'selected' : '' ?>>Unsafe Condition</option>
               <?php endif; ?>
             </select>
@@ -398,7 +398,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
               </thead>
               <tbody>
                 <?php foreach ($reports as $r):
-                  $catLabels = ['near_miss' => 'Near Miss', 'unsafe_act' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
+                  $catLabels = ['near_miss' => 'Near Miss', 'unsafe_action' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
                   ?>
                   <tr>
                     <td><span class="report-num"><?php echo htmlspecialchars($r['report_number']); ?></span></td>

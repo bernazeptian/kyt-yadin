@@ -70,7 +70,7 @@
 
 /* ── Badge extras ── */
 .badge--near_miss        { background: var(--primary-light); color: var(--primary); }
-.badge--unsafe_act       { background: var(--red-light);     color: var(--red); }
+.badge--unsafe_action       { background: var(--red-light);     color: var(--red); }
 .badge--unsafe_condition { background: var(--orange-light);  color: var(--orange); }
 
 /* ── Risk Display ── */

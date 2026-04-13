@@ -33,7 +33,7 @@ if (!$report_date || !$department_id || !$location_id || !$category || !$descrip
 }
 
 // Allowed values
-$allowed_categories = ['near_miss', 'unsafe_act', 'unsafe_condition'];
+$allowed_categories = ['near_miss', 'unsafe_action', 'unsafe_condition'];
 $allowed_likelihoods = ['A', 'B', 'C', 'D', 'E'];
 $allowed_risks = ['low', 'medium', 'high', 'extreme'];
 
