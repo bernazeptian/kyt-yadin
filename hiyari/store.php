@@ -124,6 +124,24 @@ try {
         }
     }
 
+    // ── Send Extreme Risk Alert ─────────────────
+    if ($risk_level === 'extreme') {
+        $reportStmt = $pdo->prepare("
+            SELECT r.*, d.name AS dept_name, l.name AS loc_name, u.name AS reporter_name
+            FROM hiyari_reports r
+            LEFT JOIN departments d ON r.department_id = d.id
+            LEFT JOIN locations l ON r.location_id = l.id
+            LEFT JOIN users u ON r.created_by = u.id
+            WHERE r.id = :id
+        ");
+        $reportStmt->execute([':id' => $report_id]);
+        $report_data = $reportStmt->fetch();
+
+        if ($report_data) {
+            sendExtremeRiskAlert($pdo, $report_data);
+        }
+    }
+
     // ── Success: redirect to view page ──────────
     header('Location: view?id=' . $report_id . '&success=1');
     exit;
