@@ -20,6 +20,7 @@ $filter_search = trim($_GET['search'] ?? '');
 $filter_date_range = $_GET['date_range'] ?? '';
 $filter_date_from = $_GET['date_from'] ?? '';
 $filter_date_to = $_GET['date_to'] ?? '';
+$filter_type = $_GET['type'] ?? 'hiyari';
 $page = max(1, (int) ($_GET['page'] ?? 1));
 
 // ── Resolve date range to from/to ────────────
@@ -43,6 +44,12 @@ $offset = ($page - 1) * $per_page;
 // ── Build query ──────────────────────────────────
 $where = ["1=1"];
 $params = [];
+
+if ($filter_type === 'kyt') {
+    $where[] = "r.category IN ('unsafe_act', 'unsafe_condition')";
+} else {
+    $where[] = "r.category = 'near_miss'";
+}
 
 if ($filter_status) {
   $where[] = "r.status = :status";
@@ -115,6 +122,7 @@ $reports = $stmt->fetchAll();
 $departments = $pdo->query("SELECT id, name FROM departments ORDER BY name")->fetchAll();
 
 // Summary counts
+$summary_condition = ($filter_type === 'kyt') ? "category IN ('unsafe_act', 'unsafe_condition')" : "category = 'near_miss'";
 $summary = $pdo->query("
     SELECT
         COUNT(*) AS total,
@@ -124,6 +132,7 @@ $summary = $pdo->query("
         SUM(risk_level = 'extreme') AS extreme,
         SUM(risk_level = 'high') AS high
     FROM hiyari_reports
+    WHERE $summary_condition
 ")->fetch();
 
 $success = isset($_GET['success']) && $_GET['success'] == '1';
@@ -134,7 +143,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hiyari Hatto Reports</title>
+  <title><?php echo $filter_type === 'kyt' ? 'KYT Reports' : 'Hiyari Hatto Reports'; ?></title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
@@ -209,8 +218,8 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
     <header class="topbar">
       <div class="topbar__left">
         <div>
-          <h1 class="topbar__title">Hiyari Hatto Reports</h1>
-          <p class="topbar__sub">Near miss & unsafe condition tracking</p>
+          <h1 class="topbar__title"><?php echo $filter_type === 'kyt' ? 'KYT Reports' : 'Hiyari Hatto Reports'; ?></h1>
+          <p class="topbar__sub"><?php echo $filter_type === 'kyt' ? 'Unsafe act & unsafe condition tracking' : 'Near miss tracking'; ?></p>
         </div>
       </div>
       <div class="topbar__right">
@@ -242,31 +251,31 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
 
       <!-- ── Summary Mini Cards ── -->
       <div class="summary-row">
-        <a href="index" class="mini-card <?php echo !$filter_status ? 'mini-card--active' : ''; ?>">
+        <a href="index?type=<?php echo $filter_type; ?>" class="mini-card <?php echo !$filter_status ? 'mini-card--active' : ''; ?>">
           <span class="mini-card__val"><?php echo $summary['total']; ?></span>
           <span class="mini-card__label">Total</span>
         </a>
-        <a href="?status=open"
+        <a href="?type=<?php echo $filter_type; ?>&status=open"
           class="mini-card mini-card--red <?php echo $filter_status === 'open' ? 'mini-card--active' : ''; ?>">
           <span class="mini-card__val"><?php echo $summary['open']; ?></span>
           <span class="mini-card__label">Open</span>
         </a>
-        <a href="?status=in_progress"
+        <a href="?type=<?php echo $filter_type; ?>&status=in_progress"
           class="mini-card mini-card--yellow <?php echo $filter_status === 'in_progress' ? 'mini-card--active' : ''; ?>">
           <span class="mini-card__val"><?php echo $summary['in_progress']; ?></span>
           <span class="mini-card__label">In Progress</span>
         </a>
-        <a href="?status=closed"
+        <a href="?type=<?php echo $filter_type; ?>&status=closed"
           class="mini-card mini-card--green <?php echo $filter_status === 'closed' ? 'mini-card--active' : ''; ?>">
           <span class="mini-card__val"><?php echo $summary['closed']; ?></span>
           <span class="mini-card__label">Closed</span>
         </a>
-        <a href="?risk=extreme"
+        <a href="?type=<?php echo $filter_type; ?>&risk=extreme"
           class="mini-card mini-card--extreme <?php echo $filter_risk === 'extreme' ? 'mini-card--active' : ''; ?>">
           <span class="mini-card__val"><?php echo $summary['extreme']; ?></span>
           <span class="mini-card__label">Extreme</span>
         </a>
-        <a href="?risk=high"
+        <a href="?type=<?php echo $filter_type; ?>&risk=high"
           class="mini-card mini-card--orange <?php echo $filter_risk === 'high' ? 'mini-card--active' : ''; ?>">
           <span class="mini-card__val"><?php echo $summary['high']; ?></span>
           <span class="mini-card__label">High Risk</span>
@@ -286,6 +295,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
               value="<?php echo htmlspecialchars($filter_search); ?>" />
           </div>
           <div class="filter-selects">
+            <input type="hidden" name="type" value="<?php echo htmlspecialchars($filter_type); ?>" />
             <select name="status" class="filter-select" onchange="this.form.submit()">
               <option value="">All Status</option>
               <option value="open" <?php echo $filter_status === 'open' ? 'selected' : '' ?>>Open</option>
@@ -302,12 +312,12 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
             </select>
             <select name="category" class="filter-select" onchange="this.form.submit()">
               <option value="">All Category</option>
-              <option value="near_miss" <?php echo $filter_category === 'near_miss' ? 'selected' : '' ?>>Near Miss
-              </option>
-              <option value="unsafe_act" <?php echo $filter_category === 'unsafe_act' ? 'selected' : '' ?>>Unsafe Act
-              </option>
-              <option value="unsafe_condition" <?php echo $filter_category === 'unsafe_condition' ? 'selected' : '' ?>>
-                Unsafe Condition</option>
+              <?php if ($filter_type === 'hiyari'): ?>
+                <option value="near_miss" <?php echo $filter_category === 'near_miss' ? 'selected' : '' ?>>Near Miss</option>
+              <?php else: ?>
+                <option value="unsafe_act" <?php echo $filter_category === 'unsafe_act' ? 'selected' : '' ?>>Unsafe Act</option>
+                <option value="unsafe_condition" <?php echo $filter_category === 'unsafe_condition' ? 'selected' : '' ?>>Unsafe Condition</option>
+              <?php endif; ?>
             </select>
             <select name="dept" class="filter-select" onchange="this.form.submit()">
               <option value="">All Departments</option>
@@ -340,7 +350,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
             </div>
 
             <?php if ($filter_status || $filter_risk || $filter_category || $filter_dept || $filter_search || $filter_date_range): ?>
-              <a href="index" class="filter-clear">✕ Clear</a>
+              <a href="index?type=<?php echo $filter_type; ?>" class="filter-clear">✕ Clear</a>
             <?php endif; ?>
           </div>
         </form>

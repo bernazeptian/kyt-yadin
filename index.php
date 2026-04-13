@@ -14,6 +14,20 @@ $hiyari_summary = $pdo->query("
         SUM(MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW())) AS this_month,
         SUM(MONTH(created_at) = MONTH(NOW() - INTERVAL 1 MONTH) AND YEAR(created_at) = YEAR(NOW() - INTERVAL 1 MONTH)) AS last_month
     FROM hiyari_reports
+    WHERE category = 'near_miss'
+")->fetch();
+
+// ── KYT Summary ───────────────────────────────
+$kyt_summary = $pdo->query("
+    SELECT
+        COUNT(*) AS total,
+        SUM(status = 'open') AS open,
+        SUM(status = 'in_progress') AS in_progress,
+        SUM(status = 'closed') AS closed,
+        SUM(MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW())) AS this_month,
+        SUM(MONTH(created_at) = MONTH(NOW() - INTERVAL 1 MONTH) AND YEAR(created_at) = YEAR(NOW() - INTERVAL 1 MONTH)) AS last_month
+    FROM hiyari_reports
+    WHERE category IN ('unsafe_act', 'unsafe_condition')
 ")->fetch();
 
 // ── Category Distribution ─────────────────────
@@ -25,17 +39,27 @@ $category_data = $pdo->query("
     FROM hiyari_reports
 ")->fetch();
 
-// ── Reports by Department ─────────────────────
+// ── Reports by Department (Hiyari) ────────────
 $dept_data = $pdo->query("
     SELECT d.name, COUNT(r.id) AS total
     FROM departments d
-    LEFT JOIN hiyari_reports r ON r.department_id = d.id
+    LEFT JOIN hiyari_reports r ON r.department_id = d.id AND r.category = 'near_miss'
     GROUP BY d.id, d.name
     ORDER BY total DESC
     LIMIT 6
 ")->fetchAll();
 
-// ── Recent Reports ────────────────────────────
+// ── Reports by Department (KYT) ───────────────
+$kyt_dept_data = $pdo->query("
+    SELECT d.name, COUNT(r.id) AS total
+    FROM departments d
+    LEFT JOIN hiyari_reports r ON r.department_id = d.id AND r.category IN ('unsafe_act', 'unsafe_condition')
+    GROUP BY d.id, d.name
+    ORDER BY total DESC
+    LIMIT 6
+")->fetchAll();
+
+// ── Recent Hiyari Reports ─────────────────────
 $reports = $pdo->query("
     SELECT r.*,
            d.name AS dept_name,
@@ -45,22 +69,38 @@ $reports = $pdo->query("
     LEFT JOIN departments d ON r.department_id = d.id
     LEFT JOIN locations   l ON r.location_id   = l.id
     LEFT JOIN users       u ON r.created_by    = u.id
+    WHERE r.category = 'near_miss'
     ORDER BY r.created_at DESC
     LIMIT 5
 ")->fetchAll();
 
-// ── Calculate trend ───────────────────────────
-$this_month = (int) ($hiyari_summary['this_month'] ?? 0);
-$last_month = (int) ($hiyari_summary['last_month'] ?? 0);
+// ── Recent KYT Reports ────────────────────────
+$kyt_reports = $pdo->query("
+    SELECT r.*,
+           d.name AS dept_name,
+           l.name AS loc_name,
+           u.name AS reporter_name
+    FROM hiyari_reports r
+    LEFT JOIN departments d ON r.department_id = d.id
+    LEFT JOIN locations   l ON r.location_id   = l.id
+    LEFT JOIN users       u ON r.created_by    = u.id
+    WHERE r.category IN ('unsafe_act', 'unsafe_condition')
+    ORDER BY r.created_at DESC
+    LIMIT 5
+")->fetchAll();
 
-if ($last_month == 0) {
-  $trend_pct = $this_month > 0 ? 100 : 0;
-  $trend_dir = 'up';
-} else {
-  $trend_pct = round((($this_month - $last_month) / $last_month) * 100);
-  $trend_dir = $trend_pct >= 0 ? 'up' : 'down';
-  $trend_pct = abs($trend_pct);
+// ── Calculate trends ──────────────────────────
+function calcTrend($current, $last) {
+    if ($last == 0) return ['pct' => ($current > 0 ? 100 : 0), 'dir' => 'up'];
+    $pct = round((($current - $last) / $last) * 100);
+    return ['pct' => abs($pct), 'dir' => $pct >= 0 ? 'up' : 'down'];
 }
+
+$hiyari_trend = calcTrend((int)($hiyari_summary['this_month'] ?? 0), (int)($hiyari_summary['last_month'] ?? 0));
+$kyt_trend = calcTrend((int)($kyt_summary['this_month'] ?? 0), (int)($kyt_summary['last_month'] ?? 0));
+
+$trend_pct = $hiyari_trend['pct'];
+$trend_dir = $hiyari_trend['dir'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -376,9 +416,11 @@ if ($last_month == 0) {
             </div>
             <div class="card__body">
               <span class="card__label">Total Activities</span>
-              <span class="card__value" data-count="0">0</span>
+              <span class="card__value" data-count="<?php echo (int) $kyt_summary['total']; ?>">0</span>
             </div>
-            <div class="card__trend card__trend--neutral">No data yet</div>
+            <div class="card__trend card__trend--<?php echo $kyt_trend['dir'] === 'up' ? 'up' : 'warn'; ?>">
+              <?php echo $kyt_trend['dir'] === 'up' ? '↑' : '↓'; ?> <?php echo $kyt_trend['pct']; ?>% this month
+            </div>
           </div>
           <div class="card card--green" style="--delay:0.10s">
             <div class="card__icon">
@@ -388,9 +430,9 @@ if ($last_month == 0) {
             </div>
             <div class="card__body">
               <span class="card__label">Completed</span>
-              <span class="card__value" data-count="0">0</span>
+              <span class="card__value" data-count="<?php echo (int) $kyt_summary['closed']; ?>">0</span>
             </div>
-            <div class="card__trend card__trend--neutral">No data yet</div>
+            <div class="card__trend card__trend--up">Finished activities</div>
           </div>
           <div class="card card--yellow" style="--delay:0.15s">
             <div class="card__icon">
@@ -400,10 +442,10 @@ if ($last_month == 0) {
               </svg>
             </div>
             <div class="card__body">
-              <span class="card__label">Pending</span>
-              <span class="card__value" data-count="0">0</span>
+              <span class="card__label">In Progress / Open</span>
+              <span class="card__value" data-count="<?php echo (int) ($kyt_summary['open'] + $kyt_summary['in_progress']); ?>">0</span>
             </div>
-            <div class="card__trend card__trend--neutral">No data yet</div>
+            <div class="card__trend card__trend--warn">Needs action</div>
           </div>
           <div class="card card--blue" style="--delay:0.20s">
             <div class="card__icon">
@@ -415,10 +457,15 @@ if ($last_month == 0) {
             </div>
             <div class="card__body">
               <span class="card__label">Completion Rate</span>
-              <span class="card__value" data-count="0">0</span>
+              <?php 
+                $kytTotal = (int)$kyt_summary['total'];
+                $kytClosed = (int)$kyt_summary['closed'];
+                $kytRate = $kytTotal > 0 ? round(($kytClosed / $kytTotal) * 100) : 0;
+              ?>
+              <span class="card__value" data-count="<?php echo $kytRate; ?>">0</span>
               <span class="card__unit">%</span>
             </div>
-            <div class="card__trend card__trend--neutral">No data yet</div>
+            <div class="card__trend card__trend--neutral">All time overall</div>
           </div>
         </section>
 
@@ -426,7 +473,7 @@ if ($last_month == 0) {
           <div class="chart-box" style="--delay:0.25s">
             <div class="chart-box__header">
               <h2 class="chart-box__title">Completion Rate</h2>
-              <span class="chart-box__badge">This Month</span>
+              <span class="chart-box__badge">All Time</span>
             </div>
             <div class="chart-box__body">
               <canvas id="kytCompletionChart"></canvas>
@@ -435,7 +482,7 @@ if ($last_month == 0) {
           <div class="chart-box" style="--delay:0.30s">
             <div class="chart-box__header">
               <h2 class="chart-box__title">KYT by Department</h2>
-              <span class="chart-box__badge">This Month</span>
+              <span class="chart-box__badge">All Time</span>
             </div>
             <div class="chart-box__body">
               <canvas id="kytDeptChart"></canvas>
@@ -446,26 +493,43 @@ if ($last_month == 0) {
         <section class="table-box" style="--delay:0.35s">
           <div class="table-box__header">
             <h2 class="table-box__title">Recent KYT Activities</h2>
-            <a href="kyt/index" class="table-box__link">View all →</a>
+            <a href="hiyari/index?type=kyt" class="table-box__link">View all →</a>
           </div>
           <div class="table-wrap">
             <table class="table">
               <thead>
                 <tr>
-                  <th>Activity No.</th>
+                  <th>Report No.</th>
                   <th>Date</th>
                   <th>Department</th>
-                  <th>Location</th>
-                  <th>Participants</th>
+                  <th>Category</th>
+                  <th>Risk</th>
                   <th>Status</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td colspan="7" style="text-align:center;color:var(--text-hint);padding:24px">KYT module coming soon
-                  </td>
-                </tr>
+                <?php if (empty($kyt_reports)): ?>
+                  <tr>
+                    <td colspan="7" style="text-align:center;color:var(--text-hint);padding:24px">No KYT activities yet</td>
+                  </tr>
+                <?php else: ?>
+                  <?php foreach ($kyt_reports as $r):
+                    $catLabels = ['near_miss' => 'Near Miss', 'unsafe_act' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
+                    $statusClass = ['open' => 'badge--open', 'in_progress' => 'badge--progress', 'closed' => 'badge--closed'];
+                    $statusLabel = ['open' => 'Open', 'in_progress' => 'In Progress', 'closed' => 'Closed'];
+                    ?>
+                    <tr>
+                      <td><span class="report-num"><?php echo htmlspecialchars($r['report_number']); ?></span></td>
+                      <td><?php echo date('d M Y', strtotime($r['report_date'])); ?></td>
+                      <td><?php echo htmlspecialchars($r['dept_name'] ?? '—'); ?></td>
+                      <td><?php echo $catLabels[$r['category']] ?? $r['category']; ?></td>
+                      <td><span class="badge badge--<?php echo $r['risk_level']; ?>"><?php echo ucfirst($r['risk_level']); ?></span></td>
+                      <td><span class="badge <?php echo $statusClass[$r['status']] ?? ''; ?>"><?php echo $statusLabel[$r['status']] ?? ucfirst($r['status']); ?></span></td>
+                      <td><a href="hiyari/view?id=<?php echo $r['id']; ?>" class="action-link">View</a></td>
+                    </tr>
+                  <?php endforeach; ?>
+                <?php endif; ?>
               </tbody>
             </table>
           </div>
@@ -486,10 +550,10 @@ if ($last_month == 0) {
       dept_values: <?php echo json_encode(array_map('intval', array_column($dept_data, 'total'))); ?>,
     };
     window.KYT_DATA = {
-      completed: 0,
-      pending: 0,
-      dept_labels: [],
-      dept_values: [],
+      completed: <?php echo (int)$kyt_summary['closed']; ?>,
+      pending: <?php echo (int)($kyt_summary['open'] + $kyt_summary['in_progress']); ?>,
+      dept_labels: <?php echo json_encode(array_column($kyt_dept_data, 'name')); ?>,
+      dept_values: <?php echo json_encode(array_map('intval', array_column($kyt_dept_data, 'total'))); ?>,
     };
     const BASE_URL = '/kyt-yadin';
   </script>
