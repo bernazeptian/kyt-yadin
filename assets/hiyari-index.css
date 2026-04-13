@@ -115,9 +115,9 @@
 }
 
 /* Category badges */
-.badge--near_miss        { background: #e8f0fe; color: #1a73e8; }
-.badge--unsafe_action       { background: var(--red-light); color: var(--red); }
-.badge--unsafe_condition { background: var(--orange-light); color: var(--orange); }
+.badge--near_miss        { background: var(--red-light);     color: var(--red); }
+.badge--unsafe_action    { background: var(--yellow-light);  color: #b06000; }
+.badge--unsafe_condition { background: var(--yellow-light);  color: #b06000; }
 
 /* Risk badges */
 .badge--extreme { background: #fce8e6; color: #c5221f; font-weight: 700; }

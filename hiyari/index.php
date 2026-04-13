@@ -147,8 +147,8 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="../assets/dashboard.css?v=2" />
-  <link rel="stylesheet" href="../assets/hiyari-index.css?v=2" />
+  <link rel="stylesheet" href="../assets/dashboard.css?v=3" />
+  <link rel="stylesheet" href="../assets/hiyari-index.css?v=3" />
 </head>
 
 <body>

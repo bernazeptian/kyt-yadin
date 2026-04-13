@@ -69,9 +69,9 @@
 .info-desc  { font-size: 14px; color: var(--text-primary); line-height: 1.6; white-space: pre-wrap; }
 
 /* ── Badge extras ── */
-.badge--near_miss        { background: var(--primary-light); color: var(--primary); }
-.badge--unsafe_action       { background: var(--red-light);     color: var(--red); }
-.badge--unsafe_condition { background: var(--orange-light);  color: var(--orange); }
+.badge--near_miss        { background: var(--red-light);     color: var(--red); }
+.badge--unsafe_action    { background: var(--yellow-light);  color: #b06000; }
+.badge--unsafe_condition { background: var(--yellow-light);  color: #b06000; }
 
 /* ── Risk Display ── */
 .risk-display {
