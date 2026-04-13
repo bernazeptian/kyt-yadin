@@ -418,6 +418,12 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                         <?php endif; ?>
                       </div>
                       <p class="action-item__desc"><?php echo nl2br(htmlspecialchars($a['description'])); ?></p>
+                      <?php if (!empty($a['image_path'])): ?>
+                        <a href="../<?php echo htmlspecialchars($a['image_path']); ?>" target="_blank">
+                          <img src="../<?php echo htmlspecialchars($a['image_path']); ?>" alt="Action Image"
+                            style="max-height:140px;margin-top:8px;border-radius:6px;border:1px solid #ddd;cursor:pointer;" />
+                        </a>
+                      <?php endif; ?>
                       <?php if ($a['assigned_name']): ?>
                         <span class="action-item__assign">Assigned to:
                           <strong><?php echo htmlspecialchars($a['assigned_name']); ?></strong></span>
@@ -428,7 +434,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
               <?php endif; ?>
 
               <?php if ($is_admin): ?>
-                <form method="POST" action="action_store" class="add-action-form">
+                <form method="POST" action="action_store" class="add-action-form" enctype="multipart/form-data">
                   <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
                   <div class="form-group">
                     <label class="form-label">Add Corrective Action</label>
@@ -450,6 +456,14 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                       <input type="date" name="due_date" class="form-input" />
                     </div>
                   </div>
+                  <div class="form-group">
+                    <label class="form-label">Attach Image <span style="font-weight:400;color:#888;">(optional, max
+                        5MB)</span></label>
+                    <input type="file" name="action_image" class="form-input"
+                      accept="image/jpeg,image/png,image/gif,image/webp" onchange="previewActionImage(this)" />
+                    <img id="actionImagePreview" src="" alt="Preview"
+                      style="display:none;margin-top:8px;max-height:160px;border-radius:6px;border:1px solid #ddd;" />
+                  </div>
                   <button type="submit" class="btn-add">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                       <line x1="12" y1="5" x2="12" y2="19" />
@@ -458,6 +472,18 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                     Add Action
                   </button>
                 </form>
+                <script>
+                  function previewActionImage(input) {
+                    const preview = document.getElementById('actionImagePreview');
+                    if (input.files && input.files[0]) {
+                      const reader = new FileReader();
+                      reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+                      reader.readAsDataURL(input.files[0]);
+                    } else {
+                      preview.src = ''; preview.style.display = 'none';
+                    }
+                  }
+                </script>
               <?php endif; ?>
             </div>
           </div>
