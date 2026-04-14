@@ -116,7 +116,7 @@ $trend_dir = $hiyari_trend['dir'];
     rel="stylesheet" />
   <link rel="stylesheet" href="assets/dashboard.css" />
   <link rel="stylesheet" href="assets/notifications.css" />
-  <link rel="icon" href="../assets/logo.png" />
+  <link rel="icon" href="assets/logo.png" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
