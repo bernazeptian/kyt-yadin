@@ -99,6 +99,7 @@ $errorMessages = [
         <div class="profile-card__body">
           <p class="profile-card__section-title">Personal Information</p>
           <form method="POST" action="profile_update">
+            <?php echo csrf_field(); ?>
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Employee ID</label>
@@ -139,6 +140,7 @@ $errorMessages = [
         <div class="profile-card__body">
           <p class="profile-card__section-title">Change Password</p>
           <form method="POST" action="profile_password">
+            <?php echo csrf_field(); ?>
             <div class="form-group">
               <label class="form-label">Current Password</label>
               <input type="password" name="current_password" class="form-input" placeholder="Enter current password" required />

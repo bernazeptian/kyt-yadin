@@ -21,7 +21,9 @@ $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 $stmt->execute();
 $notifications = $stmt->fetchAll();
 
-$unread = (int)$pdo->query("SELECT COUNT(*) FROM notifications WHERE user_id = $uid AND is_read = 0")->fetchColumn();
+$unreadStmt = $pdo->prepare("SELECT COUNT(*) FROM notifications WHERE user_id = :uid AND is_read = 0");
+$unreadStmt->execute([':uid' => $uid]);
+$unread = (int) $unreadStmt->fetchColumn();
 
 echo json_encode([
     'notifications' => $notifications,

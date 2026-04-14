@@ -15,6 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+csrf_verify();
+
 // ── Sanitize & validate inputs ──────────────────
 $report_number = trim($_POST['report_number'] ?? '');
 $report_date = trim($_POST['report_date'] ?? '');
@@ -146,20 +148,8 @@ try {
     header('Location: view?id=' . $report_id . '&success=1');
     exit;
 
-    // DEBUG — remove after fixing
-    die('
-    report_number: ' . $report_number . '<br>
-    report_date: ' . $report_date . '<br>
-    department_id: ' . $department_id . '<br>
-    location_id: ' . $location_id . '<br>
-    category: ' . $category . '<br>
-    likelihood: ' . $likelihood . '<br>
-    severity: ' . $severity . '<br>
-    risk_level: ' . $risk_level . '<br>
-    created_by: ' . $created_by . '<br>
-');
-
 } catch (PDOException $e) {
-    die('❌ DB Error: ' . $e->getMessage());
+    header('Location: create?error=db');
+    exit;
 }
 ?>

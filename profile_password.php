@@ -7,6 +7,8 @@ if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+csrf_verify();
+
 $uid              = (int) $_SESSION['user_id'];
 $current_password = $_POST['current_password'] ?? '';
 $new_password     = $_POST['new_password']     ?? '';

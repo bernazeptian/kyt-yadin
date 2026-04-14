@@ -12,6 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+csrf_verify();
+
 $report_id = (int) ($_POST['report_id'] ?? 0);
 $description = trim($_POST['description'] ?? '');
 $assigned_to = !empty($_POST['assigned_to']) ? (int) $_POST['assigned_to'] : null;

@@ -4,6 +4,8 @@ require_once '../config/db.php';
 if (!isset($_SESSION['user_id']) || (int)$_SESSION['role'] > 2) { header('Location: ../index'); exit; }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { header('Location: index'); exit; }
 
+csrf_verify();
+
 $report_id = (int)($_POST['report_id'] ?? 0);
 $status    = $_POST['status'] ?? '';
 $allowed   = ['open', 'in_progress', 'closed'];

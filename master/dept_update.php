@@ -10,6 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+csrf_verify();
+
 $id = (int) ($_POST['id'] ?? 0);
 $code = strtoupper(trim($_POST['code'] ?? ''));
 $name = trim($_POST['name'] ?? '');

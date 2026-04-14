@@ -147,6 +147,7 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
       <?php endif; ?>
 
       <form method="POST" action="store" enctype="multipart/form-data" id="reportForm">
+        <?php echo csrf_field(); ?>
 
         <div class="form-grid">
 

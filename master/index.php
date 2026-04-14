@@ -226,6 +226,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
               <h2 class="master-form-box__title">Add Department</h2>
             </div>
             <form method="POST" action="dept_store">
+              <?php echo csrf_field(); ?>
               <div class="form-group">
                 <label class="form-label">Department Code <span class="required">*</span></label>
                 <input type="text" name="code" class="form-input" placeholder="e.g. PROD" required maxlength="10"
@@ -345,6 +346,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
               <h2 class="master-form-box__title">Add Location</h2>
             </div>
             <form method="POST" action="loc_store">
+              <?php echo csrf_field(); ?>
               <div class="form-group">
                 <label class="form-label">Location Code <span class="required">*</span></label>
                 <input type="text" name="code" class="form-input" placeholder="e.g. LOC001" required maxlength="10"
@@ -452,6 +454,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                 <h2 class="master-form-box__title">Add User</h2>
               </div>
               <form method="POST" action="user_store">
+                <?php echo csrf_field(); ?>
                 <div class="form-group">
                   <label class="form-label">Employee ID <span class="required">*</span></label>
                   <input type="text" name="employee_id" class="form-input" placeholder="e.g. EMP001" required
@@ -617,6 +620,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
       </div>
       <form method="POST" action="dept_update">
         <input type="hidden" name="id" id="editDeptId" />
+        <?php echo csrf_field(); ?>
         <div class="form-group">
           <label class="form-label">Department Code <span class="required">*</span></label>
           <input type="text" name="code" id="editDeptCode" class="form-input" required maxlength="10"
@@ -670,6 +674,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
       </div>
       <form method="POST" action="loc_update">
         <input type="hidden" name="id" id="editLocId" />
+        <?php echo csrf_field(); ?>
         <div class="form-group">
           <label class="form-label">Location Code <span class="required">*</span></label>
           <input type="text" name="code" id="editLocCode" class="form-input" required maxlength="10"
@@ -712,6 +717,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
       </div>
       <form method="POST" action="user_update">
         <input type="hidden" name="id" id="editUserId" />
+        <?php echo csrf_field(); ?>
         <div class="form-group">
           <label class="form-label">Employee ID <span class="required">*</span></label>
           <input type="text" name="employee_id" id="editUserEmpId" class="form-input" required maxlength="20" />

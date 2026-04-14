@@ -7,6 +7,8 @@ if (!isset($_SESSION['user_id']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+csrf_verify();
+
 $uid   = (int) $_SESSION['user_id'];
 $name  = trim($_POST['name']     ?? '');
 $email = trim($_POST['email']    ?? '');

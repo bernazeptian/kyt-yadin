@@ -445,6 +445,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
               <?php if ($is_admin): ?>
                 <form method="POST" action="action_store" class="add-action-form" enctype="multipart/form-data">
                   <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
+                  <?php echo csrf_field(); ?>
                   <div class="form-group">
                     <label class="form-label">Add Corrective Action</label>
                     <textarea name="description" class="form-textarea" rows="2"
@@ -520,6 +521,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
               <div class="view-card__body">
                 <form method="POST" action="status_update">
                   <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
+                  <?php echo csrf_field(); ?>
                   <div class="status-btns">
                     <button type="submit" name="status" value="open"
                       class="status-btn <?php echo $report['status'] === 'open' ? 'status-btn--active status-btn--red' : ''; ?>">
@@ -598,6 +600,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
               <?php if ($is_admin || $is_reporter || $is_assigned): ?>
                 <form method="POST" action="comment_store" class="comment-form">
                   <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
+                  <?php echo csrf_field(); ?>
                   <div class="comment-input-wrap">
                     <div class="comment-form__avatar">
                       <?php echo strtoupper(substr($_SESSION['name'] ?? 'U', 0, 1)); ?>

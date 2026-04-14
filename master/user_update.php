@@ -10,6 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+csrf_verify();
+
 $id = (int) ($_POST['id'] ?? 0);
 $employee_id = trim($_POST['employee_id'] ?? '');
 $name = trim($_POST['name'] ?? '');

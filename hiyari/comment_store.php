@@ -5,6 +5,8 @@ require_once '../config/mail.php';
 if (!isset($_SESSION['user_id'])) { header('Location: ../auth/login'); exit; }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { header('Location: index'); exit; }
 
+csrf_verify();
+
 $report_id = (int)($_POST['report_id'] ?? 0);
 $comment   = trim($_POST['comment']    ?? '');
 $uid       = (int)$_SESSION['user_id'];
@@ -35,7 +37,7 @@ if (!$is_admin && !$is_reporter && !$is_assigned) {
 
 try {
     $pdo->prepare("
-        INSERT INTO report_comments (report_id, user_id, comment, created_at)
+        INSERT INTO hiyari_report_comments (report_id, user_id, comment, created_at)
         VALUES (:report_id, :user_id, :comment, NOW())
     ")->execute([
         ':report_id' => $report_id,

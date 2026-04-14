@@ -1,14 +1,16 @@
 <?php
 session_start();
+require_once '../config/db.php';
 if (isset($_SESSION['user_id'])) {
   header('Location: ../index');
   exit;
 }
 $error = $_GET['error'] ?? '';
 $errors = [
-  'invalid' => 'Invalid Employee ID or password.',
-  'inactive' => 'Your account is inactive. Contact administrator.',
-  'required' => 'Please fill in all fields.',
+  'invalid'   => 'Invalid Employee ID or password.',
+  'inactive'  => 'Your account is inactive. Contact administrator.',
+  'required'  => 'Please fill in all fields.',
+  'ratelimit' => 'Too many failed attempts. Please try again in 15 minutes.',
 ];
 ?>
 <!DOCTYPE html>
@@ -52,6 +54,7 @@ $errors = [
       <?php endif; ?>
 
       <form method="POST" action="login_process">
+        <?php echo csrf_field(); ?>
 
         <div class="form-group">
           <label class="form-label" for="employee_id">Employee ID</label>
