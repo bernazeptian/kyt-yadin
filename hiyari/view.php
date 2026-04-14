@@ -242,7 +242,15 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
             <line x1="12" y1="8" x2="12" y2="12" />
             <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
-          Something went wrong. Please try again.
+          <?php
+          $err_msgs = [
+            'upload' => 'Photo upload failed due to server limits. Please try a smaller photo.',
+            'invalid_file' => 'Invalid photo type or file exceeds 5MB.',
+            'upload_failed' => 'Failed to save the photo on the server.',
+            '1' => 'Something went wrong. Please try again.',
+          ];
+          echo $err_msgs[$error] ?? 'Something went wrong. Please try again.';
+          ?>
         </div>
       <?php endif; ?>
 

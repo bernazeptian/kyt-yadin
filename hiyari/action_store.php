@@ -22,9 +22,13 @@ if (!$report_id || !$description) {
     exit;
 }
 
-// ── Handle image upload ───────────────────────
 $image_path = null;
 if (!empty($_FILES['action_image']['name'])) {
+    if ($_FILES['action_image']['error'] !== UPLOAD_ERR_OK) {
+        header('Location: view?id=' . $report_id . '&error=upload');
+        exit;
+    }
+
     $upload_dir = '../uploads/corrective_actions/';
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     $max_size = 5 * 1024 * 1024; // 5MB
@@ -43,7 +47,13 @@ if (!empty($_FILES['action_image']['name'])) {
         $dest = $upload_dir . $filename;
         if (move_uploaded_file($tmp, $dest)) {
             $image_path = 'uploads/corrective_actions/' . $filename;
+        } else {
+            header('Location: view?id=' . $report_id . '&error=upload_failed');
+            exit;
         }
+    } else {
+        header('Location: view?id=' . $report_id . '&error=invalid_file');
+        exit;
     }
 }
 
