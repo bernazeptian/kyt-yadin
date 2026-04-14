@@ -90,14 +90,16 @@ $kyt_reports = $pdo->query("
 ")->fetchAll();
 
 // ── Calculate trends ──────────────────────────
-function calcTrend($current, $last) {
-    if ($last == 0) return ['pct' => ($current > 0 ? 100 : 0), 'dir' => 'up'];
-    $pct = round((($current - $last) / $last) * 100);
-    return ['pct' => abs($pct), 'dir' => $pct >= 0 ? 'up' : 'down'];
+function calcTrend($current, $last)
+{
+  if ($last == 0)
+    return ['pct' => ($current > 0 ? 100 : 0), 'dir' => 'up'];
+  $pct = round((($current - $last) / $last) * 100);
+  return ['pct' => abs($pct), 'dir' => $pct >= 0 ? 'up' : 'down'];
 }
 
-$hiyari_trend = calcTrend((int)($hiyari_summary['this_month'] ?? 0), (int)($hiyari_summary['last_month'] ?? 0));
-$kyt_trend = calcTrend((int)($kyt_summary['this_month'] ?? 0), (int)($kyt_summary['last_month'] ?? 0));
+$hiyari_trend = calcTrend((int) ($hiyari_summary['this_month'] ?? 0), (int) ($hiyari_summary['last_month'] ?? 0));
+$kyt_trend = calcTrend((int) ($kyt_summary['this_month'] ?? 0), (int) ($kyt_summary['last_month'] ?? 0));
 
 $trend_pct = $hiyari_trend['pct'];
 $trend_dir = $hiyari_trend['dir'];
@@ -114,6 +116,7 @@ $trend_dir = $hiyari_trend['dir'];
     rel="stylesheet" />
   <link rel="stylesheet" href="assets/dashboard.css" />
   <link rel="stylesheet" href="assets/notifications.css" />
+  <link rel="icon" href="assets/logo.png" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -443,7 +446,8 @@ $trend_dir = $hiyari_trend['dir'];
             </div>
             <div class="card__body">
               <span class="card__label">In Progress / Open</span>
-              <span class="card__value" data-count="<?php echo (int) ($kyt_summary['open'] + $kyt_summary['in_progress']); ?>">0</span>
+              <span class="card__value"
+                data-count="<?php echo (int) ($kyt_summary['open'] + $kyt_summary['in_progress']); ?>">0</span>
             </div>
             <div class="card__trend card__trend--warn">Needs action</div>
           </div>
@@ -457,10 +461,10 @@ $trend_dir = $hiyari_trend['dir'];
             </div>
             <div class="card__body">
               <span class="card__label">Completion Rate</span>
-              <?php 
-                $kytTotal = (int)$kyt_summary['total'];
-                $kytClosed = (int)$kyt_summary['closed'];
-                $kytRate = $kytTotal > 0 ? round(($kytClosed / $kytTotal) * 100) : 0;
+              <?php
+              $kytTotal = (int) $kyt_summary['total'];
+              $kytClosed = (int) $kyt_summary['closed'];
+              $kytRate = $kytTotal > 0 ? round(($kytClosed / $kytTotal) * 100) : 0;
               ?>
               <span class="card__value" data-count="<?php echo $kytRate; ?>">0</span>
               <span class="card__unit">%</span>
@@ -511,7 +515,8 @@ $trend_dir = $hiyari_trend['dir'];
               <tbody>
                 <?php if (empty($kyt_reports)): ?>
                   <tr>
-                    <td colspan="7" style="text-align:center;color:var(--text-hint);padding:24px">No KYT activities yet</td>
+                    <td colspan="7" style="text-align:center;color:var(--text-hint);padding:24px">No KYT activities yet
+                    </td>
                   </tr>
                 <?php else: ?>
                   <?php foreach ($kyt_reports as $r):
@@ -524,8 +529,12 @@ $trend_dir = $hiyari_trend['dir'];
                       <td><?php echo date('d M Y', strtotime($r['report_date'])); ?></td>
                       <td><?php echo htmlspecialchars($r['dept_name'] ?? '—'); ?></td>
                       <td><?php echo $catLabels[$r['category']] ?? $r['category']; ?></td>
-                      <td><span class="badge badge--<?php echo $r['risk_level']; ?>"><?php echo ucfirst($r['risk_level']); ?></span></td>
-                      <td><span class="badge <?php echo $statusClass[$r['status']] ?? ''; ?>"><?php echo $statusLabel[$r['status']] ?? ucfirst($r['status']); ?></span></td>
+                      <td><span
+                          class="badge badge--<?php echo $r['risk_level']; ?>"><?php echo ucfirst($r['risk_level']); ?></span>
+                      </td>
+                      <td><span
+                          class="badge <?php echo $statusClass[$r['status']] ?? ''; ?>"><?php echo $statusLabel[$r['status']] ?? ucfirst($r['status']); ?></span>
+                      </td>
                       <td><a href="hiyari/view?id=<?php echo $r['id']; ?>" class="action-link">View</a></td>
                     </tr>
                   <?php endforeach; ?>
@@ -550,8 +559,8 @@ $trend_dir = $hiyari_trend['dir'];
       dept_values: <?php echo json_encode(array_map('intval', array_column($dept_data, 'total'))); ?>,
     };
     window.KYT_DATA = {
-      completed: <?php echo (int)$kyt_summary['closed']; ?>,
-      pending: <?php echo (int)($kyt_summary['open'] + $kyt_summary['in_progress']); ?>,
+      completed: <?php echo (int) $kyt_summary['closed']; ?>,
+      pending: <?php echo (int) ($kyt_summary['open'] + $kyt_summary['in_progress']); ?>,
       dept_labels: <?php echo json_encode(array_column($kyt_dept_data, 'name')); ?>,
       dept_values: <?php echo json_encode(array_map('intval', array_column($kyt_dept_data, 'total'))); ?>,
     };

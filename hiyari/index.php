@@ -46,9 +46,9 @@ $where = ["1=1"];
 $params = [];
 
 if ($filter_type === 'kyt') {
-    $where[] = "r.category IN ('unsafe_action', 'unsafe_condition')";
+  $where[] = "r.category IN ('unsafe_action', 'unsafe_condition')";
 } else {
-    $where[] = "r.category = 'near_miss'";
+  $where[] = "r.category = 'near_miss'";
 }
 
 if ($filter_status) {
@@ -148,6 +148,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="../assets/dashboard.css?v=3" />
+  <link rel="icon" href="../assets/logo.png" />
   <link rel="stylesheet" href="../assets/hiyari-index.css?v=3" />
 </head>
 
@@ -219,7 +220,9 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
       <div class="topbar__left">
         <div>
           <h1 class="topbar__title"><?php echo $filter_type === 'kyt' ? 'KYT Reports' : 'Hiyari Hatto Reports'; ?></h1>
-          <p class="topbar__sub"><?php echo $filter_type === 'kyt' ? 'Unsafe act & unsafe condition tracking' : 'Near miss tracking'; ?></p>
+          <p class="topbar__sub">
+            <?php echo $filter_type === 'kyt' ? 'Unsafe act & unsafe condition tracking' : 'Near miss tracking'; ?>
+          </p>
         </div>
       </div>
       <div class="topbar__right">
@@ -251,7 +254,8 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
 
       <!-- ── View Tabs ── -->
       <div class="tabs" style="margin-bottom: 24px;">
-        <a href="?type=hiyari" class="tab <?php echo $filter_type !== 'kyt' ? 'tab--active' : ''; ?>" style="text-decoration:none;">
+        <a href="?type=hiyari" class="tab <?php echo $filter_type !== 'kyt' ? 'tab--active' : ''; ?>"
+          style="text-decoration:none;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
             <line x1="12" y1="9" x2="12" y2="13" />
@@ -259,7 +263,8 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
           </svg>
           Hiyari Hatto Reports
         </a>
-        <a href="?type=kyt" class="tab <?php echo $filter_type === 'kyt' ? 'tab--active' : ''; ?>" style="text-decoration:none;">
+        <a href="?type=kyt" class="tab <?php echo $filter_type === 'kyt' ? 'tab--active' : ''; ?>"
+          style="text-decoration:none;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
             <path d="M9 11l3 3L22 4" />
             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
@@ -270,7 +275,8 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
 
       <!-- ── Summary Mini Cards ── -->
       <div class="summary-row">
-        <a href="index?type=<?php echo $filter_type; ?>" class="mini-card <?php echo !$filter_status ? 'mini-card--active' : ''; ?>">
+        <a href="index?type=<?php echo $filter_type; ?>"
+          class="mini-card <?php echo !$filter_status ? 'mini-card--active' : ''; ?>">
           <span class="mini-card__val"><?php echo $summary['total']; ?></span>
           <span class="mini-card__label">Total</span>
         </a>
@@ -332,10 +338,13 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
             <select name="category" class="filter-select" onchange="this.form.submit()">
               <option value="">All Category</option>
               <?php if ($filter_type === 'hiyari'): ?>
-                <option value="near_miss" <?php echo $filter_category === 'near_miss' ? 'selected' : '' ?>>Near Miss</option>
+                <option value="near_miss" <?php echo $filter_category === 'near_miss' ? 'selected' : '' ?>>Near Miss
+                </option>
               <?php else: ?>
-                <option value="unsafe_action" <?php echo $filter_category === 'unsafe_action' ? 'selected' : '' ?>>Unsafe Act</option>
-                <option value="unsafe_condition" <?php echo $filter_category === 'unsafe_condition' ? 'selected' : '' ?>>Unsafe Condition</option>
+                <option value="unsafe_action" <?php echo $filter_category === 'unsafe_action' ? 'selected' : '' ?>>Unsafe
+                  Act</option>
+                <option value="unsafe_condition" <?php echo $filter_category === 'unsafe_condition' ? 'selected' : '' ?>>
+                  Unsafe Condition</option>
               <?php endif; ?>
             </select>
             <select name="dept" class="filter-select" onchange="this.form.submit()">

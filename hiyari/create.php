@@ -34,6 +34,7 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="../assets/dashboard.css" />
+  <link rel="icon" href="../assets/logo.png" />
   <link rel="stylesheet" href="../assets/create.css" />
 </head>
 
