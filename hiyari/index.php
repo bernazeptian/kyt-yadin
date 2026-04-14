@@ -294,7 +294,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
             <line x1="12" y1="9" x2="12" y2="13" />
             <line x1="12" y1="17" x2="12.01" y2="17" />
           </svg>
-          Hiyari Hatto Reports
+          Create Reports
         </a>
         <a href="?type=kyt" class="tab <?php echo $filter_type === 'kyt' ? 'tab--active' : ''; ?>"
           style="text-decoration:none;">
