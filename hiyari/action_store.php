@@ -72,6 +72,7 @@ try {
 
     header('Location: view?id=' . $report_id . '&success=action_added');
 } catch (PDOException $e) {
-    die('❌ Error: ' . $e->getMessage());
+    header('Location: view?id=' . $report_id . '&error=1');
+    exit;
 }
 exit;

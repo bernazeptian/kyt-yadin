@@ -49,6 +49,7 @@ try {
     ]);
     header('Location: index?tab=departments&success=dept_updated');
 } catch (PDOException $e) {
-    die('❌ Error: ' . $e->getMessage());
+    header('Location: index?tab=departments&error=failed');
+    exit;
 }
 exit;
