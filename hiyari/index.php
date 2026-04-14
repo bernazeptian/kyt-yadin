@@ -227,6 +227,39 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
       </div>
       <div class="topbar__right">
         <div class="topbar__date"><?php echo date('l, d F Y'); ?></div>
+        <?php
+        $export_params = http_build_query([
+          'type' => $filter_type,
+          'status' => $filter_status,
+          'risk' => $filter_risk,
+          'category' => $filter_category,
+          'dept' => $filter_dept,
+          'search' => $filter_search,
+          'date_from' => $filter_date_from,
+          'date_to' => $filter_date_to,
+        ]);
+        ?>
+        <a href="export?format=excel&<?php echo $export_params; ?>" class="btn-new" style="background:#27ae60;"
+          title="Export to Excel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="12" y1="18" x2="12" y2="12" />
+            <line x1="9" y1="15" x2="15" y2="15" />
+          </svg>
+          Excel
+        </a>
+        <a href="export?format=csv&<?php echo $export_params; ?>" class="btn-new" style="background:#2980b9;"
+          title="Export to CSV">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+          CSV
+        </a>
         <a href="create" class="btn-new">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
             <line x1="12" y1="5" x2="12" y2="19" />
