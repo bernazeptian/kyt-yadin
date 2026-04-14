@@ -36,6 +36,7 @@ if (!empty($_FILES['action_image']['name']) && $_FILES['action_image']['error'] 
     if (in_array($ext, $allowed_ext) && $_FILES['action_image']['size'] <= 5 * 1024 * 1024) {
         $filename = 'action_' . $report_id . '_' . uniqid() . '.' . $ext;
         if (move_uploaded_file($_FILES['action_image']['tmp_name'], $upload_dir . $filename)) {
+            chmod($upload_dir . $filename, 0644);
             $image_path = 'uploads/corrective_actions/' . $filename;
         }
     }
