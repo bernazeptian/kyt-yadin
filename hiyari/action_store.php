@@ -25,7 +25,7 @@ if (!$report_id || !$description) {
 // ── Handle image upload (simple) ─────────────
 $image_path = null;
 if (!empty($_FILES['action_image']['name']) && $_FILES['action_image']['error'] === UPLOAD_ERR_OK) {
-    $upload_dir = '../uploads/corrective_actions/';
+    $upload_dir = dirname(__DIR__) . '/uploads/corrective_actions/';
     if (!is_dir($upload_dir)) {
         mkdir($upload_dir, 0755, true);
     }
