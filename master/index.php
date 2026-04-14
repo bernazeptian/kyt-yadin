@@ -314,17 +314,21 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                             </svg>
                           </button>
-                          <a href="dept_delete?id=<?php echo $d['id']; ?>" class="action-btn action-btn--delete"
-                            onclick="return confirm('Delete this department?')" title="Delete">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
-                              height="15">
-                              <polyline points="3 6 5 6 21 6" />
-                              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                              <path d="M10 11v6" />
-                              <path d="M14 11v6" />
-                              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                            </svg>
-                          </a>
+                          <form method="POST" action="dept_delete" style="display:inline"
+                            onsubmit="return confirm('Delete this department?')">
+                            <input type="hidden" name="id" value="<?php echo $d['id']; ?>" />
+                            <?php echo csrf_field(); ?>
+                            <button type="submit" class="action-btn action-btn--delete" title="Delete">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
+                                height="15">
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                <path d="M10 11v6" />
+                                <path d="M14 11v6" />
+                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                              </svg>
+                            </button>
+                          </form>
                         </td>
                       </tr>
                     <?php endforeach; ?>
@@ -421,17 +425,21 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                             </svg>
                           </button>
-                          <a href="loc_delete?id=<?php echo $l['id']; ?>" class="action-btn action-btn--delete"
-                            onclick="return confirm('Delete this location?')" title="Delete">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
-                              height="15">
-                              <polyline points="3 6 5 6 21 6" />
-                              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                              <path d="M10 11v6" />
-                              <path d="M14 11v6" />
-                              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                            </svg>
-                          </a>
+                          <form method="POST" action="loc_delete" style="display:inline"
+                            onsubmit="return confirm('Delete this location?')">
+                            <input type="hidden" name="id" value="<?php echo $l['id']; ?>" />
+                            <?php echo csrf_field(); ?>
+                            <button type="submit" class="action-btn action-btn--delete" title="Delete">
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
+                                height="15">
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                <path d="M10 11v6" />
+                                <path d="M14 11v6" />
+                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                              </svg>
+                            </button>
+                          </form>
                         </td>
                       </tr>
                     <?php endforeach; ?>
@@ -578,18 +586,21 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                               </svg>
                             </a>
                             <?php if ($u['id'] != $_SESSION['user_id']): ?>
-                              <a href="user_delete?id=<?php echo $u['id']; ?>" class="action-btn action-btn--delete"
-                                onclick="return confirm('Delete user <?php echo htmlspecialchars($u['name']); ?>?')"
-                                title="Delete">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
-                                  height="15">
-                                  <polyline points="3 6 5 6 21 6" />
-                                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                                  <path d="M10 11v6" />
-                                  <path d="M14 11v6" />
-                                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                                </svg>
-                              </a>
+                              <form method="POST" action="user_delete" style="display:inline"
+                                onsubmit="return confirm('Delete user <?php echo htmlspecialchars($u['name']); ?>?')">
+                                <input type="hidden" name="id" value="<?php echo $u['id']; ?>" />
+                                <?php echo csrf_field(); ?>
+                                <button type="submit" class="action-btn action-btn--delete" title="Delete">
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
+                                    height="15">
+                                    <polyline points="3 6 5 6 21 6" />
+                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                    <path d="M10 11v6" />
+                                    <path d="M14 11v6" />
+                                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                                  </svg>
+                                </button>
+                              </form>
                             <?php endif; ?>
                           </td>
                         </tr>

@@ -5,8 +5,14 @@ if (!isset($_SESSION['user_id']) || (int) $_SESSION['role'] > 2) {
     header('Location: ../index');
     exit;
 }
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: index?tab=locations');
+    exit;
+}
 
-$id = (int) ($_GET['id'] ?? 0);
+csrf_verify();
+
+$id = (int) ($_POST['id'] ?? 0);
 if (!$id) {
     header('Location: index?tab=locations');
     exit;

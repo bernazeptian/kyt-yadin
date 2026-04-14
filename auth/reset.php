@@ -296,6 +296,7 @@ if (!$user) {
 
         <form method="POST" action="reset_process">
           <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>" />
+          <?php echo csrf_field(); ?>
 
           <div class="form-group">
             <label class="form-label">New Password</label>

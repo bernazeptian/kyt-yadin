@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(wc -l /c/xampp/htdocs/kyt-yadin/kyt-yadin/.claude/worktrees/pedantic-wu/**/*.php)"
+      "Bash(wc -l /c/xampp/htdocs/kyt-yadin/kyt-yadin/.claude/worktrees/pedantic-wu/**/*.php)",
+      "Bash(grep -n \"password_min_length\\\\|strlen.*password\\\\|filter.*email\" /c/xampp/htdocs/kyt-yadin/kyt-yadin/.claude/worktrees/pedantic-wu/auth/*.php)",
+      "Bash(grep -n \"htmlspecialchars\\\\|filter_var\\\\|preg_match\" /c/xampp/htdocs/kyt-yadin/kyt-yadin/.claude/worktrees/pedantic-wu/master/*.php)",
+      "Bash(grep -n \"form method\" /c/xampp/htdocs/kyt-yadin/kyt-yadin/.claude/worktrees/pedantic-wu/auth/*.php)",
+      "Bash(grep -rn 'echo.*$_' '/c/xampp/htdocs/kyt-yadin/kyt-yadin/.claude/worktrees/pedantic-wu/*.php')",
+      "Bash(grep -n \"http://\\\\|https://\" /c/xampp/htdocs/kyt-yadin/kyt-yadin/.claude/worktrees/pedantic-wu/config/*.php)",
+      "Bash(grep -n \"password_verify\\\\|password_hash\" /c/xampp/htdocs/kyt-yadin/kyt-yadin/.claude/worktrees/pedantic-wu/**/*.php)",
+      "Bash(grep -n 'REQUEST_METHOD\\\\|$_POST\\\\|$_GET\\\\|json_decode.*input' '/c/xampp/htdocs/kyt-yadin/kyt-yadin/.claude/worktrees/pedantic-wu/api/*.php')"
     ]
   }
 }

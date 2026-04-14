@@ -1,16 +1,14 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
 require_once '../config/db.php';
 require_once '../config/mail.php';
-
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: forgot');
     exit;
 }
+
+csrf_verify();
 
 $email = trim($_POST['email'] ?? '');
 
@@ -40,9 +38,9 @@ $body = "<p>Click here to reset: <a href='{$reset_link}'>{$reset_link}</a></p>";
 $sent = sendMail($user['email'], 'Reset Your KYT Yadin Password', $body);
 
 if (!$sent) {
-    die('❌ Mail failed. Check the error printed above or PHP error logs.');
+    header('Location: forgot?error=fail');
+    exit;
 }
-
 
 header('Location: forgot?sent=1');
 exit;

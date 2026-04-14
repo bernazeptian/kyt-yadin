@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../config/db.php';
 if (isset($_SESSION['user_id'])) {
   header('Location: ../index');
   exit;
@@ -70,6 +71,7 @@ $error = $_GET['error'] ?? '';
 
         <?php if (!$sent): ?>
         <form method="POST" action="forgot_process">
+          <?php echo csrf_field(); ?>
           <div class="form-group">
             <label class="form-label" for="email">Email Address</label>
             <input type="email" class="form-input" id="email" name="email" placeholder="your.email@yanmar.com" required
