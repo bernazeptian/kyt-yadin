@@ -22,38 +22,22 @@ if (!$report_id || !$description) {
     exit;
 }
 
+// ── Handle image upload (simple) ─────────────
 $image_path = null;
-if (!empty($_FILES['action_image']['name'])) {
-    if ($_FILES['action_image']['error'] !== UPLOAD_ERR_OK) {
-        header('Location: view?id=' . $report_id . '&error=upload');
-        exit;
-    }
-
+if (!empty($_FILES['action_image']['name']) && $_FILES['action_image']['error'] === UPLOAD_ERR_OK) {
     $upload_dir = '../uploads/corrective_actions/';
-    $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    $max_size = 5 * 1024 * 1024; // 5MB
-
     if (!is_dir($upload_dir)) {
         mkdir($upload_dir, 0755, true);
     }
 
-    $tmp = $_FILES['action_image']['tmp_name'];
-    $file_size = $_FILES['action_image']['size'];
-    $file_type = mime_content_type($tmp);
+    $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
     $ext = strtolower(pathinfo($_FILES['action_image']['name'], PATHINFO_EXTENSION));
 
-    if (in_array($file_type, $allowed_types) && $file_size <= $max_size) {
+    if (in_array($ext, $allowed_ext) && $_FILES['action_image']['size'] <= 5 * 1024 * 1024) {
         $filename = 'action_' . $report_id . '_' . uniqid() . '.' . $ext;
-        $dest = $upload_dir . $filename;
-        if (move_uploaded_file($tmp, $dest)) {
+        if (move_uploaded_file($_FILES['action_image']['tmp_name'], $upload_dir . $filename)) {
             $image_path = 'uploads/corrective_actions/' . $filename;
-        } else {
-            header('Location: view?id=' . $report_id . '&error=upload_failed');
-            exit;
         }
-    } else {
-        header('Location: view?id=' . $report_id . '&error=invalid_file');
-        exit;
     }
 }
 
@@ -71,7 +55,6 @@ try {
 
     // ── Notify assigned user ──────────────────
     if ($assigned_to) {
-        // Get report number
         $r = $pdo->prepare("SELECT report_number FROM hiyari_reports WHERE id = :id");
         $r->execute([':id' => $report_id]);
         $report = $r->fetch();
@@ -80,10 +63,7 @@ try {
         $message = 'You have been assigned a corrective action for report ' . ($report['report_number'] ?? '') . ': ' . substr($description, 0, 80) . '...';
         $url = '/hiyari/view?id=' . $report_id;
 
-        // In-app notification
         createNotification($pdo, $assigned_to, $title, $message, 'warning', $url);
-
-        // Browser push notification
         sendPushNotification($pdo, $assigned_to, $title, $message, $url);
     }
 
