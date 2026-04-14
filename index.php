@@ -116,7 +116,7 @@ $trend_dir = $hiyari_trend['dir'];
     rel="stylesheet" />
   <link rel="stylesheet" href="assets/dashboard.css" />
   <link rel="stylesheet" href="assets/notifications.css" />
-  <link rel="icon" href="assets/logo.png" />
+  <link rel="icon" href="../assets/logo.png" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -237,8 +237,8 @@ $trend_dir = $hiyari_trend['dir'];
               <div class="avatar-dropdown__divider"></div>
               <a href="profile" class="avatar-dropdown__logout">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
                 </svg>
                 My Profile
               </a>
