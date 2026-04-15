@@ -11,8 +11,8 @@ if (!isset($_SESSION['user_id'])) {
 // Fetch departments from DB
 $departments = $pdo->query("SELECT id, name FROM departments ORDER BY name")->fetchAll();
 
-// Fetch locations from DB with department_id
-$locations = $pdo->query("SELECT id, name, department_id FROM locations WHERE is_active = 1 ORDER BY name")->fetchAll();
+// Fetch locations from DB
+$locations = $pdo->query("SELECT id, name FROM locations ORDER BY name")->fetchAll();
 
 // Auto-generate report number
 $year = date('Y');
@@ -120,8 +120,40 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
       </div>
       <div class="topbar__right">
         <div class="topbar__date"><?php echo date('l, d F Y'); ?></div>
-        <div class="topbar__avatar" title="<?php echo htmlspecialchars($_SESSION['name'] ?? 'User'); ?>">
+        <div class="topbar__avatar" id="avatarBtn">
           <?php echo strtoupper(substr($_SESSION['name'] ?? 'U', 0, 1)); ?>
+        </div>
+        <div class="avatar-dropdown" id="avatarDropdown">
+          <div class="avatar-dropdown__info">
+            <div class="avatar-dropdown__avatar">
+              <?php echo strtoupper(substr($_SESSION['name'] ?? 'U', 0, 1)); ?>
+            </div>
+            <div>
+              <div class="avatar-dropdown__name"><?php echo htmlspecialchars($_SESSION['name'] ?? 'User'); ?></div>
+              <div class="avatar-dropdown__id">ID: <?php echo htmlspecialchars($_SESSION['employee_id'] ?? '—'); ?>
+              </div>
+              <div class="avatar-dropdown__role">
+                <?php $rn = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
+                echo $rn[$role] ?? 'User'; ?></div>
+            </div>
+          </div>
+          <div class="avatar-dropdown__divider"></div>
+          <a href="../profile" class="avatar-dropdown__logout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            My Profile
+          </a>
+          <div class="avatar-dropdown__divider"></div>
+          <a href="../auth/logout" class="avatar-dropdown__logout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Sign Out
+          </a>
         </div>
       </div>
     </header>
@@ -185,8 +217,7 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label" for="department_id">Department <span class="required">*</span></label>
-                  <select class="form-select" id="department_id" name="department_id" required
-                    onchange="filterLocations(this.value)">
+                  <select class="form-select" id="department_id" name="department_id" required>
                     <option value="">-- Select Department --</option>
                     <?php foreach ($departments as $dept): ?>
                       <option value="<?php echo $dept['id']; ?>">
@@ -198,35 +229,14 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
                 <div class="form-group">
                   <label class="form-label" for="location_id">Location <span class="required">*</span></label>
                   <select class="form-select" id="location_id" name="location_id" required>
-                    <option value="">-- Select Department First --</option>
+                    <option value="">-- Select Location --</option>
                     <?php foreach ($locations as $loc): ?>
-                      <option value="<?php echo $loc['id']; ?>" data-dept="<?php echo $loc['department_id']; ?>"
-                        style="display:none">
+                      <option value="<?php echo $loc['id']; ?>">
                         <?php echo htmlspecialchars($loc['name']); ?>
                       </option>
                     <?php endforeach; ?>
                   </select>
                 </div>
-                <script>
-                  function filterLocations(deptId) {
-                    const locSelect = document.getElementById('location_id');
-                    const options = locSelect.querySelectorAll('option[data-dept]');
-                    let hasOptions = false;
-
-                    options.forEach(opt => {
-                      if (opt.dataset.dept === deptId) {
-                        opt.style.display = '';
-                        hasOptions = true;
-                      } else {
-                        opt.style.display = 'none';
-                      }
-                    });
-
-                    locSelect.value = '';
-                    locSelect.querySelector('option:first-child').textContent =
-                      hasOptions ? '-- Select Location --' : '-- No locations for this department --';
-                  }
-                </script>
               </div>
 
               <!-- Category -->
@@ -463,6 +473,7 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
   </main>
 
   <script src="../assets/create.js"></script>
+  <script src="../assets/avatar.js"></script>
 </body>
 
 </html>
