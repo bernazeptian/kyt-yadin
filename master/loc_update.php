@@ -16,6 +16,7 @@ $id = (int) $_POST['id'];
 $code = strtoupper(trim($_POST['code'] ?? ''));
 $name = trim($_POST['name'] ?? '');
 $description = trim($_POST['description'] ?? '');
+$department_id = !empty($_POST['department_id']) ? (int) $_POST['department_id'] : null;
 $is_active = isset($_POST['is_active']) ? 1 : 0;
 
 if (!$id || !$code || !$name) {
@@ -31,8 +32,8 @@ if ($check->fetch()) {
 }
 
 try {
-    $stmt = $pdo->prepare("UPDATE locations SET code = :code, name = :name, description = :description, is_active = :is_active, updated_at = NOW() WHERE id = :id");
-    $stmt->execute([':code' => $code, ':name' => $name, ':description' => $description, ':is_active' => $is_active, ':id' => $id]);
+    $stmt = $pdo->prepare("UPDATE locations SET code = :code, name = :name, description = :description, department_id = :department_id, is_active = :is_active, updated_at = NOW() WHERE id = :id");
+    $stmt->execute([':code' => $code, ':name' => $name, ':description' => $description, ':department_id' => $department_id, ':is_active' => $is_active, ':id' => $id]);
     header('Location: index?tab=locations&success=loc_updated');
 } catch (PDOException $e) {
     header('Location: index?tab=locations&error=failed');

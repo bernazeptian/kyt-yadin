@@ -11,8 +11,8 @@ if (!isset($_SESSION['user_id'])) {
 // Fetch departments from DB
 $departments = $pdo->query("SELECT id, name FROM departments ORDER BY name")->fetchAll();
 
-// Fetch locations from DB
-$locations = $pdo->query("SELECT id, name FROM locations ORDER BY name")->fetchAll();
+// Fetch locations from DB with department_id
+$locations = $pdo->query("SELECT id, name, department_id FROM locations WHERE is_active = 1 ORDER BY name")->fetchAll();
 
 // Auto-generate report number
 $year = date('Y');
@@ -185,7 +185,8 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label" for="department_id">Department <span class="required">*</span></label>
-                  <select class="form-select" id="department_id" name="department_id" required>
+                  <select class="form-select" id="department_id" name="department_id" required
+                    onchange="filterLocations(this.value)">
                     <option value="">-- Select Department --</option>
                     <?php foreach ($departments as $dept): ?>
                       <option value="<?php echo $dept['id']; ?>">
@@ -197,14 +198,35 @@ $error = isset($_GET['error']) ? $_GET['error'] : null;
                 <div class="form-group">
                   <label class="form-label" for="location_id">Location <span class="required">*</span></label>
                   <select class="form-select" id="location_id" name="location_id" required>
-                    <option value="">-- Select Location --</option>
+                    <option value="">-- Select Department First --</option>
                     <?php foreach ($locations as $loc): ?>
-                      <option value="<?php echo $loc['id']; ?>">
+                      <option value="<?php echo $loc['id']; ?>" data-dept="<?php echo $loc['department_id']; ?>"
+                        style="display:none">
                         <?php echo htmlspecialchars($loc['name']); ?>
                       </option>
                     <?php endforeach; ?>
                   </select>
                 </div>
+                <script>
+                  function filterLocations(deptId) {
+                    const locSelect = document.getElementById('location_id');
+                    const options = locSelect.querySelectorAll('option[data-dept]');
+                    let hasOptions = false;
+
+                    options.forEach(opt => {
+                      if (opt.dataset.dept === deptId) {
+                        opt.style.display = '';
+                        hasOptions = true;
+                      } else {
+                        opt.style.display = 'none';
+                      }
+                    });
+
+                    locSelect.value = '';
+                    locSelect.querySelector('option:first-child').textContent =
+                      hasOptions ? '-- Select Location --' : '-- No locations for this department --';
+                  }
+                </script>
               </div>
 
               <!-- Category -->

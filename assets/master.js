@@ -63,6 +63,7 @@ function openEditLoc(data) {
   document.getElementById('editLocCode').value = data.code;
   document.getElementById('editLocName').value = data.name;
   document.getElementById('editLocDesc').value = data.description ?? '';
+  document.getElementById('editLocDept').value = data.department_id ?? '';
   document.getElementById('editLocActive').checked = data.is_active == 1;
   openModal('editLocModal');
 }

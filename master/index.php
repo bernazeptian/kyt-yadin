@@ -24,7 +24,9 @@ $departments = $pdo->query("
 
 // ── LOCATIONS ────────────────────────────────────
 $locations = $pdo->query("
-    SELECT l.* FROM locations l ORDER BY l.name
+    SELECT l.*, d.name AS dept_name FROM locations l
+    LEFT JOIN departments d ON l.department_id = d.id
+    ORDER BY l.name
 ")->fetchAll();
 
 // ── Users for head dropdown ───────────────────────
@@ -362,6 +364,15 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                 <input type="text" name="name" class="form-input" placeholder="e.g. Area A" required />
               </div>
               <div class="form-group">
+                <label class="form-label">Department <span class="required">*</span></label>
+                <select name="department_id" class="form-select" required>
+                  <option value="">-- Select Department --</option>
+                  <?php foreach ($departments as $d): ?>
+                    <option value="<?php echo $d['id']; ?>"><?php echo htmlspecialchars($d['name']); ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <div class="form-group">
                 <label class="form-label">Description</label>
                 <textarea name="description" class="form-textarea" rows="3"
                   placeholder="Optional description..."></textarea>
@@ -402,6 +413,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                     <tr>
                       <th>Code</th>
                       <th>Name</th>
+                      <th>Department</th>
                       <th>Description</th>
                       <th>Status</th>
                       <th></th>
@@ -412,6 +424,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                       <tr>
                         <td><span class="code-badge"><?php echo htmlspecialchars($l['code']); ?></span></td>
                         <td><strong><?php echo htmlspecialchars($l['name']); ?></strong></td>
+                        <td><?php echo htmlspecialchars($l['dept_name'] ?? '—'); ?></td>
                         <td class="td-desc"><?php echo htmlspecialchars($l['description'] ?? '—'); ?></td>
                         <td><span
                             class="badge <?php echo $l['is_active'] ? 'badge--closed' : 'badge--open'; ?>"><?php echo $l['is_active'] ? 'Active' : 'Inactive'; ?></span>
@@ -694,6 +707,15 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
         <div class="form-group">
           <label class="form-label">Location Name <span class="required">*</span></label>
           <input type="text" name="name" id="editLocName" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Department <span class="required">*</span></label>
+          <select name="department_id" id="editLocDept" class="form-select" required>
+            <option value="">-- Select Department --</option>
+            <?php foreach ($departments as $d): ?>
+              <option value="<?php echo $d['id']; ?>"><?php echo htmlspecialchars($d['name']); ?></option>
+            <?php endforeach; ?>
+          </select>
         </div>
         <div class="form-group">
           <label class="form-label">Description</label>
