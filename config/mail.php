@@ -1,7 +1,7 @@
 <?php
 // ── Brevo API Configuration ──
 $_env = parse_ini_file(__DIR__ . '/../.env') ?: [];
-define('BREVO_API_KEY', $_env['BREVO_API_KEY'] ?? '');
+define('BREVO_API_KEY', $_env['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'] ?? '');
 define('MAIL_FROM_NAME', 'KYT Yadin System');
 define('MAIL_FROM_EMAIL', 'noreply@yanmar.co.id');
 define('APP_URL', 'http://kyt.yadin.com');
@@ -11,47 +11,47 @@ define('APP_URL', 'http://kyt.yadin.com');
  */
 function sendMail(string $to, string $subject, string $body): bool
 {
-    $payload = json_encode([
-        'sender' => [
-            'name' => MAIL_FROM_NAME,
-            'email' => MAIL_FROM_EMAIL,
-        ],
-        'to' => [
-            ['email' => $to]
-        ],
-        'subject' => $subject,
-        'htmlContent' => $body,
-    ]);
+  $payload = json_encode([
+    'sender' => [
+      'name' => MAIL_FROM_NAME,
+      'email' => MAIL_FROM_EMAIL,
+    ],
+    'to' => [
+      ['email' => $to]
+    ],
+    'subject' => $subject,
+    'htmlContent' => $body,
+  ]);
 
-    $ch = curl_init('https://api.brevo.com/v3/smtp/email');
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => $payload,
-        CURLOPT_HTTPHEADER => [
-            'accept: application/json',
-            'api-key: ' . BREVO_API_KEY,
-            'content-type: application/json',
-        ],
-        CURLOPT_TIMEOUT => 15,
-    ]);
+  $ch = curl_init('https://api.brevo.com/v3/smtp/email');
+  curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_POST => true,
+    CURLOPT_POSTFIELDS => $payload,
+    CURLOPT_HTTPHEADER => [
+      'accept: application/json',
+      'api-key: ' . BREVO_API_KEY,
+      'content-type: application/json',
+    ],
+    CURLOPT_TIMEOUT => 15,
+  ]);
 
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curlError = curl_error($ch);
-    curl_close($ch);
+  $response = curl_exec($ch);
+  $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+  $curlError = curl_error($ch);
+  curl_close($ch);
 
-    if ($curlError) {
-        echo '❌ cURL Error: ' . $curlError;
-        return false;
-    }
-
-    if ($httpCode === 201) {
-        return true;
-    }
-
-    echo '❌ Mail failed. HTTP ' . $httpCode . ': ' . $response;
+  if ($curlError) {
+    echo '❌ cURL Error: ' . $curlError;
     return false;
+  }
+
+  if ($httpCode === 201) {
+    return true;
+  }
+
+  echo '❌ Mail failed. HTTP ' . $httpCode . ': ' . $response;
+  return false;
 }
 
 /**
@@ -60,13 +60,13 @@ function sendMail(string $to, string $subject, string $body): bool
  */
 function sendExtremeRiskAlert(PDO $pdo, array $report): void
 {
-    // Target positions that must be notified
-    $target_positions = ['President Director', 'General Manager', 'Manager'];
+  // Target positions that must be notified
+  $target_positions = ['President Director', 'General Manager', 'Manager'];
 
-    // Build placeholders for IN clause
-    $placeholders = implode(',', array_fill(0, count($target_positions), '?'));
+  // Build placeholders for IN clause
+  $placeholders = implode(',', array_fill(0, count($target_positions), '?'));
 
-    $stmt = $pdo->prepare("
+  $stmt = $pdo->prepare("
         SELECT name, email
         FROM users
         WHERE position IN ($placeholders)
@@ -74,30 +74,30 @@ function sendExtremeRiskAlert(PDO $pdo, array $report): void
           AND email IS NOT NULL
           AND email != ''
     ");
-    $stmt->execute($target_positions);
-    $recipients = $stmt->fetchAll();
+  $stmt->execute($target_positions);
+  $recipients = $stmt->fetchAll();
 
-    if (empty($recipients)) {
-        return; // No matching users found
-    }
+  if (empty($recipients)) {
+    return; // No matching users found
+  }
 
-    $report_number = htmlspecialchars($report['report_number'] ?? '—');
-    $report_date   = isset($report['report_date']) ? date('d F Y', strtotime($report['report_date'])) : '—';
-    $department    = htmlspecialchars($report['dept_name'] ?? '—');
-    $location      = htmlspecialchars($report['loc_name'] ?? '—');
-    $category_map  = [
-        'near_miss'        => 'Near Miss',
-        'unsafe_action'       => 'Unsafe Act',
-        'unsafe_condition' => 'Unsafe Condition',
-    ];
-    $category    = $category_map[$report['category'] ?? ''] ?? ucfirst($report['category'] ?? '—');
-    $description = htmlspecialchars($report['description'] ?? '—');
-    $reporter    = htmlspecialchars($report['reporter_name'] ?? '—');
-    $view_url    = APP_URL . '/hiyari/view?id=' . (int) ($report['id'] ?? 0);
+  $report_number = htmlspecialchars($report['report_number'] ?? '—');
+  $report_date = isset($report['report_date']) ? date('d F Y', strtotime($report['report_date'])) : '—';
+  $department = htmlspecialchars($report['dept_name'] ?? '—');
+  $location = htmlspecialchars($report['loc_name'] ?? '—');
+  $category_map = [
+    'near_miss' => 'Near Miss',
+    'unsafe_action' => 'Unsafe Act',
+    'unsafe_condition' => 'Unsafe Condition',
+  ];
+  $category = $category_map[$report['category'] ?? ''] ?? ucfirst($report['category'] ?? '—');
+  $description = htmlspecialchars($report['description'] ?? '—');
+  $reporter = htmlspecialchars($report['reporter_name'] ?? '—');
+  $view_url = APP_URL . '/hiyari/view?id=' . (int) ($report['id'] ?? 0);
 
-    $subject = '🚨 [EXTREME RISK] Hiyari Hatto Report ' . $report_number . ' Requires Immediate Attention';
+  $subject = '🚨 [EXTREME RISK] Hiyari Hatto Report ' . $report_number . ' Requires Immediate Attention';
 
-    $body = "
+  $body = "
     <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
       <div style='background:#c0392b;padding:24px 32px'>
         <h1 style='color:#fff;margin:0;font-size:20px'>🚨 EXTREME RISK — Immediate Action Required</h1>
@@ -149,7 +149,7 @@ function sendExtremeRiskAlert(PDO $pdo, array $report): void
     </div>
     ";
 
-    foreach ($recipients as $recipient) {
-        sendMail($recipient['email'], $subject, $body);
-    }
+  foreach ($recipients as $recipient) {
+    sendMail($recipient['email'], $subject, $body);
+  }
 }
