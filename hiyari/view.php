@@ -23,11 +23,17 @@ $stmt = $pdo->prepare("
            d.name AS dept_name,
            l.name AS loc_name,
            u.name AS reporter_name,
-           u.employee_id AS reporter_emp_id
+           u.employee_id AS reporter_emp_id,
+           pic_dept.name AS pic_dept_name,
+           pic_dept.employee_id AS pic_dept_emp_id,
+           pic_area.name AS pic_area_name,
+           pic_area.employee_id AS pic_area_emp_id
     FROM hiyari_reports r
     LEFT JOIN departments d ON r.department_id = d.id
     LEFT JOIN locations   l ON r.location_id   = l.id
     LEFT JOIN users       u ON r.created_by    = u.id
+    LEFT JOIN users pic_dept ON d.head_id      = pic_dept.id
+    LEFT JOIN users pic_area ON l.pic_area_id  = pic_area.id
     WHERE r.id = :id
 ");
 $stmt->execute([':id' => $id]);
@@ -301,20 +307,20 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                 <p style="font-size:13px;color:#666;margin:0 0 16px;">Review and edit the report if needed, set the due
                   date, then release it to notify all relevant parties.</p>
                 <form method="POST" action="approve">
-                  <?php echo csrf_field(); ?>
+                    <?php echo csrf_field(); ?>
                   <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
                   <div class="form-group" style="margin-bottom:14px;">
                     <label class="form-label" style="font-size:13px;font-weight:600;">Edit Description (optional)</label>
                     <textarea name="description" class="form-textarea" rows="3" style="font-size:13px;"
                       placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['description']); ?></textarea>
                   </div>
-                  <?php if (!empty($report['safe_action'])): ?>
+                    <?php if (!empty($report['safe_action'])): ?>
                     <div class="form-group" style="margin-bottom:14px;">
                       <label class="form-label" style="font-size:13px;font-weight:600;">Edit Safe Action (optional)</label>
                       <textarea name="safe_action" class="form-textarea" rows="3" style="font-size:13px;"
                         placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['safe_action']); ?></textarea>
                     </div>
-                  <?php endif; ?>
+                    <?php endif; ?>
                   <div class="form-group" style="margin-bottom:16px;">
                     <label class="form-label" style="font-size:13px;font-weight:600;">Due Date <span
                         style="color:#e74c3c;">*</span></label>
@@ -372,11 +378,27 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                 </div>
                 <div class="info-item">
                   <span class="info-label">Department</span>
-                  <span class="info-value"><?php echo htmlspecialchars($report['dept_name'] ?? '—'); ?></span>
+                  <span class="info-value">
+                    <?php echo htmlspecialchars($report['dept_name'] ?? '—'); ?>
+                    <?php if (!empty($report['pic_dept_name'])): ?>
+                      <br><small style="color:#888;font-size:12px;">
+                        PIC: <?php echo htmlspecialchars($report['pic_dept_emp_id']); ?> —
+                        <?php echo htmlspecialchars($report['pic_dept_name']); ?>
+                      </small>
+                    <?php endif; ?>
+                  </span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">Location</span>
-                  <span class="info-value"><?php echo htmlspecialchars($report['loc_name'] ?? '—'); ?></span>
+                  <span class="info-value">
+                    <?php echo htmlspecialchars($report['loc_name'] ?? '—'); ?>
+                    <?php if (!empty($report['pic_area_name'])): ?>
+                      <br><small style="color:#888;font-size:12px;">
+                        PIC: <?php echo htmlspecialchars($report['pic_area_emp_id']); ?> —
+                        <?php echo htmlspecialchars($report['pic_area_name']); ?>
+                      </small>
+                    <?php endif; ?>
+                  </span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">Category</span>
@@ -406,7 +428,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                   <span class="info-label">Safe Action (Tindakan Karantina)</span>
                   <p class="info-desc"
                     style="background:#f0fff4;padding:10px 14px;border-radius:6px;border-left:3px solid #27ae60;">
-                    <?php echo nl2br(htmlspecialchars($report['safe_action'])); ?>
+                      <?php echo nl2br(htmlspecialchars($report['safe_action'])); ?>
                   </p>
                 </div>
               <?php endif; ?>
