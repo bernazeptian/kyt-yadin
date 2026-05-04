@@ -7,10 +7,12 @@ if (isset($_SESSION['user_id'])) {
 }
 $error = $_GET['error'] ?? '';
 $errors = [
-  'invalid'   => 'Invalid Employee ID or password.',
-  'inactive'  => 'Your account is inactive. Contact administrator.',
-  'required'  => 'Please fill in all fields.',
-  'ratelimit' => 'Too many failed attempts. Please try again in 15 minutes.',
+  'invalid'       => 'Invalid Employee ID or password.',
+  'inactive'      => 'Your account is inactive. Contact administrator.',
+  'required'      => 'Please fill in all fields.',
+  'ratelimit'     => 'Too many failed attempts. Please try again in 15 minutes.',
+  'token_expired' => 'Your setup link has expired. Please contact the administrator to resend it.',
+  'invalid_token' => 'Invalid setup link. Please contact the administrator.',
 ];
 ?>
 <!DOCTYPE html>
