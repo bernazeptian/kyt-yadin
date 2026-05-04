@@ -92,6 +92,7 @@ try {
 
   header('Location: index?tab=users&success=user_added');
 } catch (PDOException $e) {
-  header('Location: index?tab=users&error=failed');
+  error_log('user_store error: ' . $e->getMessage());
+  die('❌ DB Error: ' . $e->getMessage());
 }
 exit;
