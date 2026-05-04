@@ -125,53 +125,11 @@ try {
       </div>
     </div>";
 
-    $subject      = '⚠️ [KIKEN YOCHI] New Report ' . $report_data['report_number'] . ' — Pending Review';
-    $notified_ids = [];
-
-    // 1. Notify all SuperAdmin & Admin
-    $admins = $pdo->query("SELECT id, name, email FROM users WHERE role <= 2 AND is_active = 1 AND email IS NOT NULL")->fetchAll();
-    foreach ($admins as $a) {
-        sendMail($a['email'], $subject, $email_body);
-        createNotification($pdo, $a['id'], 'New Kiken Yochi Report', 'Report ' . $report_data['report_number'] . ' submitted — Pending Review', 'info', '/hiyari/view?id=' . $report_id);
-        $notified_ids[] = $a['id'];
-    }
-
-    // 2. Notify PIC Dept
-    if (!empty($report_data['dept_head_id']) && !in_array($report_data['dept_head_id'], $notified_ids)) {
-        $dh = $pdo->prepare("SELECT id, name, email FROM users WHERE id = :id AND is_active = 1");
-        $dh->execute([':id' => $report_data['dept_head_id']]);
-        $dh = $dh->fetch();
-        if ($dh && $dh['email']) {
-            sendMail($dh['email'], $subject, $email_body);
-            createNotification($pdo, $dh['id'], 'New Report in Your Department', 'Report ' . $report_data['report_number'] . ' submitted', 'info', '/hiyari/view?id=' . $report_id);
-            $notified_ids[] = $dh['id'];
-        }
-    }
-
-    // 3. Notify PIC Area
-    if (!empty($report_data['pic_area_id']) && !in_array($report_data['pic_area_id'], $notified_ids)) {
-        $pa = $pdo->prepare("SELECT id, name, email FROM users WHERE id = :id AND is_active = 1");
-        $pa->execute([':id' => $report_data['pic_area_id']]);
-        $pa = $pa->fetch();
-        if ($pa && $pa['email']) {
-            sendMail($pa['email'], $subject, $email_body);
-            createNotification($pdo, $pa['id'], 'New Report in Your Area', 'Report ' . $report_data['report_number'] . ' submitted', 'info', '/hiyari/view?id=' . $report_id);
-            $notified_ids[] = $pa['id'];
-        }
-    }
-
-    // 4. If extreme, also notify President Director, Director, GM
-    if ($risk_level === 'extreme') {
-        $targets = ['President Director', 'Director', 'General Manager'];
-        $ph      = implode(',', array_fill(0, count($targets), '?'));
-        $leaders = $pdo->prepare("SELECT id, name, email FROM users WHERE position IN ($ph) AND is_active = 1 AND email IS NOT NULL");
-        $leaders->execute($targets);
-        foreach ($leaders->fetchAll() as $l) {
-            if (!in_array($l['id'], $notified_ids)) {
-                sendMail($l['email'], '🚨 [EXTREME RISK] ' . $subject, $email_body);
-                $notified_ids[] = $l['id'];
-            }
-        }
+    // ── Only notify SuperAdmin (Gunawan) on submit ───
+    $superadmins = $pdo->query("SELECT id, name, email FROM users WHERE role = 1 AND is_active = 1 AND email IS NOT NULL")->fetchAll();
+    foreach ($superadmins as $sa) {
+        sendMail($sa['email'], $subject, $email_body);
+        createNotification($pdo, $sa['id'], 'New Kiken Yochi — Pending Review', 'Report ' . $report_data['report_number'] . ' needs your review', 'info', '/hiyari/view?id=' . $report_id);
     }
 
     header('Location: view?id=' . $report_id . '&success=1');
