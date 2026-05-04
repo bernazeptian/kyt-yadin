@@ -377,8 +377,8 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                 <div class="info-item">
                   <span class="info-label">Department</span>
                   <span class="info-value"><?php echo htmlspecialchars($report['dept_name'] ?? '—'); ?></span>
-                  <span
-                    style="color:var(--text-secondary);font-size:12px">(<?php echo htmlspecialchars($report['dept_emp_pic'] ?? ''); ?>)
+                  <span style="color:var(--text-secondary);font-size:12px">(<?php echo
+                    htmlspecialchars($report['dept_emp_pic'] ?? ''); ?>)
                   </span>
                 </div>
                 <div class="info-item">
