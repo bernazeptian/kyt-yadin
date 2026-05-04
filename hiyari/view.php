@@ -21,7 +21,11 @@ if (!$id) {
 $stmt = $pdo->prepare("
     SELECT r.*,
            d.name AS dept_name,
+           d.employee_id AS dept_emp_pic
+           u.name AS dept_emp_name
            l.name AS loc_name,
+           l.employee_id AS loc_emp_pic
+           l.name AS loc_emp_name
            u.name AS reporter_name,
            u.employee_id AS reporter_emp_id
     FROM hiyari_reports r
@@ -105,22 +109,22 @@ $cat_labels = [
 ];
 
 $status_labels = [
-    'pending_review' => 'Pending Review',
-    'active'         => 'Active',
-    'overdue'        => 'Overdue',
-    'completed'      => 'Completed',
-    'closed'         => 'Closed',
-    'open'           => 'Open',
-    'in_progress'    => 'In Progress',
+  'pending_review' => 'Pending Review',
+  'active' => 'Active',
+  'overdue' => 'Overdue',
+  'completed' => 'Completed',
+  'closed' => 'Closed',
+  'open' => 'Open',
+  'in_progress' => 'In Progress',
 ];
 $status_badges = [
-    'pending_review' => 'badge--pending',
-    'active'         => 'badge--open',
-    'overdue'        => 'badge--extreme',
-    'completed'      => 'badge--closed',
-    'closed'         => 'badge--closed',
-    'open'           => 'badge--open',
-    'in_progress'    => 'badge--progress',
+  'pending_review' => 'badge--pending',
+  'active' => 'badge--open',
+  'overdue' => 'badge--extreme',
+  'completed' => 'badge--closed',
+  'closed' => 'badge--closed',
+  'open' => 'badge--open',
+  'in_progress' => 'badge--progress',
 ];
 $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
 ?>
@@ -287,54 +291,63 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
 
           <!-- ── Gunawan Review Panel (SuperAdmin only, pending_review) ── -->
           <?php if ($role === 1 && $report['status'] === 'pending_review'): ?>
-          <div class="view-card" style="border:2px solid #e74c3c;">
-            <div class="view-card__header" style="background:#fdf2f2;">
-              <div class="view-card__icon view-card__icon--red">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            <div class="view-card" style="border:2px solid #e74c3c;">
+              <div class="view-card__header" style="background:#fdf2f2;">
+                <div class="view-card__icon view-card__icon--red">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                    <path d="M9 11l3 3L22 4" />
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                  </svg>
+                </div>
+                <h2 class="view-card__title" style="color:#e74c3c;">⏳ Pending Your Review & Approval</h2>
               </div>
-              <h2 class="view-card__title" style="color:#e74c3c;">⏳ Pending Your Review & Approval</h2>
+              <div class="view-card__body">
+                <p style="font-size:13px;color:#666;margin:0 0 16px;">Review and edit the report if needed, set the due
+                  date, then release it to notify all relevant parties.</p>
+                <form method="POST" action="approve">
+                  <?php echo csrf_field(); ?>
+                  <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
+                  <div class="form-group" style="margin-bottom:14px;">
+                    <label class="form-label" style="font-size:13px;font-weight:600;">Edit Description (optional)</label>
+                    <textarea name="description" class="form-textarea" rows="3" style="font-size:13px;"
+                      placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['description']); ?></textarea>
+                  </div>
+                  <?php if (!empty($report['safe_action'])): ?>
+                    <div class="form-group" style="margin-bottom:14px;">
+                      <label class="form-label" style="font-size:13px;font-weight:600;">Edit Safe Action (optional)</label>
+                      <textarea name="safe_action" class="form-textarea" rows="3" style="font-size:13px;"
+                        placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['safe_action']); ?></textarea>
+                    </div>
+                  <?php endif; ?>
+                  <div class="form-group" style="margin-bottom:16px;">
+                    <label class="form-label" style="font-size:13px;font-weight:600;">Due Date <span
+                        style="color:#e74c3c;">*</span></label>
+                    <input type="date" name="due_date" class="form-input" required min="<?php echo date('Y-m-d'); ?>" />
+                    <span style="font-size:12px;color:#888;">Deadline for corrective actions to be completed</span>
+                  </div>
+                  <button type="submit"
+                    onclick="return confirm('Release this report? This will notify all relevant parties.')"
+                    style="display:inline-flex;align-items:center;gap:8px;background:#27ae60;color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;width:100%;justify-content:center;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                      <path d="M9 11l3 3L22 4" />
+                    </svg>
+                    Approve & Release Report
+                  </button>
+                </form>
+              </div>
             </div>
-            <div class="view-card__body">
-              <p style="font-size:13px;color:#666;margin:0 0 16px;">Review and edit the report if needed, set the due date, then release it to notify all relevant parties.</p>
-              <form method="POST" action="approve">
-                <?php echo csrf_field(); ?>
-                <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
-                <div class="form-group" style="margin-bottom:14px;">
-                  <label class="form-label" style="font-size:13px;font-weight:600;">Edit Description (optional)</label>
-                  <textarea name="description" class="form-textarea" rows="3" style="font-size:13px;"
-                    placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['description']); ?></textarea>
-                </div>
-                <?php if (!empty($report['safe_action'])): ?>
-                <div class="form-group" style="margin-bottom:14px;">
-                  <label class="form-label" style="font-size:13px;font-weight:600;">Edit Safe Action (optional)</label>
-                  <textarea name="safe_action" class="form-textarea" rows="3" style="font-size:13px;"
-                    placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['safe_action']); ?></textarea>
-                </div>
-                <?php endif; ?>
-                <div class="form-group" style="margin-bottom:16px;">
-                  <label class="form-label" style="font-size:13px;font-weight:600;">Due Date <span style="color:#e74c3c;">*</span></label>
-                  <input type="date" name="due_date" class="form-input" required min="<?php echo date('Y-m-d'); ?>" />
-                  <span style="font-size:12px;color:#888;">Deadline for corrective actions to be completed</span>
-                </div>
-                <button type="submit" onclick="return confirm('Release this report? This will notify all relevant parties.')"
-                  style="display:inline-flex;align-items:center;gap:8px;background:#27ae60;color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;width:100%;justify-content:center;">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 11l3 3L22 4"/></svg>
-                  Approve & Release Report
-                </button>
-              </form>
-            </div>
-          </div>
           <?php endif; ?>
 
           <!-- Pending Review Notice for non-superadmin -->
           <?php if ($role > 1 && $report['status'] === 'pending_review'): ?>
-          <div class="view-card" style="border:1px solid #f39c12;">
-            <div class="view-card__body" style="padding:16px 20px;">
-              <p style="margin:0;font-size:13px;color:#856404;background:#fff3cd;padding:12px 16px;border-radius:8px;">
-                ⏳ This report is currently <strong>Pending Review</strong> by management. It will be released once approved.
-              </p>
+            <div class="view-card" style="border:1px solid #f39c12;">
+              <div class="view-card__body" style="padding:16px 20px;">
+                <p style="margin:0;font-size:13px;color:#856404;background:#fff3cd;padding:12px 16px;border-radius:8px;">
+                  ⏳ This report is currently <strong>Pending Review</strong> by management. It will be released once
+                  approved.
+                </p>
+              </div>
             </div>
-          </div>
           <?php endif; ?>
 
           <!-- Report Info Card -->
@@ -364,10 +377,16 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                 <div class="info-item">
                   <span class="info-label">Department</span>
                   <span class="info-value"><?php echo htmlspecialchars($report['dept_name'] ?? '—'); ?></span>
+                  <span
+                    style="color:var(--text-secondary);font-size:12px">(<?php echo htmlspecialchars($report['dept_emp_pic'] ?? ''); ?>)
+                  </span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">Location</span>
                   <span class="info-value"><?php echo htmlspecialchars($report['loc_name'] ?? '—'); ?></span>
+                  <span
+                    style="color:var(--text-secondary);font-size:12px">(<?php echo htmlspecialchars($report['loc_emp_pic'] ?? ''); ?>)
+                  </span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">Category</span>
@@ -393,12 +412,13 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                 <p class="info-desc"><?php echo nl2br(htmlspecialchars($report['description'])); ?></p>
               </div>
               <?php if (!empty($report['safe_action'])): ?>
-              <div class="info-item info-item--full">
-                <span class="info-label">Safe Action (Tindakan Karantina)</span>
-                <p class="info-desc" style="background:#f0fff4;padding:10px 14px;border-radius:6px;border-left:3px solid #27ae60;">
-                  <?php echo nl2br(htmlspecialchars($report['safe_action'])); ?>
-                </p>
-              </div>
+                <div class="info-item info-item--full">
+                  <span class="info-label">Safe Action (Tindakan Karantina)</span>
+                  <p class="info-desc"
+                    style="background:#f0fff4;padding:10px 14px;border-radius:6px;border-left:3px solid #27ae60;">
+                    <?php echo nl2br(htmlspecialchars($report['safe_action'])); ?>
+                  </p>
+                </div>
               <?php endif; ?>
             </div>
           </div>

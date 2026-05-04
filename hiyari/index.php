@@ -277,22 +277,32 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
             </div>
             <div>
               <div class="avatar-dropdown__name"><?php echo htmlspecialchars($_SESSION['name'] ?? 'User'); ?></div>
-              <div class="avatar-dropdown__id">ID: <?php echo htmlspecialchars($_SESSION['employee_id'] ?? '—'); ?></div>
-              <div class="avatar-dropdown__role"><?php $rn = [1=>'Super Admin',2=>'Admin',3=>'User']; echo $rn[$role] ?? 'User'; ?></div>
+              <div class="avatar-dropdown__id">ID:
+                <?php echo htmlspecialchars($_SESSION['employee_id'] ?? '—'); ?></div>
+                <div class="avatar-dropdown__role">
+                  <?php $rn = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
+                  echo $rn[$role] ?? 'User'; ?></div>
+              </div>
             </div>
+            <div class="avatar-dropdown__divider"></div>
+            <a href="../profile" class="avatar-dropdown__logout">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              My Profile
+            </a>
+            <div class="avatar-dropdown__divider"></div>
+            <a href="../auth/logout" class="avatar-dropdown__logout">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              Sign Out
+            </a>
           </div>
-          <div class="avatar-dropdown__divider"></div>
-          <a href="../profile" class="avatar-dropdown__logout">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            My Profile
-          </a>
-          <div class="avatar-dropdown__divider"></div>
-          <a href="../auth/logout" class="avatar-dropdown__logout">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Sign Out
-          </a>
         </div>
-      </div>
     </header>
 
     <div class="content">
@@ -461,7 +471,8 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
               <polyline points="10 9 9 9 8 9" />
             </svg>
             <p>No reports found</p>
-            <a href="<?php echo $filter_type === 'kyt' ? 'create_kiken' : 'create_hiyari'; ?>" class="btn-new" style="margin-top:12px">Create First Report</a>
+            <a href="<?php echo $filter_type === 'kyt' ? 'create_kiken' : 'create_hiyari'; ?>" class="btn-new"
+              style="margin-top:12px">Create First Report</a>
           </div>
         <?php else: ?>
           <div class="table-wrap">
