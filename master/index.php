@@ -428,6 +428,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                     <tr>
                       <th>Code</th>
                       <th>Name</th>
+                      <th>PIC Location</th>
                       <th>Description</th>
                       <th>Status</th>
                       <th></th>
@@ -438,6 +439,9 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                       <tr>
                         <td><span class="code-badge"><?php echo htmlspecialchars($l['code']); ?></span></td>
                         <td><strong><?php echo htmlspecialchars($l['name']); ?></strong></td>
+                        <td>
+                          <?php echo htmlspecialchars($l['pic_area_name']); ?>
+                        </td>
                         <td class="td-desc"><?php echo htmlspecialchars($l['description'] ?? '—'); ?></td>
                         <td><span
                             class="badge <?php echo $l['is_active'] ? 'badge--closed' : 'badge--open'; ?>"><?php echo $l['is_active'] ? 'Active' : 'Inactive'; ?></span>
