@@ -440,7 +440,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                         <td><span class="code-badge"><?php echo htmlspecialchars($l['code']); ?></span></td>
                         <td><strong><?php echo htmlspecialchars($l['name']); ?></strong></td>
                         <td>
-                          <?php echo htmlspecialchars($l['pic_area_name']); ?>
+                          <?php echo htmlspecialchars($l['pic_area_id']); ?>
                         </td>
                         <td class="td-desc"><?php echo htmlspecialchars($l['description'] ?? '—'); ?></td>
                         <td><span
