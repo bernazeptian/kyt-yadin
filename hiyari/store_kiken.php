@@ -4,33 +4,41 @@ require_once '../config/db.php';
 require_once '../config/mail.php';
 require_once '../config/notifications.php';
 
-if (!isset($_SESSION['user_id'])) { header('Location: ../auth/login'); exit; }
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') { header('Location: create_kiken'); exit; }
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../auth/login');
+    exit;
+}
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: create_kiken');
+    exit;
+}
 
 csrf_verify();
 
 $report_number = trim($_POST['report_number'] ?? '');
-$report_date   = trim($_POST['report_date']   ?? '');
-$department_id = (int)($_POST['department_id'] ?? 0);
-$location_id   = (int)($_POST['location_id']  ?? 0);
-$category      = trim($_POST['category']      ?? '');
-$description   = trim($_POST['description']   ?? '');
-$safe_action   = trim($_POST['safe_action']   ?? '');
-$likelihood    = trim($_POST['likelihood']    ?? '');
-$severity      = (int)($_POST['severity_val'] ?? $_POST['severity'] ?? 0);
-$risk_level    = trim($_POST['risk_level']    ?? '');
-$created_by    = $_SESSION['user_id'];
-$report_type   = 'kiken';
+$report_date = trim($_POST['report_date'] ?? '');
+$department_id = (int) ($_POST['department_id'] ?? 0);
+$location_id = (int) ($_POST['location_id'] ?? 0);
+$category = trim($_POST['category'] ?? '');
+$description = trim($_POST['description'] ?? '');
+$safe_action = trim($_POST['safe_action'] ?? '');
+$likelihood = trim($_POST['likelihood'] ?? '');
+$severity = (int) ($_POST['severity_val'] ?? $_POST['severity'] ?? 0);
+$risk_level = trim($_POST['risk_level'] ?? '');
+$created_by = $_SESSION['user_id'];
+$report_type = 'kiken';
 
-$allowed_categories  = ['unsafe_action', 'unsafe_condition'];
-$allowed_likelihoods = ['A','B','C','D','E'];
-$allowed_risks       = ['low','medium','high','extreme'];
+$allowed_categories = ['unsafe_action', 'unsafe_condition'];
+$allowed_likelihoods = ['A', 'B', 'C', 'D', 'E'];
+$allowed_risks = ['low', 'medium', 'high', 'extreme'];
 
 if (!$report_date || !$department_id || !$location_id || !$category || !$description || !$safe_action || !$likelihood || !$severity || !$risk_level) {
-    header('Location: create_kiken?error=1'); exit;
+    header('Location: create_kiken?error=1');
+    exit;
 }
 if (!in_array($category, $allowed_categories) || !in_array($likelihood, $allowed_likelihoods) || !in_array($risk_level, $allowed_risks) || $severity < 1 || $severity > 5) {
-    header('Location: create_kiken?error=1'); exit;
+    header('Location: create_kiken?error=1');
+    exit;
 }
 
 try {
@@ -45,18 +53,18 @@ try {
              'pending_review', :created_by, NOW(), NOW())
     ");
     $stmt->execute([
-        ':report_type'   => $report_type,
+        ':report_type' => $report_type,
         ':report_number' => $report_number,
-        ':report_date'   => $report_date,
+        ':report_date' => $report_date,
         ':department_id' => $department_id,
-        ':location_id'   => $location_id,
-        ':category'      => $category,
-        ':description'   => $description,
-        ':safe_action'   => $safe_action,
-        ':likelihood'    => $likelihood,
-        ':severity'      => $severity,
-        ':risk_level'    => $risk_level,
-        ':created_by'    => $created_by,
+        ':location_id' => $location_id,
+        ':category' => $category,
+        ':description' => $description,
+        ':safe_action' => $safe_action,
+        ':likelihood' => $likelihood,
+        ':severity' => $severity,
+        ':risk_level' => $risk_level,
+        ':created_by' => $created_by,
     ]);
 
     $report_id = $pdo->lastInsertId();
@@ -64,15 +72,20 @@ try {
     // ── Photo uploads ─────────────────────────────
     if (!empty($_FILES['photos']['name'][0])) {
         $upload_dir = dirname(__DIR__) . '/uploads/hiyari/';
-        if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
-        $allowed_ext = ['jpg','jpeg','png','gif','webp'];
+        if (!is_dir($upload_dir))
+            mkdir($upload_dir, 0755, true);
+        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
         $uploaded = 0;
         foreach ($_FILES['photos']['tmp_name'] as $key => $tmp) {
-            if ($uploaded >= 5) break;
-            if ($_FILES['photos']['error'][$key] !== 0) continue;
-            if ($_FILES['photos']['size'][$key] > 5 * 1024 * 1024) continue;
+            if ($uploaded >= 5)
+                break;
+            if ($_FILES['photos']['error'][$key] !== 0)
+                continue;
+            if ($_FILES['photos']['size'][$key] > 5 * 1024 * 1024)
+                continue;
             $ext = strtolower(pathinfo($_FILES['photos']['name'][$key], PATHINFO_EXTENSION));
-            if (!in_array($ext, $allowed_ext)) continue;
+            if (!in_array($ext, $allowed_ext))
+                continue;
             $filename = 'kiken_' . $report_id . '_' . uniqid() . '.' . $ext;
             if (move_uploaded_file($tmp, $upload_dir . $filename)) {
                 chmod($upload_dir . $filename, 0644);
@@ -96,10 +109,10 @@ try {
     $rStmt->execute([':id' => $report_id]);
     $report_data = $rStmt->fetch();
 
-    $view_url    = APP_URL . '/hiyari/view?id=' . $report_id;
-    $risk_colors = ['low'=>'#27ae60','medium'=>'#f39c12','high'=>'#e67e22','extreme'=>'#c0392b'];
-    $risk_color  = $risk_colors[$risk_level] ?? '#333';
-    $cat_map     = ['unsafe_action'=>'Unsafe Act','unsafe_condition'=>'Unsafe Condition'];
+    $view_url = APP_URL . '/hiyari/view?id=' . $report_id;
+    $risk_colors = ['low' => '#27ae60', 'medium' => '#f39c12', 'high' => '#e67e22', 'extreme' => '#c0392b'];
+    $risk_color = $risk_colors[$risk_level] ?? '#333';
+    $cat_map = ['unsafe_action' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
 
     $email_body = "
     <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
@@ -126,6 +139,7 @@ try {
     </div>";
 
     // ── Only notify SuperAdmin (Gunawan) on submit ───
+    $subject = '⚠️ [PENDING REVIEW] New Kiken Yochi Report ' . $report_data['report_number'];
     $superadmins = $pdo->query("SELECT id, name, email FROM users WHERE role = 1 AND is_active = 1 AND email IS NOT NULL")->fetchAll();
     foreach ($superadmins as $sa) {
         sendMail($sa['email'], $subject, $email_body);

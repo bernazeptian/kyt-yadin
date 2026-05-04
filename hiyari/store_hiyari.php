@@ -4,24 +4,30 @@ require_once '../config/db.php';
 require_once '../config/mail.php';
 require_once '../config/notifications.php';
 
-if (!isset($_SESSION['user_id'])) { header('Location: ../auth/login'); exit; }
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') { header('Location: create_hiyari'); exit; }
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../auth/login');
+    exit;
+}
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: create_hiyari');
+    exit;
+}
 
 csrf_verify();
 
 $report_number = trim($_POST['report_number'] ?? '');
-$report_date   = trim($_POST['report_date']   ?? '');
-$department_id = (int)($_POST['department_id'] ?? 0);
-$location_id   = (int)($_POST['location_id']  ?? 0);
-$description   = trim($_POST['description']   ?? '');
-$safe_action   = trim($_POST['safe_action']   ?? '');
-$created_by    = $_SESSION['user_id'];
+$report_date = trim($_POST['report_date'] ?? '');
+$department_id = (int) ($_POST['department_id'] ?? 0);
+$location_id = (int) ($_POST['location_id'] ?? 0);
+$description = trim($_POST['description'] ?? '');
+$safe_action = trim($_POST['safe_action'] ?? '');
+$created_by = $_SESSION['user_id'];
 
 // Hiyari Hatto is always near_miss, always extreme
-$category    = 'near_miss';
-$risk_level  = 'extreme';
-$likelihood  = 'A';
-$severity    = 5;
+$category = 'near_miss';
+$risk_level = 'extreme';
+$likelihood = 'A';
+$severity = 5;
 $report_type = 'hiyari';
 
 if (!$report_date || !$department_id || !$location_id || !$description || !$safe_action) {
@@ -41,18 +47,18 @@ try {
              'pending_review', :created_by, NOW(), NOW())
     ");
     $stmt->execute([
-        ':report_type'   => $report_type,
+        ':report_type' => $report_type,
         ':report_number' => $report_number,
-        ':report_date'   => $report_date,
+        ':report_date' => $report_date,
         ':department_id' => $department_id,
-        ':location_id'   => $location_id,
-        ':category'      => $category,
-        ':description'   => $description,
-        ':safe_action'   => $safe_action,
-        ':likelihood'    => $likelihood,
-        ':severity'      => $severity,
-        ':risk_level'    => $risk_level,
-        ':created_by'    => $created_by,
+        ':location_id' => $location_id,
+        ':category' => $category,
+        ':description' => $description,
+        ':safe_action' => $safe_action,
+        ':likelihood' => $likelihood,
+        ':severity' => $severity,
+        ':risk_level' => $risk_level,
+        ':created_by' => $created_by,
     ]);
 
     $report_id = $pdo->lastInsertId();
@@ -60,15 +66,20 @@ try {
     // ── Photo uploads ─────────────────────────────
     if (!empty($_FILES['photos']['name'][0])) {
         $upload_dir = dirname(__DIR__) . '/uploads/hiyari/';
-        if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
-        $allowed_ext = ['jpg','jpeg','png','gif','webp'];
+        if (!is_dir($upload_dir))
+            mkdir($upload_dir, 0755, true);
+        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
         $uploaded = 0;
         foreach ($_FILES['photos']['tmp_name'] as $key => $tmp) {
-            if ($uploaded >= 5) break;
-            if ($_FILES['photos']['error'][$key] !== 0) continue;
-            if ($_FILES['photos']['size'][$key] > 5 * 1024 * 1024) continue;
+            if ($uploaded >= 5)
+                break;
+            if ($_FILES['photos']['error'][$key] !== 0)
+                continue;
+            if ($_FILES['photos']['size'][$key] > 5 * 1024 * 1024)
+                continue;
             $ext = strtolower(pathinfo($_FILES['photos']['name'][$key], PATHINFO_EXTENSION));
-            if (!in_array($ext, $allowed_ext)) continue;
+            if (!in_array($ext, $allowed_ext))
+                continue;
             $filename = 'hiyari_' . $report_id . '_' . uniqid() . '.' . $ext;
             if (move_uploaded_file($tmp, $upload_dir . $filename)) {
                 chmod($upload_dir . $filename, 0644);
@@ -95,8 +106,9 @@ try {
     $view_url = APP_URL . '/hiyari/view?id=' . $report_id;
 
     // ── Email helper ──────────────────────────────
-    function buildReportEmail(array $r, string $view_url, string $extra_msg = ''): string {
-        $category_map = ['near_miss'=>'Near Miss (Hiyari Hatto)','unsafe_action'=>'Unsafe Act','unsafe_condition'=>'Unsafe Condition'];
+    function buildReportEmail(array $r, string $view_url, string $extra_msg = ''): string
+    {
+        $category_map = ['near_miss' => 'Near Miss (Hiyari Hatto)', 'unsafe_action' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
         return "
         <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
           <div style='background:#c0392b;padding:24px 32px'>
@@ -125,7 +137,7 @@ try {
     // ── Only notify SuperAdmin (Gunawan) on submit ───
     $superadmins = $pdo->query("SELECT id, name, email FROM users WHERE role = 1 AND is_active = 1 AND email IS NOT NULL")->fetchAll();
     foreach ($superadmins as $sa) {
-        $subject    = '🚨 [PENDING REVIEW] New Hiyari Hatto Report ' . $report_data['report_number'];
+        $subject = '🚨 [PENDING REVIEW] New Hiyari Hatto Report ' . $report_data['report_number'];
         $email_body = buildReportEmail($report_data, $view_url, 'A new Hiyari Hatto report has been submitted and is waiting for your review and approval.');
         sendMail($sa['email'], $subject, $email_body);
         createNotification($pdo, $sa['id'], 'New Hiyari Hatto — Pending Review', 'Report ' . $report_data['report_number'] . ' needs your review', 'warning', '/hiyari/view?id=' . $report_id);
