@@ -2,7 +2,7 @@
 // ── Brevo API Configuration ──
 $_env = parse_ini_file(__DIR__ . '/../.env') ?: [];
 define('BREVO_API_KEY', $_env['BREVO_API_KEY'] ?? '');
-define('MAIL_FROM_NAME', 'KYT Yadin System');
+define('MAIL_FROM_NAME',  'YADIN Safety Report Management System');
 define('MAIL_FROM_EMAIL', 'noreply@yanmar.co.id');
 define('APP_URL', 'http://kyt.yadin.com');
 

@@ -370,6 +370,24 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                 <input type="text" name="name" class="form-input" placeholder="e.g. Area A" required />
               </div>
               <div class="form-group">
+                <label class="form-label">Department <span class="required">*</span></label>
+                <select name="department_id" class="form-select" required>
+                  <option value="">-- Select Department --</option>
+                  <?php foreach ($departments as $d): ?>
+                    <option value="<?php echo $d['id']; ?>"><?php echo htmlspecialchars($d['name']); ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">PIC Area</label>
+                <select name="pic_area_id" class="form-select">
+                  <option value="">-- Select PIC Area --</option>
+                  <?php foreach ($all_users as $u): ?>
+                    <option value="<?php echo $u['id']; ?>"><?php echo htmlspecialchars($u['name']); ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </div>
+              <div class="form-group">
                 <label class="form-label">Description</label>
                 <textarea name="description" class="form-textarea" rows="3"
                   placeholder="Optional description..."></textarea>
@@ -702,6 +720,24 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
         <div class="form-group">
           <label class="form-label">Location Name <span class="required">*</span></label>
           <input type="text" name="name" id="editLocName" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Department</label>
+          <select name="department_id" id="editLocDept" class="form-select">
+            <option value="">-- Select Department --</option>
+            <?php foreach ($departments as $d): ?>
+              <option value="<?php echo $d['id']; ?>"><?php echo htmlspecialchars($d['name']); ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">PIC Area</label>
+          <select name="pic_area_id" id="editLocPicArea" class="form-select">
+            <option value="">-- Select PIC Area --</option>
+            <?php foreach ($all_users as $u): ?>
+              <option value="<?php echo $u['id']; ?>"><?php echo htmlspecialchars($u['name']); ?></option>
+            <?php endforeach; ?>
+          </select>
         </div>
         <div class="form-group">
           <label class="form-label">Description</label>

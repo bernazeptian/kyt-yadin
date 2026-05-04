@@ -64,6 +64,7 @@ function openEditLoc(data) {
   document.getElementById('editLocName').value = data.name;
   document.getElementById('editLocDesc').value = data.description ?? '';
   document.getElementById('editLocDept').value = data.department_id ?? '';
+  document.getElementById('editLocPicArea').value = data.pic_area_id ?? '';
   document.getElementById('editLocActive').checked = data.is_active == 1;
   openModal('editLocModal');
 }
