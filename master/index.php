@@ -24,7 +24,11 @@ $departments = $pdo->query("
 
 // ── LOCATIONS ────────────────────────────────────
 $locations = $pdo->query("
-    SELECT l.* FROM locations l ORDER BY l.name
+    SELECT l.*,
+           u.name AS pic_area_name
+    FROM locations l
+    LEFT JOIN users u ON l.pic_area_id = u.id
+    ORDER BY l.name
 ")->fetchAll();
 
 // ── Users for head dropdown ───────────────────────
@@ -440,7 +444,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                         <td><span class="code-badge"><?php echo htmlspecialchars($l['code']); ?></span></td>
                         <td><strong><?php echo htmlspecialchars($l['name']); ?></strong></td>
                         <td>
-                          <?php echo htmlspecialchars($l['pic_area_id']); ?>
+                          <?php echo htmlspecialchars($l['pic_area_name']); ?>
                         </td>
                         <td class="td-desc"><?php echo htmlspecialchars($l['description'] ?? '—'); ?></td>
                         <td><span
