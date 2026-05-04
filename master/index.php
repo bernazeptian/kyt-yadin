@@ -24,11 +24,7 @@ $departments = $pdo->query("
 
 // ── LOCATIONS ────────────────────────────────────
 $locations = $pdo->query("
-    SELECT l.*,
-           u.name AS pic_area_name
-    FROM locations l
-    LEFT JOIN users u ON l.pic_area_id = u.id
-    ORDER BY l.name
+    SELECT l.* FROM locations l ORDER BY l.name
 ")->fetchAll();
 
 // ── Users for head dropdown ───────────────────────
@@ -67,7 +63,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
           <rect x="14" y="14" width="7" height="7" rx="1" />
         </svg>
       </a>
-      <a href="../hiyari/index" class="nav-item" data-tooltip="Create Report">
+      <a href="../hiyari/index" class="nav-item" data-tooltip="Hiyari Hatto">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
           <line x1="12" y1="9" x2="12" y2="13" />
@@ -432,7 +428,6 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                     <tr>
                       <th>Code</th>
                       <th>Name</th>
-                      <th>PIC Location</th>
                       <th>Description</th>
                       <th>Status</th>
                       <th></th>
@@ -443,9 +438,6 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                       <tr>
                         <td><span class="code-badge"><?php echo htmlspecialchars($l['code']); ?></span></td>
                         <td><strong><?php echo htmlspecialchars($l['name']); ?></strong></td>
-                        <td>
-                          <?php echo htmlspecialchars($l['pic_area_name']); ?>
-                        </td>
                         <td class="td-desc"><?php echo htmlspecialchars($l['description'] ?? '—'); ?></td>
                         <td><span
                             class="badge <?php echo $l['is_active'] ? 'badge--closed' : 'badge--open'; ?>"><?php echo $l['is_active'] ? 'Active' : 'Inactive'; ?></span>
@@ -511,9 +503,15 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                   <input type="email" name="email" class="form-input" placeholder="e.g. john@yanmar.com" required />
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Password <span class="required">*</span></label>
-                  <input type="password" name="password" class="form-input" placeholder="Min. 8 characters" required
-                    minlength="8" />
+                  <div
+                    style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:10px 14px;font-size:13px;color:#856404;display:flex;align-items:center;gap:8px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    The user will receive a welcome email and set their own password on first login.
+                  </div>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Position</label>
