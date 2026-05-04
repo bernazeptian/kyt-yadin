@@ -30,21 +30,29 @@ $stmt = $pdo->prepare("SELECT * FROM users WHERE employee_id = :employee_id LIMI
 $stmt->execute([':employee_id' => $employee_id]);
 $user = $stmt->fetch();
 
-if (!$user || !password_verify($password, $user['password'])) {
+if (!$user['is_active']) {
+    header('Location: login?error=inactive');
+    exit;
+}
+
+// ── Detect first-time login (no password set) ──
+if (is_null($user['password'])) {
+    $_SESSION['set_password_user_id'] = (int)$user['id'];
+    header('Location: set_password');
+    exit;
+}
+
+// Normal password check
+if (!password_verify($password, $user['password'])) {
     $attempts = ($_SESSION[$attempts_key] ?? 0) + 1;
     if ($attempts >= 5) {
-        $_SESSION[$blocked_key] = time() + 900; // 15 minutes
+        $_SESSION[$blocked_key] = time() + 900;
         unset($_SESSION[$attempts_key]);
         header('Location: login?error=ratelimit');
     } else {
         $_SESSION[$attempts_key] = $attempts;
         header('Location: login?error=invalid');
     }
-    exit;
-}
-
-if (!$user['is_active']) {
-    header('Location: login?error=inactive');
     exit;
 }
 
