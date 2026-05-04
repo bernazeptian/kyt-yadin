@@ -2,65 +2,66 @@
 session_start();
 require_once '../config/db.php';
 if (!isset($_SESSION['user_id']) || (int) $_SESSION['role'] !== 1) {
-    header('Location: ../index');
-    exit;
+  header('Location: ../index');
+  exit;
 }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: index?tab=users');
-    exit;
+  header('Location: index?tab=users');
+  exit;
 }
 
 csrf_verify();
 
 $employee_id = trim($_POST['employee_id'] ?? '');
-$name        = trim($_POST['name']        ?? '');
-$email       = trim($_POST['email']       ?? '');
-$position    = trim($_POST['position']    ?? '');
-$role        = (int)($_POST['role']       ?? 3);
-$is_active   = isset($_POST['is_active'])  ? 1 : 0;
+$name = trim($_POST['name'] ?? '');
+$email = trim($_POST['email'] ?? '');
+$position = trim($_POST['position'] ?? '');
+$role = (int) ($_POST['role'] ?? 3);
+$is_active = isset($_POST['is_active']) ? 1 : 0;
 
 if (!$employee_id || !$name || !$email) {
-    header('Location: index?tab=users&error=failed');
-    exit;
+  header('Location: index?tab=users&error=failed');
+  exit;
 }
 
 // Check duplicate employee_id
 $check = $pdo->prepare("SELECT id FROM users WHERE employee_id = :emp_id");
 $check->execute([':emp_id' => $employee_id]);
 if ($check->fetch()) {
-    header('Location: index?tab=users&error=emp_exists');
-    exit;
+  header('Location: index?tab=users&error=emp_exists');
+  exit;
 }
 
 // Check duplicate email
 $check2 = $pdo->prepare("SELECT id FROM users WHERE email = :email");
 $check2->execute([':email' => $email]);
 if ($check2->fetch()) {
-    header('Location: index.?tab=users&error=email_exists');
-    exit;
+  header('Location: index?tab=users&error=email_exists');
+  exit;
 }
 
+require_once '../config/mail.php';
+
 try {
-    $stmt = $pdo->prepare("
+  $stmt = $pdo->prepare("
         INSERT INTO users (employee_id, name, email, password, position, role, is_active, created_at, updated_at)
         VALUES (:employee_id, :name, :email, NULL, :position, :role, :is_active, NOW(), NOW())
     ");
-    $stmt->execute([
-        ':employee_id' => $employee_id,
-        ':name'        => $name,
-        ':email'       => $email,
-        ':position'    => $position ?: null,
-        ':role'        => $role,
-        ':is_active'   => $is_active,
-    ]);
+  $stmt->execute([
+    ':employee_id' => $employee_id,
+    ':name' => $name,
+    ':email' => $email,
+    ':position' => $position ?: null,
+    ':role' => $role,
+    ':is_active' => $is_active,
+  ]);
 
-    // ── Send welcome email ────────────────────────
-    require_once '../config/mail.php';
-    $login_url  = APP_URL . '/auth/login';
-    $role_names = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
-    $role_label = $role_names[$role] ?? 'User';
+  // ── Send welcome email ────────────────────────
+  $login_url = APP_URL . '/auth/login';
+  $role_names = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
+  $role_label = $role_names[$role] ?? 'User';
 
-    $welcome_body = "
+  $welcome_body = "
     <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
       <div style='background:#2563eb;padding:24px 32px'>
         <h1 style='color:#fff;margin:0;font-size:18px'>👋 Welcome to YADIN Safety Report System</h1>
@@ -87,10 +88,10 @@ try {
       </div>
     </div>";
 
-    sendMail($email, 'Welcome to YADIN Safety Report System — Set Your Password', $welcome_body);
+  sendMail($email, 'Welcome to YADIN Safety Report System — Set Your Password', $welcome_body);
 
-    header('Location: index?tab=users&success=user_added');
+  header('Location: index?tab=users&success=user_added');
 } catch (PDOException $e) {
-    header('Location: index?tab=users&error=failed');
+  header('Location: index?tab=users&error=failed');
 }
 exit;
