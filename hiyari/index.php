@@ -170,7 +170,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
           <rect x="14" y="14" width="7" height="7" rx="1" />
         </svg>
       </a>
-      <a href="../hiyari/index" class="nav-item nav-item--active" data-tooltip="Hiyari Hatto">
+      <a href="../hiyari/index" class="nav-item nav-item--active" data-tooltip="Create Report">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
           <line x1="12" y1="9" x2="12" y2="13" />
@@ -278,31 +278,33 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
             <div>
               <div class="avatar-dropdown__name"><?php echo htmlspecialchars($_SESSION['name'] ?? 'User'); ?></div>
               <div class="avatar-dropdown__id">ID:
-                <?php echo htmlspecialchars($_SESSION['employee_id'] ?? '—'); ?></div>
-                <div class="avatar-dropdown__role">
-                  <?php $rn = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
-                  echo $rn[$role] ?? 'User'; ?></div>
+                <?php echo htmlspecialchars($_SESSION['employee_id'] ?? '—'); ?>
+              </div>
+              <div class="avatar-dropdown__role">
+                <?php $rn = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
+                echo $rn[$role] ?? 'User'; ?>
               </div>
             </div>
-            <div class="avatar-dropdown__divider"></div>
-            <a href="../profile" class="avatar-dropdown__logout">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-              My Profile
-            </a>
-            <div class="avatar-dropdown__divider"></div>
-            <a href="../auth/logout" class="avatar-dropdown__logout">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>
-              Sign Out
-            </a>
           </div>
+          <div class="avatar-dropdown__divider"></div>
+          <a href="../profile" class="avatar-dropdown__logout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            My Profile
+          </a>
+          <div class="avatar-dropdown__divider"></div>
+          <a href="../auth/logout" class="avatar-dropdown__logout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Sign Out
+          </a>
         </div>
+      </div>
     </header>
 
     <div class="content">

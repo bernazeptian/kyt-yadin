@@ -160,7 +160,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
           <rect x="14" y="14" width="7" height="7" rx="1" />
         </svg>
       </a>
-      <a href="index" class="nav-item nav-item--active" data-tooltip="Hiyari Hatto">
+      <a href="index" class="nav-item nav-item--active" data-tooltip="Create Report">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
           <line x1="12" y1="9" x2="12" y2="13" />
@@ -307,20 +307,20 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                 <p style="font-size:13px;color:#666;margin:0 0 16px;">Review and edit the report if needed, set the due
                   date, then release it to notify all relevant parties.</p>
                 <form method="POST" action="approve">
-                    <?php echo csrf_field(); ?>
+                  <?php echo csrf_field(); ?>
                   <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
                   <div class="form-group" style="margin-bottom:14px;">
                     <label class="form-label" style="font-size:13px;font-weight:600;">Edit Description (optional)</label>
                     <textarea name="description" class="form-textarea" rows="3" style="font-size:13px;"
                       placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['description']); ?></textarea>
                   </div>
-                    <?php if (!empty($report['safe_action'])): ?>
+                  <?php if (!empty($report['safe_action'])): ?>
                     <div class="form-group" style="margin-bottom:14px;">
                       <label class="form-label" style="font-size:13px;font-weight:600;">Edit Safe Action (optional)</label>
                       <textarea name="safe_action" class="form-textarea" rows="3" style="font-size:13px;"
                         placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['safe_action']); ?></textarea>
                     </div>
-                    <?php endif; ?>
+                  <?php endif; ?>
                   <div class="form-group" style="margin-bottom:16px;">
                     <label class="form-label" style="font-size:13px;font-weight:600;">Due Date <span
                         style="color:#e74c3c;">*</span></label>
@@ -428,7 +428,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                   <span class="info-label">Safe Action (Tindakan Karantina)</span>
                   <p class="info-desc"
                     style="background:#f0fff4;padding:10px 14px;border-radius:6px;border-left:3px solid #27ae60;">
-                      <?php echo nl2br(htmlspecialchars($report['safe_action'])); ?>
+                    <?php echo nl2br(htmlspecialchars($report['safe_action'])); ?>
                   </p>
                 </div>
               <?php endif; ?>
