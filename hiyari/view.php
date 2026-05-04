@@ -21,11 +21,7 @@ if (!$id) {
 $stmt = $pdo->prepare("
     SELECT r.*,
            d.name AS dept_name,
-           d.employee_id AS dept_emp_pic
-           u.name AS dept_emp_name
            l.name AS loc_name,
-           l.employee_id AS loc_emp_pic
-           l.name AS loc_emp_name
            u.name AS reporter_name,
            u.employee_id AS reporter_emp_id
     FROM hiyari_reports r
@@ -377,16 +373,10 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                 <div class="info-item">
                   <span class="info-label">Department</span>
                   <span class="info-value"><?php echo htmlspecialchars($report['dept_name'] ?? '—'); ?></span>
-                  <span style="color:var(--text-secondary);font-size:12px">(<?php echo
-                    htmlspecialchars($report['dept_emp_pic'] ?? ''); ?>)
-                  </span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">Location</span>
                   <span class="info-value"><?php echo htmlspecialchars($report['loc_name'] ?? '—'); ?></span>
-                  <span
-                    style="color:var(--text-secondary);font-size:12px">(<?php echo htmlspecialchars($report['loc_emp_pic'] ?? ''); ?>)
-                  </span>
                 </div>
                 <div class="info-item">
                   <span class="info-label">Category</span>
