@@ -110,7 +110,7 @@ $trend_dir = $hiyari_trend['dir'];
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard — KYT Yadin</title>
+  <title>Dashboard — Safety Form PT. Yanmar Diesel Indonesia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
@@ -185,7 +185,7 @@ $trend_dir = $hiyari_trend['dir'];
         <?php if (isset($_SESSION['name'])): ?>
           <p class="topbar__sub">Welcome back, <strong><?php echo htmlspecialchars($_SESSION['name']); ?></strong></p>
         <?php else: ?>
-          <p class="topbar__sub">Welcome to KYT Yadin</p>
+          <p class="topbar__sub">Welcome to Safety Form PT. Yanmar Diesel Indonesia</p>
         <?php endif; ?>
       </div>
       <div class="topbar__right">
@@ -261,10 +261,15 @@ $trend_dir = $hiyari_trend['dir'];
     <div class="content">
 
       <?php if (($_GET['welcome'] ?? '') === '1'): ?>
-      <div style="background:#d4edda;border:1px solid #c3e6cb;border-radius:10px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;color:#155724;font-size:14px;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        <span>🎉 Welcome, <strong><?php echo htmlspecialchars($_SESSION['name'] ?? ''); ?></strong>! Your account is set up and ready to use.</span>
-      </div>
+        <div
+          style="background:#d4edda;border:1px solid #c3e6cb;border-radius:10px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;color:#155724;font-size:14px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          <span>🎉 Welcome, <strong><?php echo htmlspecialchars($_SESSION['name'] ?? ''); ?></strong>! Your account is set
+            up and ready to use.</span>
+        </div>
       <?php endif; ?>
       <div class="tabs">
         <button class="tab tab--active" data-tab="hiyari">
@@ -280,7 +285,7 @@ $trend_dir = $hiyari_trend['dir'];
             <path d="M9 11l3 3L22 4" />
             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
           </svg>
-          KYT
+          Kiken Yochi
         </button>
       </div>
 
@@ -498,7 +503,7 @@ $trend_dir = $hiyari_trend['dir'];
           </div>
           <div class="chart-box" style="--delay:0.30s">
             <div class="chart-box__header">
-              <h2 class="chart-box__title">KYT by Department</h2>
+              <h2 class="chart-box__title">Kiken Yochi by Department</h2>
               <span class="chart-box__badge">All Time</span>
             </div>
             <div class="chart-box__body">
@@ -509,7 +514,7 @@ $trend_dir = $hiyari_trend['dir'];
 
         <section class="table-box" style="--delay:0.35s">
           <div class="table-box__header">
-            <h2 class="table-box__title">Recent KYT Activities</h2>
+            <h2 class="table-box__title">Recent Kiken Yochi Activities</h2>
             <a href="hiyari/index?type=kyt" class="table-box__link">View all →</a>
           </div>
           <div class="table-wrap">
@@ -528,7 +533,8 @@ $trend_dir = $hiyari_trend['dir'];
               <tbody>
                 <?php if (empty($kyt_reports)): ?>
                   <tr>
-                    <td colspan="7" style="text-align:center;color:var(--text-hint);padding:24px">No KYT activities yet
+                    <td colspan="7" style="text-align:center;color:var(--text-hint);padding:24px">No Kiken Yochi
+                      activities yet
                     </td>
                   </tr>
                 <?php else: ?>

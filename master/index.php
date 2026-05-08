@@ -39,7 +39,7 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Master Data — KYT Yadin</title>
+  <title>Master Data — Safety Form PT. Yanmar Diesel Indonesa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
