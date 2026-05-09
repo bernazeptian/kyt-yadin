@@ -278,14 +278,14 @@ $trend_dir = $hiyari_trend['dir'];
             <line x1="12" y1="9" x2="12" y2="13" />
             <line x1="12" y1="17" x2="12.01" y2="17" />
           </svg>
-          Hiyari Hatto
+          Hiyari Hatto (Near Miss)
         </button>
         <button class="tab" data-tab="kyt">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
             <path d="M9 11l3 3L22 4" />
             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
           </svg>
-          Kiken Yochi
+          Kiken Yochi (Hazard Prediction)
         </button>
       </div>
 

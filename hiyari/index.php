@@ -143,7 +143,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><?php echo $filter_type === 'kyt' ? 'KYT Reports' : 'Hiyari Hatto Reports'; ?></title>
+  <title><?php echo $filter_type === 'kyt' ? 'Kiken Yochi Reports' : 'Hiyari Hatto Reports'; ?></title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet" />
@@ -328,7 +328,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
             <line x1="12" y1="9" x2="12" y2="13" />
             <line x1="12" y1="17" x2="12.01" y2="17" />
           </svg>
-          Hiyari Hatto
+          Hiyari Hatto (Near Miss)
         </a>
         <a href="?type=kyt" class="tab <?php echo $filter_type === 'kyt' ? 'tab--active' : ''; ?>"
           style="text-decoration:none;<?php echo $filter_type === 'kyt' ? 'border-bottom-color:#f39c12;color:#f39c12;' : ''; ?>">
@@ -336,7 +336,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
             <path d="M9 11l3 3L22 4" />
             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
           </svg>
-          Kiken Yochi
+          Kiken Yochi (Hazard Prediction)
         </a>
       </div>
 
