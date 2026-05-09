@@ -219,7 +219,9 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
     <header class="topbar">
       <div class="topbar__left">
         <div>
-          <h1 class="topbar__title"><?php echo $filter_type === 'kyt' ? 'KYT Reports' : 'Hiyari Hatto Reports'; ?></h1>
+          <h1 class="topbar__title">
+            <?php echo $filter_type === 'kyt' ? 'Kiken Yochi (Hazard Prediction) Reports' : 'Hiyari Hatto (Near Miss) Reports'; ?>
+          </h1>
           <p class="topbar__sub">
             <?php echo $filter_type === 'kyt' ? 'Unsafe act & unsafe condition tracking' : 'Near miss tracking'; ?>
           </p>
