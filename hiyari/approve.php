@@ -6,27 +6,22 @@ require_once '../config/notifications.php';
 
 if (!isset($_SESSION['user_id'])) { header('Location: ../auth/login'); exit; }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { header('Location: index'); exit; }
-
 csrf_verify();
 
-// Only SuperAdmin (Gunawan) can approve
-if ((int)$_SESSION['role'] !== 1) {
-    header('Location: index');
-    exit;
-}
+if ((int)$_SESSION['role'] !== 1) { header('Location: index'); exit; }
 
-$report_id   = (int)($_POST['report_id'] ?? 0);
-$due_date    = !empty($_POST['due_date']) ? $_POST['due_date'] : null;
-$description = trim($_POST['description'] ?? '');
-$safe_action = trim($_POST['safe_action'] ?? '');
-$reviewer_id = (int)$_SESSION['user_id'];
-
-$action = trim($_POST['action'] ?? 'approve'); // approve or reject
+$report_id     = (int)($_POST['report_id']    ?? 0);
+$due_date      = !empty($_POST['due_date'])    ? $_POST['due_date']    : null;
+$description   = trim($_POST['description']   ?? '');
+$safe_action   = trim($_POST['safe_action']   ?? '');
+$action        = trim($_POST['action']        ?? 'approve');
 $reject_reason = trim($_POST['reject_reason'] ?? '');
+$new_category  = trim($_POST['category']      ?? '');
+$new_type      = trim($_POST['report_type']   ?? '');
+$reviewer_id   = (int)$_SESSION['user_id'];
 
 if (!$report_id) { header('Location: index'); exit; }
 
-// Fetch report
 $stmt = $pdo->prepare("
     SELECT r.*, d.name AS dept_name, l.name AS loc_name,
            u.name AS reporter_name, u.email AS reporter_email,
@@ -45,7 +40,7 @@ if (!$report || $report['status'] !== 'pending_review') {
     exit;
 }
 
-// ── Handle REJECT ─────────────────────────────
+// ── REJECT ────────────────────────────────────
 if ($action === 'reject') {
     try {
         $pdo->prepare("
@@ -54,33 +49,28 @@ if ($action === 'reject') {
             WHERE id = :id
         ")->execute([':reviewed_by' => $reviewer_id, ':id' => $report_id]);
 
-        // Notify reporter via bell
-        createNotification($pdo, $report['created_by'], 'Report Rejected: ' . $report['report_number'],
+        createNotification($pdo, $report['created_by'],
+            'Report Rejected: ' . $report['report_number'],
             'Your report has been rejected' . ($reject_reason ? ': ' . substr($reject_reason, 0, 80) : ''),
             'warning', '/hiyari/view?id=' . $report_id);
 
-        // Email reporter
         if (!empty($report['reporter_email'])) {
-            $reject_body = "
+            $body = "
             <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
               <div style='background:#e74c3c;padding:24px 32px'>
                 <h1 style='color:#fff;margin:0;font-size:18px'>❌ Report Rejected</h1>
                 <p style='color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:13px'>YADIN Safety Report Management System</p>
               </div>
               <div style='padding:28px 32px'>
-                <p style='color:#333;font-size:14px;'>Dear <strong>" . htmlspecialchars($report['reporter_name']) . "</strong>,</p>
-                <p style='color:#333;font-size:14px;'>Your report <strong>" . htmlspecialchars($report['report_number']) . "</strong> has been reviewed and rejected.</p>
-                " . ($reject_reason ? "<div style='background:#fdf2f2;padding:12px 16px;border-radius:8px;border-left:4px solid #e74c3c;margin:16px 0;font-size:14px;color:#555;'>
-                  <strong>Reason:</strong> " . htmlspecialchars($reject_reason) . "</div>" : "") . "
-                <a href='" . APP_URL . "/hiyari/view?id={$report_id}' style='display:inline-block;background:#e74c3c;color:#fff;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;'>View Report →</a>
+                <p style='color:#333;'>Dear <strong>" . htmlspecialchars($report['reporter_name']) . "</strong>,</p>
+                <p style='color:#333;'>Your report <strong>" . htmlspecialchars($report['report_number']) . "</strong> has been rejected.</p>
+                " . ($reject_reason ? "<div style='background:#fdf2f2;padding:12px 16px;border-radius:8px;border-left:4px solid #e74c3c;margin:16px 0;'><strong>Reason:</strong> " . htmlspecialchars($reject_reason) . "</div>" : "") . "
+                <a href='" . APP_URL . "/hiyari/view?id={$report_id}' style='display:inline-block;background:#e74c3c;color:#fff;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:bold;'>View Report →</a>
               </div>
-              <div style='background:#f7f7f7;padding:16px 32px;font-size:12px;color:#999;border-top:1px solid #e0e0e0'>
-                This is an automated notification from YADIN Safety Report Management System.
-              </div>
+              <div style='background:#f7f7f7;padding:16px 32px;font-size:12px;color:#999;border-top:1px solid #e0e0e0'>YADIN Safety Report Management System</div>
             </div>";
-            sendMail($report['reporter_email'], 'Report ' . $report['report_number'] . ' Rejected', $reject_body);
+            sendMail($report['reporter_email'], 'Report ' . $report['report_number'] . ' Rejected', $body);
         }
-
         header('Location: view?id=' . $report_id . '&success=rejected');
     } catch (PDOException $e) {
         error_log('reject error: ' . $e->getMessage());
@@ -89,32 +79,39 @@ if ($action === 'reject') {
     exit;
 }
 
+// ── APPROVE ───────────────────────────────────
 try {
-    // Update report: set active, due_date, reviewed_by, and any edits
-    $updateFields = [
-        'status'      => 'active',
-        'due_date'    => $due_date,
-        'reviewed_by' => $reviewer_id,
-        'reviewed_at' => date('Y-m-d H:i:s'),
-        'updated_at'  => date('Y-m-d H:i:s'),
-    ];
-    if ($description) $updateFields['description'] = $description;
-    if ($safe_action) $updateFields['safe_action']  = $safe_action;
+    // Determine final category and type
+    $allowed_categories = ['near_miss','unsafe_action','unsafe_condition'];
+    $final_category     = in_array($new_category, $allowed_categories) ? $new_category : $report['category'];
+
+    // Auto-set report_type based on category
+    $final_type = ($final_category === 'near_miss') ? 'hiyari' : 'kiken';
+
+    // Auto-set risk_level for hiyari
+    $final_risk = ($final_type === 'hiyari') ? 'extreme' : $report['risk_level'];
 
     $pdo->prepare("
         UPDATE hiyari_reports
-        SET status = 'open', due_date = :due_date,
-            reviewed_by = :reviewed_by, reviewed_at = :reviewed_at,
-            description = COALESCE(NULLIF(:description,''), description),
-            safe_action = COALESCE(NULLIF(:safe_action,''), safe_action),
-            updated_at = NOW()
+        SET status       = 'open',
+            due_date     = :due_date,
+            reviewed_by  = :reviewed_by,
+            reviewed_at  = NOW(),
+            description  = COALESCE(NULLIF(:description,''), description),
+            safe_action  = COALESCE(NULLIF(:safe_action,''), safe_action),
+            category     = :category,
+            report_type  = :report_type,
+            risk_level   = :risk_level,
+            updated_at   = NOW()
         WHERE id = :id
     ")->execute([
         ':due_date'    => $due_date,
         ':reviewed_by' => $reviewer_id,
-        ':reviewed_at' => date('Y-m-d H:i:s'),
         ':description' => $description,
         ':safe_action' => $safe_action,
+        ':category'    => $final_category,
+        ':report_type' => $final_type,
+        ':risk_level'  => $final_risk,
         ':id'          => $report_id,
     ]);
 
@@ -122,14 +119,13 @@ try {
     $stmt->execute([':id' => $report_id]);
     $report = $stmt->fetch();
 
-    $view_url    = APP_URL . '/hiyari/view?id=' . $report_id;
-    $type_label  = $report['report_type'] === 'hiyari' ? 'Hiyari Hatto' : 'Kiken Yochi';
-    $type_color  = $report['report_type'] === 'hiyari' ? '#c0392b' : '#f39c12';
-    $risk_colors = ['low'=>'#27ae60','medium'=>'#f39c12','high'=>'#e67e22','extreme'=>'#c0392b'];
-    $risk_color  = $risk_colors[$report['risk_level']] ?? '#333';
-    $cat_map     = ['near_miss'=>'Near Miss (Hiyari Hatto)','unsafe_action'=>'Unsafe Act','unsafe_condition'=>'Unsafe Condition'];
+    $view_url   = APP_URL . '/hiyari/view?id=' . $report_id;
+    $type_label = $final_type === 'hiyari' ? 'Hiyari Hatto' : 'Kiken Yochi';
+    $type_color = $final_type === 'hiyari' ? '#c0392b' : '#f39c12';
+    $cat_map    = ['near_miss'=>'Near Miss','unsafe_action'=>'Unsafe Act','unsafe_condition'=>'Unsafe Condition'];
+    $risk_colors= ['low'=>'#27ae60','medium'=>'#f39c12','high'=>'#e67e22','extreme'=>'#c0392b'];
+    $risk_color = $risk_colors[$final_risk] ?? '#333';
 
-    // Build email body
     $email_body = "
     <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
       <div style='background:{$type_color};padding:24px 32px'>
@@ -137,39 +133,34 @@ try {
         <p style='color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:13px'>YADIN Safety Report Management System</p>
       </div>
       <div style='padding:28px 32px'>
-        <p style='color:#333;font-size:14px;margin-top:0'>A safety report has been reviewed and released by management. Please take the necessary corrective actions.</p>
+        <p style='color:#333;font-size:14px;'>A safety report has been reviewed and released. Please take necessary corrective actions.</p>
         <table style='width:100%;border-collapse:collapse;font-size:14px;color:#444;margin-bottom:24px'>
           <tr style='background:#f8f9fa'><td style='padding:10px 14px;font-weight:bold;width:38%'>Report No.</td><td style='padding:10px 14px'>" . htmlspecialchars($report['report_number']) . "</td></tr>
           <tr><td style='padding:10px 14px;font-weight:bold'>Type</td><td style='padding:10px 14px'>{$type_label}</td></tr>
-          <tr style='background:#f8f9fa'><td style='padding:10px 14px;font-weight:bold'>Date</td><td style='padding:10px 14px'>" . date('d F Y', strtotime($report['report_date'])) . "</td></tr>
-          <tr><td style='padding:10px 14px;font-weight:bold'>Department</td><td style='padding:10px 14px'>" . htmlspecialchars($report['dept_name'] ?? '—') . "</td></tr>
-          <tr style='background:#f8f9fa'><td style='padding:10px 14px;font-weight:bold'>Location</td><td style='padding:10px 14px'>" . htmlspecialchars($report['loc_name'] ?? '—') . "</td></tr>
-          <tr><td style='padding:10px 14px;font-weight:bold'>Category</td><td style='padding:10px 14px'>" . htmlspecialchars($cat_map[$report['category']] ?? $report['category']) . "</td></tr>
-          <tr style='background:#f8f9fa'><td style='padding:10px 14px;font-weight:bold'>Risk Level</td><td style='padding:10px 14px'><strong style='color:{$risk_color}'>" . strtoupper($report['risk_level']) . "</strong></td></tr>
+          <tr style='background:#f8f9fa'><td style='padding:10px 14px;font-weight:bold'>Category</td><td style='padding:10px 14px'>" . ($cat_map[$final_category] ?? $final_category) . "</td></tr>
+          <tr><td style='padding:10px 14px;font-weight:bold'>Risk Level</td><td style='padding:10px 14px'><strong style='color:{$risk_color}'>" . strtoupper($final_risk) . "</strong></td></tr>
+          <tr style='background:#f8f9fa'><td style='padding:10px 14px;font-weight:bold'>Department</td><td style='padding:10px 14px'>" . htmlspecialchars($report['dept_name'] ?? '—') . "</td></tr>
           " . ($due_date ? "<tr><td style='padding:10px 14px;font-weight:bold'>Due Date</td><td style='padding:10px 14px'><strong>" . date('d F Y', strtotime($due_date)) . "</strong></td></tr>" : "") . "
-          <tr style='background:#f8f9fa'><td style='padding:10px 14px;font-weight:bold;vertical-align:top'>Description</td><td style='padding:10px 14px'>" . htmlspecialchars(substr($report['description'], 0, 300)) . "</td></tr>
         </table>
         <a href='{$view_url}' style='display:inline-block;background:{$type_color};color:#fff;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;'>View Full Report →</a>
       </div>
-      <div style='background:#f7f7f7;padding:16px 32px;font-size:12px;color:#999;border-top:1px solid #e0e0e0'>
-        This is an automated notification from YADIN Safety Report Management System.
-      </div>
+      <div style='background:#f7f7f7;padding:16px 32px;font-size:12px;color:#999;border-top:1px solid #e0e0e0'>YADIN Safety Report Management System</div>
     </div>";
 
-    $subject      = '📋 [' . strtoupper($report['report_type'] === 'hiyari' ? 'HIYARI HATTO' : 'KIKEN YOCHI') . '] Report ' . $report['report_number'] . ' Released — Action Required';
+    $subject      = '📋 [' . strtoupper($final_type === 'hiyari' ? 'HIYARI HATTO' : 'KIKEN YOCHI') . '] Report ' . $report['report_number'] . ' Released';
     $notified_ids = [];
 
-    // 1. Notify all Admins
+    // 1. Admins
     $admins = $pdo->query("SELECT id, name, email FROM users WHERE role = 2 AND is_active = 1 AND email IS NOT NULL")->fetchAll();
     foreach ($admins as $a) {
         sendMail($a['email'], $subject, $email_body);
-        createNotification($pdo, $a['id'], 'Report Released: ' . $report['report_number'], 'Report has been approved and is now active', 'success', '/hiyari/view?id=' . $report_id);
+        createNotification($pdo, $a['id'], 'Report Released: ' . $report['report_number'], 'Report is now active', 'success', '/hiyari/view?id=' . $report_id);
         $notified_ids[] = $a['id'];
     }
 
-    // 2. Notify PIC Dept
+    // 2. PIC Dept
     if (!empty($report['dept_head_id']) && !in_array($report['dept_head_id'], $notified_ids)) {
-        $dh = $pdo->prepare("SELECT id, name, email FROM users WHERE id = :id AND is_active = 1");
+        $dh = $pdo->prepare("SELECT id, email FROM users WHERE id = :id AND is_active = 1");
         $dh->execute([':id' => $report['dept_head_id']]);
         $dh = $dh->fetch();
         if ($dh && $dh['email']) {
@@ -179,9 +170,9 @@ try {
         }
     }
 
-    // 3. Notify PIC Area
+    // 3. PIC Area
     if (!empty($report['pic_area_id']) && !in_array($report['pic_area_id'], $notified_ids)) {
-        $pa = $pdo->prepare("SELECT id, name, email FROM users WHERE id = :id AND is_active = 1");
+        $pa = $pdo->prepare("SELECT id, email FROM users WHERE id = :id AND is_active = 1");
         $pa->execute([':id' => $report['pic_area_id']]);
         $pa = $pa->fetch();
         if ($pa && $pa['email']) {
@@ -191,31 +182,16 @@ try {
         }
     }
 
-    // 4. Notify leadership based on type/risk
-    $notify_leadership = $report['report_type'] === 'hiyari' || $report['risk_level'] === 'extreme';
-    if ($notify_leadership) {
-        $targets = ['President Director', 'Director', 'General Manager'];
-        $ph      = implode(',', array_fill(0, count($targets), '?'));
-        $leaders = $pdo->prepare("SELECT id, name, email FROM users WHERE position IN ($ph) AND is_active = 1 AND email IS NOT NULL");
-        $leaders->execute($targets);
+    // 4. Leadership for hiyari or extreme
+    if ($final_type === 'hiyari' || $final_risk === 'extreme') {
+        $positions = ['President Director','Director','General Manager','Deputy Manager','Manager'];
+        $ph        = implode(',', array_fill(0, count($positions), '?'));
+        $leaders   = $pdo->prepare("SELECT id, email FROM users WHERE position IN ($ph) AND is_active = 1 AND email IS NOT NULL");
+        $leaders->execute($positions);
         foreach ($leaders->fetchAll() as $l) {
             if (!in_array($l['id'], $notified_ids)) {
                 sendMail($l['email'], $subject, $email_body);
                 $notified_ids[] = $l['id'];
-            }
-        }
-    }
-
-    // 5. Notify Deputy Manager, Manager if Hiyari Hatto
-    if ($report['report_type'] === 'hiyari') {
-        $mgrs = ['Deputy Manager', 'Manager'];
-        $ph   = implode(',', array_fill(0, count($mgrs), '?'));
-        $mgr_users = $pdo->prepare("SELECT id, name, email FROM users WHERE position IN ($ph) AND is_active = 1 AND email IS NOT NULL");
-        $mgr_users->execute($mgrs);
-        foreach ($mgr_users->fetchAll() as $m) {
-            if (!in_array($m['id'], $notified_ids)) {
-                sendMail($m['email'], $subject, $email_body);
-                $notified_ids[] = $m['id'];
             }
         }
     }

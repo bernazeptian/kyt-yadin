@@ -154,7 +154,14 @@ document.addEventListener("DOMContentLoaded", () => {
      FORM VALIDATION before submit
   ───────────────────────────────────────── */
   document.getElementById("reportForm").addEventListener("submit", (e) => {
-    if (!riskLevelInput.value) {
+    // Attach uploadedFiles to the file input via DataTransfer
+    if (uploadedFiles.length > 0) {
+      const dt = new DataTransfer();
+      uploadedFiles.forEach(f => dt.items.add(f));
+      photoInput.files = dt.files;
+    }
+
+    if (document.getElementById('riskLevelInput') && !document.getElementById('riskLevelInput').value) {
       e.preventDefault();
       riskResult.scrollIntoView({ behavior: "smooth", block: "center" });
       riskResult.style.outline = "2px solid var(--red)";

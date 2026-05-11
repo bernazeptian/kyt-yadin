@@ -307,6 +307,15 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                 <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
                 <input type="hidden" name="action" id="reviewAction" value="approve" />
                 <div class="form-group" style="margin-bottom:14px;">
+                  <label class="form-label" style="font-size:13px;font-weight:600;">Change Category (optional)</label>
+                  <select name="category" class="form-select" style="font-size:13px;">
+                    <option value="">— Keep current (<?php echo $cat_labels[$report['category']] ?? $report['category']; ?>) —</option>
+                    <option value="near_miss" <?php echo $report['category']==='near_miss'?'selected':''; ?>>Near Miss → Hiyari Hatto (auto Extreme)</option>
+                    <option value="unsafe_action" <?php echo $report['category']==='unsafe_action'?'selected':''; ?>>Unsafe Act → Kiken Yochi</option>
+                    <option value="unsafe_condition" <?php echo $report['category']==='unsafe_condition'?'selected':''; ?>>Unsafe Condition → Kiken Yochi</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom:14px;">
                   <label class="form-label" style="font-size:13px;font-weight:600;">Edit Description (optional)</label>
                   <textarea name="description" class="form-textarea" rows="3" style="font-size:13px;"
                     placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['description']); ?></textarea>
@@ -449,16 +458,30 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
               </div>
 
               <div class="info-item info-item--full">
-                <span class="info-label">Description</span>
-                <p class="info-desc"><?php echo nl2br(htmlspecialchars($report['description'])); ?></p>
+                <span class="info-label" style="display:flex;align-items:center;justify-content:space-between;">
+                  Description
+                  <span style="display:flex;gap:6px;">
+                    <button type="button" onclick="translateText('descText','en')" class="translate-btn" title="Translate to English">🇬🇧 EN</button>
+                    <button type="button" onclick="translateText('descText','ja')" class="translate-btn" title="Translate to Japanese">🇯🇵 JP</button>
+                    <button type="button" onclick="resetText('descText','<?php echo addslashes(htmlspecialchars($report['description'])); ?>')" class="translate-btn translate-btn--reset" title="Reset">↺</button>
+                  </span>
+                </span>
+                <p class="info-desc" id="descText"><?php echo nl2br(htmlspecialchars($report['description'])); ?></p>
               </div>
               <?php if (!empty($report['safe_action'])): ?>
               <div class="info-item info-item--full">
-                <span class="info-label">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="vertical-align:middle;margin-right:4px;color:#27ae60"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                  Safe Action (Tindakan Karantina)
+                <span class="info-label" style="display:flex;align-items:center;justify-content:space-between;">
+                  <span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="vertical-align:middle;margin-right:4px;color:#27ae60"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    Safe Action (Tindakan Karantina)
+                  </span>
+                  <span style="display:flex;gap:6px;">
+                    <button type="button" onclick="translateText('safeText','en')" class="translate-btn" title="Translate to English">🇬🇧 EN</button>
+                    <button type="button" onclick="translateText('safeText','ja')" class="translate-btn" title="Translate to Japanese">🇯🇵 JP</button>
+                    <button type="button" onclick="resetText('safeText','<?php echo addslashes(htmlspecialchars($report['safe_action'])); ?>')" class="translate-btn translate-btn--reset" title="Reset">↺</button>
+                  </span>
                 </span>
-                <div style="background:#f0fff4;padding:12px 16px;border-radius:8px;border-left:4px solid #27ae60;font-size:14px;color:#333;line-height:1.6;margin-top:6px;">
+                <div style="background:#f0fff4;padding:12px 16px;border-radius:8px;border-left:4px solid #27ae60;font-size:14px;color:#333;line-height:1.6;margin-top:6px;" id="safeText">
                   <?php echo nl2br(htmlspecialchars($report['safe_action'])); ?>
                 </div>
               </div>
@@ -788,6 +811,61 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
     // Scroll to bottom of comments
     const commentsList = document.getElementById('commentsList');
     if (commentsList) commentsList.scrollTop = commentsList.scrollHeight;
+  </script>
+  <style>
+    .translate-btn {
+      font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;
+      border:1px solid #ddd;background:#fff;cursor:pointer;color:#555;
+      display:inline-flex;align-items:center;gap:3px;
+    }
+    .translate-btn:hover { background:#f0f4ff;border-color:#2563eb;color:#2563eb; }
+    .translate-btn--reset { color:#888;border-color:#e0e0e0; }
+    .translate-btn--reset:hover { background:#fff3cd;border-color:#f39c12;color:#f39c12; }
+    .translate-btn.loading { opacity:0.6;pointer-events:none; }
+  </style>
+  <script>
+  const originalTexts = {};
+
+  async function translateText(elementId, targetLang) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+
+    // Store original
+    if (!originalTexts[elementId]) {
+      originalTexts[elementId] = el.innerHTML;
+    }
+
+    const text = el.innerText;
+    if (!text.trim()) return;
+
+    // Find and disable button
+    const btns = el.closest('.info-item')?.querySelectorAll('.translate-btn');
+    btns?.forEach(b => b.classList.add('loading'));
+
+    try {
+      // Use MyMemory free translation API
+      const langMap = { 'en': 'en-GB', 'ja': 'ja-JP' };
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=id|${langMap[targetLang] || targetLang}`;
+      const res  = await fetch(url);
+      const data = await res.json();
+
+      if (data.responseStatus === 200 && data.responseData?.translatedText) {
+        el.innerHTML = data.responseData.translatedText.replace(/\n/g, '<br>');
+      } else {
+        alert('Translation failed. Please try again.');
+      }
+    } catch (e) {
+      alert('Translation service unavailable. Please try again later.');
+    } finally {
+      btns?.forEach(b => b.classList.remove('loading'));
+    }
+  }
+
+  function resetText(elementId, original) {
+    const el = document.getElementById(elementId);
+    if (el) el.innerHTML = original;
+    delete originalTexts[elementId];
+  }
   </script>
 </body>
 
