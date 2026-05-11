@@ -83,7 +83,10 @@ const Notifications = {
   async markRead(id, url) {
     await fetch('/api/notifications_read', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
       body: 'id=' + id,
     });
     if (url) window.location.href = url;
@@ -94,7 +97,10 @@ const Notifications = {
   async markAllRead() {
     await fetch('../api/notifications_read', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
       body: 'id=0',
     });
     await this.load();

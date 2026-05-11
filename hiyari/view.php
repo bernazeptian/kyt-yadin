@@ -111,22 +111,22 @@ $cat_labels = [
 ];
 
 $status_labels = [
-  'pending_review' => 'Pending Review',
-  'active' => 'Active',
-  'overdue' => 'Overdue',
-  'completed' => 'Completed',
-  'closed' => 'Closed',
-  'open' => 'Open',
-  'in_progress' => 'In Progress',
+    'pending_review' => 'Pending Review',
+    'active'         => 'Active',
+    'overdue'        => 'Overdue',
+    'completed'      => 'Completed',
+    'closed'         => 'Closed',
+    'open'           => 'Open',
+    'in_progress'    => 'In Progress',
 ];
 $status_badges = [
-  'pending_review' => 'badge--pending',
-  'active' => 'badge--open',
-  'overdue' => 'badge--extreme',
-  'completed' => 'badge--closed',
-  'closed' => 'badge--closed',
-  'open' => 'badge--open',
-  'in_progress' => 'badge--progress',
+    'pending_review' => 'badge--pending',
+    'active'         => 'badge--open',
+    'overdue'        => 'badge--extreme',
+    'completed'      => 'badge--closed',
+    'closed'         => 'badge--closed',
+    'open'           => 'badge--open',
+    'in_progress'    => 'badge--progress',
 ];
 $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
 ?>
@@ -160,7 +160,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
           <rect x="14" y="14" width="7" height="7" rx="1" />
         </svg>
       </a>
-      <a href="index" class="nav-item nav-item--active" data-tooltip="Create Report">
+      <a href="index" class="nav-item nav-item--active" data-tooltip="Hiyari Hatto">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
           <line x1="12" y1="9" x2="12" y2="13" />
@@ -293,63 +293,94 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
 
           <!-- ── Gunawan Review Panel (SuperAdmin only, pending_review) ── -->
           <?php if ($role === 1 && $report['status'] === 'pending_review'): ?>
-            <div class="view-card" style="border:2px solid #e74c3c;">
-              <div class="view-card__header" style="background:#fdf2f2;">
-                <div class="view-card__icon view-card__icon--red">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                    <path d="M9 11l3 3L22 4" />
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-                  </svg>
-                </div>
-                <h2 class="view-card__title" style="color:#e74c3c;">⏳ Pending Your Review & Approval</h2>
+          <div class="view-card" style="border:2px solid #e74c3c;">
+            <div class="view-card__header" style="background:#fdf2f2;">
+              <div class="view-card__icon view-card__icon--red">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
               </div>
-              <div class="view-card__body">
-                <p style="font-size:13px;color:#666;margin:0 0 16px;">Review and edit the report if needed, set the due
-                  date, then release it to notify all relevant parties.</p>
-                <form method="POST" action="approve">
-                  <?php echo csrf_field(); ?>
-                  <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
-                  <div class="form-group" style="margin-bottom:14px;">
-                    <label class="form-label" style="font-size:13px;font-weight:600;">Edit Description (optional)</label>
-                    <textarea name="description" class="form-textarea" rows="3" style="font-size:13px;"
-                      placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['description']); ?></textarea>
-                  </div>
-                  <?php if (!empty($report['safe_action'])): ?>
-                    <div class="form-group" style="margin-bottom:14px;">
-                      <label class="form-label" style="font-size:13px;font-weight:600;">Edit Safe Action (optional)</label>
-                      <textarea name="safe_action" class="form-textarea" rows="3" style="font-size:13px;"
-                        placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['safe_action']); ?></textarea>
-                    </div>
-                  <?php endif; ?>
-                  <div class="form-group" style="margin-bottom:16px;">
-                    <label class="form-label" style="font-size:13px;font-weight:600;">Due Date <span
-                        style="color:#e74c3c;">*</span></label>
-                    <input type="date" name="due_date" class="form-input" required min="<?php echo date('Y-m-d'); ?>" />
-                    <span style="font-size:12px;color:#888;">Deadline for corrective actions to be completed</span>
-                  </div>
-                  <button type="submit"
-                    onclick="return confirm('Release this report? This will notify all relevant parties.')"
-                    style="display:inline-flex;align-items:center;gap:8px;background:#27ae60;color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;cursor:pointer;width:100%;justify-content:center;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                      <path d="M9 11l3 3L22 4" />
-                    </svg>
-                    Approve & Release Report
-                  </button>
-                </form>
-              </div>
+              <h2 class="view-card__title" style="color:#e74c3c;">⏳ Pending Your Review & Approval</h2>
             </div>
+            <div class="view-card__body">
+              <p style="font-size:13px;color:#666;margin:0 0 16px;">Review and edit the report if needed, set the due date, then approve or reject it.</p>
+              <form method="POST" action="approve" id="reviewForm">
+                <?php echo csrf_field(); ?>
+                <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
+                <input type="hidden" name="action" id="reviewAction" value="approve" />
+                <div class="form-group" style="margin-bottom:14px;">
+                  <label class="form-label" style="font-size:13px;font-weight:600;">Edit Description (optional)</label>
+                  <textarea name="description" class="form-textarea" rows="3" style="font-size:13px;"
+                    placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['description']); ?></textarea>
+                </div>
+                <?php if (!empty($report['safe_action'])): ?>
+                <div class="form-group" style="margin-bottom:14px;">
+                  <label class="form-label" style="font-size:13px;font-weight:600;">Edit Safe Action (optional)</label>
+                  <textarea name="safe_action" class="form-textarea" rows="3" style="font-size:13px;"
+                    placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['safe_action']); ?></textarea>
+                </div>
+                <?php endif; ?>
+                <div class="form-group" style="margin-bottom:14px;" id="dueDateGroup">
+                  <label class="form-label" style="font-size:13px;font-weight:600;">Due Date <span style="color:#e74c3c;">*</span></label>
+                  <input type="date" name="due_date" id="dueDateInput" class="form-input" min="<?php echo date('Y-m-d'); ?>" />
+                  <span style="font-size:12px;color:#888;">Deadline for corrective actions</span>
+                </div>
+                <div class="form-group" style="margin-bottom:16px;display:none;" id="rejectReasonGroup">
+                  <label class="form-label" style="font-size:13px;font-weight:600;">Reject Reason <span style="color:#e74c3c;">*</span></label>
+                  <textarea name="reject_reason" id="rejectReason" class="form-textarea" rows="3"
+                    placeholder="Explain why this report is being rejected..."></textarea>
+                </div>
+                <div style="display:flex;gap:10px;">
+                  <button type="button" onclick="submitApprove()"
+                    style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#27ae60;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M9 11l3 3L22 4"/></svg>
+                    Approve & Release
+                  </button>
+                  <button type="button" onclick="showReject()"
+                    style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Reject Report
+                  </button>
+                </div>
+                <div style="display:none;margin-top:12px;" id="rejectSubmitGroup">
+                  <button type="button" onclick="submitReject()"
+                    style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;">
+                    Confirm Rejection
+                  </button>
+                </div>
+              </form>
+              <script>
+              function submitApprove() {
+                const due = document.getElementById('dueDateInput').value;
+                if (!due) { alert('Please set a due date before approving.'); return; }
+                if (!confirm('Approve and release this report? All parties will be notified.')) return;
+                document.getElementById('reviewAction').value = 'approve';
+                document.getElementById('reviewForm').submit();
+              }
+              function showReject() {
+                document.getElementById('dueDateGroup').style.display = 'none';
+                document.getElementById('rejectReasonGroup').style.display = 'block';
+                document.getElementById('rejectSubmitGroup').style.display = 'block';
+              }
+              function submitReject() {
+                const reason = document.getElementById('rejectReason').value.trim();
+                if (!reason) { alert('Please provide a reason for rejection.'); return; }
+                if (!confirm('Reject this report? The reporter will be notified.')) return;
+                document.getElementById('reviewAction').value = 'reject';
+                document.getElementById('reviewForm').submit();
+              }
+              </script>
+            </div>
+          </div>
           <?php endif; ?>
 
           <!-- Pending Review Notice for non-superadmin -->
           <?php if ($role > 1 && $report['status'] === 'pending_review'): ?>
-            <div class="view-card" style="border:1px solid #f39c12;">
-              <div class="view-card__body" style="padding:16px 20px;">
-                <p style="margin:0;font-size:13px;color:#856404;background:#fff3cd;padding:12px 16px;border-radius:8px;">
-                  ⏳ This report is currently <strong>Pending Review</strong> by management. It will be released once
-                  approved.
-                </p>
-              </div>
+          <div class="view-card" style="border:1px solid #f39c12;">
+            <div class="view-card__body" style="padding:16px 20px;">
+              <p style="margin:0;font-size:13px;color:#856404;background:#fff3cd;padding:12px 16px;border-radius:8px;">
+                ⏳ This report is currently <strong>Pending Review</strong> by management. It will be released once approved.
+              </p>
             </div>
+          </div>
           <?php endif; ?>
 
           <!-- Report Info Card -->
@@ -382,8 +413,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                     <?php echo htmlspecialchars($report['dept_name'] ?? '—'); ?>
                     <?php if (!empty($report['pic_dept_name'])): ?>
                       <br><small style="color:#888;font-size:12px;">
-                        PIC: <?php echo htmlspecialchars($report['pic_dept_emp_id']); ?> —
-                        <?php echo htmlspecialchars($report['pic_dept_name']); ?>
+                        PIC: <?php echo htmlspecialchars($report['pic_dept_emp_id']); ?> — <?php echo htmlspecialchars($report['pic_dept_name']); ?>
                       </small>
                     <?php endif; ?>
                   </span>
@@ -394,8 +424,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                     <?php echo htmlspecialchars($report['loc_name'] ?? '—'); ?>
                     <?php if (!empty($report['pic_area_name'])): ?>
                       <br><small style="color:#888;font-size:12px;">
-                        PIC: <?php echo htmlspecialchars($report['pic_area_emp_id']); ?> —
-                        <?php echo htmlspecialchars($report['pic_area_name']); ?>
+                        PIC: <?php echo htmlspecialchars($report['pic_area_emp_id']); ?> — <?php echo htmlspecialchars($report['pic_area_name']); ?>
                       </small>
                     <?php endif; ?>
                   </span>
@@ -424,13 +453,15 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                 <p class="info-desc"><?php echo nl2br(htmlspecialchars($report['description'])); ?></p>
               </div>
               <?php if (!empty($report['safe_action'])): ?>
-                <div class="info-item info-item--full">
-                  <span class="info-label">Safe Action (Tindakan Karantina)</span>
-                  <p class="info-desc"
-                    style="background:#f0fff4;padding:10px 14px;border-radius:6px;border-left:3px solid #27ae60;">
-                    <?php echo nl2br(htmlspecialchars($report['safe_action'])); ?>
-                  </p>
+              <div class="info-item info-item--full">
+                <span class="info-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="vertical-align:middle;margin-right:4px;color:#27ae60"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                  Safe Action (Tindakan Karantina)
+                </span>
+                <div style="background:#f0fff4;padding:12px 16px;border-radius:8px;border-left:4px solid #27ae60;font-size:14px;color:#333;line-height:1.6;margin-top:6px;">
+                  <?php echo nl2br(htmlspecialchars($report['safe_action'])); ?>
                 </div>
+              </div>
               <?php endif; ?>
             </div>
           </div>
@@ -546,7 +577,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                       <?php if (!empty($a['image_path'])): ?>
                         <a href="../<?php echo htmlspecialchars($a['image_path']); ?>" target="_blank">
                           <img src="../<?php echo htmlspecialchars($a['image_path']); ?>" alt="Action Image"
-                            style="max-height:140px;margin-top:8px;border-radius:6px;border:1px solid #ddd;cursor:pointer;" />
+                            style="max-width:100%;max-height:200px;width:auto;height:auto;margin-top:8px;border-radius:8px;border:1px solid #e0e0e0;display:block;object-fit:contain;" />
                         </a>
                       <?php endif; ?>
                       <?php if ($a['assigned_name']): ?>

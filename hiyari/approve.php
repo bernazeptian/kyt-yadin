@@ -21,9 +21,12 @@ $description = trim($_POST['description'] ?? '');
 $safe_action = trim($_POST['safe_action'] ?? '');
 $reviewer_id = (int)$_SESSION['user_id'];
 
+$action = trim($_POST['action'] ?? 'approve'); // approve or reject
+$reject_reason = trim($_POST['reject_reason'] ?? '');
+
 if (!$report_id) { header('Location: index'); exit; }
 
-// Fetch report with full details
+// Fetch report
 $stmt = $pdo->prepare("
     SELECT r.*, d.name AS dept_name, l.name AS loc_name,
            u.name AS reporter_name, u.email AS reporter_email,
@@ -42,6 +45,50 @@ if (!$report || $report['status'] !== 'pending_review') {
     exit;
 }
 
+// ── Handle REJECT ─────────────────────────────
+if ($action === 'reject') {
+    try {
+        $pdo->prepare("
+            UPDATE hiyari_reports
+            SET status = 'closed', reviewed_by = :reviewed_by, reviewed_at = NOW(), updated_at = NOW()
+            WHERE id = :id
+        ")->execute([':reviewed_by' => $reviewer_id, ':id' => $report_id]);
+
+        // Notify reporter via bell
+        createNotification($pdo, $report['created_by'], 'Report Rejected: ' . $report['report_number'],
+            'Your report has been rejected' . ($reject_reason ? ': ' . substr($reject_reason, 0, 80) : ''),
+            'warning', '/hiyari/view?id=' . $report_id);
+
+        // Email reporter
+        if (!empty($report['reporter_email'])) {
+            $reject_body = "
+            <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
+              <div style='background:#e74c3c;padding:24px 32px'>
+                <h1 style='color:#fff;margin:0;font-size:18px'>❌ Report Rejected</h1>
+                <p style='color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:13px'>YADIN Safety Report Management System</p>
+              </div>
+              <div style='padding:28px 32px'>
+                <p style='color:#333;font-size:14px;'>Dear <strong>" . htmlspecialchars($report['reporter_name']) . "</strong>,</p>
+                <p style='color:#333;font-size:14px;'>Your report <strong>" . htmlspecialchars($report['report_number']) . "</strong> has been reviewed and rejected.</p>
+                " . ($reject_reason ? "<div style='background:#fdf2f2;padding:12px 16px;border-radius:8px;border-left:4px solid #e74c3c;margin:16px 0;font-size:14px;color:#555;'>
+                  <strong>Reason:</strong> " . htmlspecialchars($reject_reason) . "</div>" : "") . "
+                <a href='" . APP_URL . "/hiyari/view?id={$report_id}' style='display:inline-block;background:#e74c3c;color:#fff;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;'>View Report →</a>
+              </div>
+              <div style='background:#f7f7f7;padding:16px 32px;font-size:12px;color:#999;border-top:1px solid #e0e0e0'>
+                This is an automated notification from YADIN Safety Report Management System.
+              </div>
+            </div>";
+            sendMail($report['reporter_email'], 'Report ' . $report['report_number'] . ' Rejected', $reject_body);
+        }
+
+        header('Location: view?id=' . $report_id . '&success=rejected');
+    } catch (PDOException $e) {
+        error_log('reject error: ' . $e->getMessage());
+        header('Location: view?id=' . $report_id . '&error=reject_failed');
+    }
+    exit;
+}
+
 try {
     // Update report: set active, due_date, reviewed_by, and any edits
     $updateFields = [
@@ -56,7 +103,7 @@ try {
 
     $pdo->prepare("
         UPDATE hiyari_reports
-        SET status = 'active', due_date = :due_date,
+        SET status = 'open', due_date = :due_date,
             reviewed_by = :reviewed_by, reviewed_at = :reviewed_at,
             description = COALESCE(NULLIF(:description,''), description),
             safe_action = COALESCE(NULLIF(:safe_action,''), safe_action),
