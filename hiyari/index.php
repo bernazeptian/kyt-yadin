@@ -121,19 +121,23 @@ $reports = $stmt->fetchAll();
 // Departments for filter dropdown
 $departments = $pdo->query("SELECT id, name FROM departments ORDER BY name")->fetchAll();
 
-// Summary counts
-$summary_condition = ($filter_type === 'kyt') ? "category IN ('unsafe_action', 'unsafe_condition')" : "category = 'near_miss'";
-$summary = $pdo->query("
+// Summary counts — filtered by user role
+$summary_condition = ($filter_type === 'kyt') ? "r.category IN ('unsafe_action', 'unsafe_condition')" : "r.category = 'near_miss'";
+$summary_user_filter = ($role >= 3) ? "AND (r.created_by = $uid OR r.id IN (SELECT report_id FROM corrective_actions WHERE pic_user_id = $uid))" : "";
+
+$summary_stmt = $pdo->prepare("
     SELECT
         COUNT(*) AS total,
-        SUM(status = 'open') AS open,
-        SUM(status = 'in_progress') AS in_progress,
-        SUM(status = 'closed') AS closed,
-        SUM(risk_level = 'extreme') AS extreme,
-        SUM(risk_level = 'high') AS high
-    FROM hiyari_reports
-    WHERE $summary_condition
-")->fetch();
+        SUM(r.status = 'open') AS open,
+        SUM(r.status = 'in_progress') AS in_progress,
+        SUM(r.status = 'closed') AS closed,
+        SUM(r.risk_level = 'extreme') AS extreme,
+        SUM(r.risk_level = 'high') AS high
+    FROM hiyari_reports r
+    WHERE $summary_condition $summary_user_filter
+");
+$summary_stmt->execute();
+$summary = $summary_stmt->fetch();
 
 $success = isset($_GET['success']) && $_GET['success'] == '1';
 ?>

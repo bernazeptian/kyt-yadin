@@ -46,6 +46,9 @@ try {
              :category, :description, :safe_action, :likelihood, :severity, :risk_level,
              'pending_review', :created_by, NOW(), NOW())
     ");
+
+    auditLog($pdo, 'REPORT_CREATED', 'hiyari', $report_id, $report_number);
+
     $stmt->execute([
         ':report_type' => $report_type,
         ':report_number' => $report_number,

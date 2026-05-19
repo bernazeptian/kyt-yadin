@@ -4,70 +4,74 @@ require_once '../config/db.php';
 require_once '../config/mail.php';
 
 if (!isset($_SESSION['user_id']) || (int) $_SESSION['role'] !== 1) {
-    header('Location: ../index');
-    exit;
+  header('Location: ../index');
+  exit;
 }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: index?tab=users');
-    exit;
+  header('Location: index?tab=users');
+  exit;
 }
 
 csrf_verify();
 
 $employee_id = trim($_POST['employee_id'] ?? '');
-$name        = trim($_POST['name']        ?? '');
-$email       = trim($_POST['email']       ?? '');
-$position    = trim($_POST['position']    ?? '');
-$role        = (int)($_POST['role']       ?? 3);
-$is_active   = isset($_POST['is_active'])  ? 1 : 0;
+$name = trim($_POST['name'] ?? '');
+$email = trim($_POST['email'] ?? '');
+$position = trim($_POST['position'] ?? '');
+$role = (int) ($_POST['role'] ?? 3);
+$is_active = isset($_POST['is_active']) ? 1 : 0;
 
 if (!$employee_id || !$name || !$email) {
-    header('Location: index?tab=users&error=failed');
-    exit;
+  header('Location: index?tab=users&error=failed');
+  exit;
 }
 
 // Check duplicate employee_id
 $check = $pdo->prepare("SELECT id FROM users WHERE employee_id = :emp_id");
 $check->execute([':emp_id' => $employee_id]);
 if ($check->fetch()) {
-    header('Location: index?tab=users&error=emp_exists');
-    exit;
+  header('Location: index?tab=users&error=emp_exists');
+  exit;
 }
 
 // Check duplicate email
 $check2 = $pdo->prepare("SELECT id FROM users WHERE email = :email");
 $check2->execute([':email' => $email]);
 if ($check2->fetch()) {
-    header('Location: index?tab=users&error=email_exists');
-    exit;
+  header('Location: index?tab=users&error=email_exists');
+  exit;
 }
 
 try {
-    // Generate setup token (expires in 7 days)
-    $setup_token   = bin2hex(random_bytes(32));
-    $token_expires = date('Y-m-d H:i:s', strtotime('+7 days'));
+  // Generate setup token (expires in 7 days)
+  $setup_token = bin2hex(random_bytes(32));
+  $token_expires = date('Y-m-d H:i:s', strtotime('+7 days'));
 
-    $stmt = $pdo->prepare("
+  $stmt = $pdo->prepare("
         INSERT INTO users (employee_id, name, email, password, position, role, is_active, setup_token, setup_token_expires, created_at, updated_at)
         VALUES (:employee_id, :name, :email, NULL, :position, :role, :is_active, :setup_token, :token_expires, NOW(), NOW())
     ");
-    $stmt->execute([
-        ':employee_id'   => $employee_id,
-        ':name'          => $name,
-        ':email'         => $email,
-        ':position'      => $position ?: null,
-        ':role'          => $role,
-        ':is_active'     => $is_active,
-        ':setup_token'   => $setup_token,
-        ':token_expires' => $token_expires,
-    ]);
 
-    // ── Send welcome email with direct setup link ─
-    $setup_url  = APP_URL . '/auth/set_password?token=' . $setup_token;
-    $role_names = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
-    $role_label = $role_names[$role] ?? 'User';
+  auditLog($pdo, 'USER_CREATED', 'master', $new_user_id, $name);
 
-    $welcome_body = "
+
+  $stmt->execute([
+    ':employee_id' => $employee_id,
+    ':name' => $name,
+    ':email' => $email,
+    ':position' => $position ?: null,
+    ':role' => $role,
+    ':is_active' => $is_active,
+    ':setup_token' => $setup_token,
+    ':token_expires' => $token_expires,
+  ]);
+
+  // ── Send welcome email with direct setup link ─
+  $setup_url = APP_URL . '/auth/set_password?token=' . $setup_token;
+  $role_names = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
+  $role_label = $role_names[$role] ?? 'User';
+
+  $welcome_body = "
     <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
       <div style='background:#2563eb;padding:24px 32px'>
         <h1 style='color:#fff;margin:0;font-size:18px'>👋 Welcome to YADIN Safety Report System</h1>
@@ -97,12 +101,12 @@ try {
       </div>
     </div>";
 
-    sendMail($email, 'Welcome to YADIN Safety — Set Your Password', $welcome_body);
+  sendMail($email, 'Welcome to YADIN Safety — Set Your Password', $welcome_body);
 
-    header('Location: index?tab=users&success=user_added');
+  header('Location: index?tab=users&success=user_added');
 } catch (PDOException $e) {
-    error_log('user_store error: ' . $e->getMessage());
-    header('Location: index?tab=users&error=failed');
+  error_log('user_store error: ' . $e->getMessage());
+  header('Location: index?tab=users&error=failed');
 }
 exit;
 

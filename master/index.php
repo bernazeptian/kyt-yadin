@@ -14,6 +14,13 @@ $error = $_GET['error'] ?? '';
 $is_superadmin = (int) $_SESSION['role'] == 1;
 $role = (int) ($_SESSION['role'] ?? 3);
 
+// Fetch audit logs
+$audit_logs = $pdo->query("
+    SELECT * FROM audit_logs
+    ORDER BY created_at DESC
+    LIMIT 200
+")->fetchAll();
+
 // ── DEPARTMENTS ──────────────────────────────────
 $departments = $pdo->query("
     SELECT d.*, u.name AS head_name
@@ -219,6 +226,24 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
               <path d="M16 3.13a4 4 0 0 1 0 7.75" />
             </svg>
             Users
+          </button>
+          <button class="tab <?php echo $active_tab === 'settings' ? 'tab--active' : ''; ?>" data-tab="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+            Settings
+          </button>
+          <button class="tab <?php echo $active_tab === 'audit' ? 'tab--active' : ''; ?>" data-tab="audit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+            Audit Log
           </button>
         <?php endif; ?>
       </div>
@@ -644,6 +669,112 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
             </div>
           </div>
         </div><!-- /users tab -->
+        <div class="tab-panel <?php echo $active_tab === 'settings' ? 'tab-panel--active' : ''; ?>" id="tab-settings">
+          <div class="master-form-box">
+            <h2 class="master-form-box__title">Due Date Configuration</h2>
+            <p style="font-size:13px;color:#888;margin:0 0 20px;">Set the number of days for corrective action due dates
+              based on risk level.</p>
+            <?php
+            $risk_configs = $pdo->query("SELECT risk_level, due_days FROM risk_config")->fetchAll(PDO::FETCH_KEY_PAIR);
+            $risk_levels = ['extreme' => 'Extreme', 'high' => 'High', 'medium' => 'Medium', 'low' => 'Low'];
+            $risk_colors = ['extreme' => '#c0392b', 'high' => '#e67e22', 'medium' => '#f39c12', 'low' => '#27ae60'];
+            ?>
+            <form method="POST" action="settings_update">
+              <?php echo csrf_field(); ?>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:500px;">
+                <?php foreach ($risk_levels as $level => $label): ?>
+                  <div
+                    style="background:#f8f9fa;border:1px solid #e0e0e0;border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                      <span
+                        style="width:12px;height:12px;border-radius:50%;background:<?php echo $risk_colors[$level]; ?>;display:inline-block;flex-shrink:0;"></span>
+                      <span
+                        style="font-weight:600;color:<?php echo $risk_colors[$level]; ?>;font-size:14px;"><?php echo $label; ?></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                      <input type="number" name="days[<?php echo $level; ?>]"
+                        value="<?php echo $risk_configs[$level] ?? 7; ?>" min="1" max="365" class="form-input"
+                        style="width:70px;text-align:center;font-weight:700;font-size:15px;" />
+                      <span style="font-size:13px;color:#888;white-space:nowrap;">days</span>
+                    </div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+              <button type="submit" class="btn-submit" style="margin-top:20px;max-width:500px;width:100%;">
+                Save Configuration
+              </button>
+            </form>
+          </div>
+        </div>
+        <div class="tab-panel <?php echo $active_tab === 'audit' ? 'tab-panel--active' : ''; ?>" id="tab-audit">
+          <div class="master-list-box">
+            <div class="master-list-box__header">
+              <h2 class="master-list-box__title">Audit Log <span class="table-count">
+                  <?php echo count($audit_logs); ?> records
+                </span></h2>
+            </div>
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Time</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Module</th>
+                    <th>Target</th>
+                    <th>Old Value</th>
+                    <th>New Value</th>
+                    <th>IP Address</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php if (empty($audit_logs)): ?>
+                    <tr>
+                      <td colspan="8" style="text-align:center;padding:32px;color:#aaa;">No audit logs yet</td>
+                    </tr>
+                  <?php else: ?>
+                    <?php foreach ($audit_logs as $log): ?>
+                      <tr>
+                        <td style="white-space:nowrap;font-size:12px;color:#888;">
+                          <?php echo date('d M Y H:i', strtotime($log['created_at'])); ?>
+                        </td>
+                        <td><strong><?php echo htmlspecialchars($log['user_name'] ?? '—'); ?></strong></td>
+                        <td>
+                          <?php
+                          $action_colors = [
+                            'REPORT_CREATED' => '#2563eb',
+                            'REPORT_APPROVED' => '#27ae60',
+                            'REPORT_REJECTED' => '#e74c3c',
+                            'REPORT_CLOSED' => '#888',
+                            'LOGIN_SUCCESS' => '#27ae60',
+                            'LOGIN_FAILED' => '#e74c3c',
+                            'USER_CREATED' => '#2563eb',
+                            'USER_UPDATED' => '#f39c12',
+                            'USER_DELETED' => '#e74c3c',
+                            'PASSWORD_CHANGED' => '#f39c12',
+                            'STATUS_CHANGED' => '#9b59b6',
+                            'ACTION_ADDED' => '#e67e22',
+                          ];
+                          $color = $action_colors[$log['action']] ?? '#555';
+                          ?>
+                          <span
+                            style="background:<?php echo $color; ?>22;color:<?php echo $color; ?>;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;">
+                            <?php echo htmlspecialchars($log['action']); ?>
+                          </span>
+                        </td>
+                        <td style="font-size:12px;color:#666;"><?php echo htmlspecialchars($log['module']); ?></td>
+                        <td style="font-size:13px;"><?php echo htmlspecialchars($log['target_label'] ?? '—'); ?></td>
+                        <td style="font-size:12px;color:#888;"><?php echo htmlspecialchars($log['old_value'] ?? '—'); ?></td>
+                        <td style="font-size:12px;color:#555;"><?php echo htmlspecialchars($log['new_value'] ?? '—'); ?></td>
+                        <td style="font-size:12px;color:#aaa;"><?php echo htmlspecialchars($log['ip_address'] ?? '—'); ?></td>
+                      </tr>
+                    <?php endforeach; ?>
+                  <?php endif; ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div><!-- /audit tab -->
       <?php endif; ?>
 
     </div><!-- /content -->

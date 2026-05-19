@@ -30,14 +30,19 @@ $kyt_summary = $pdo->query("
     WHERE category IN ('unsafe_action', 'unsafe_condition')
 ")->fetch();
 
-// ── Category Distribution ─────────────────────
-$category_data = $pdo->query("
-    SELECT
-        SUM(category = 'near_miss')        AS near_miss,
-        SUM(category = 'unsafe_action')       AS unsafe_action,
-        SUM(category = 'unsafe_condition') AS unsafe_condition
-    FROM hiyari_reports
-")->fetch();
+// ── Most Reported Area (Hiyari Hatto) ─────────
+$uid = (int) ($_SESSION['user_id'] ?? 0);
+$area_where = $role >= 3 ? "AND r.created_by = $uid" : "";
+$most_reported_areas = $pdo->query("
+    SELECT l.name AS location, d.name AS department, COUNT(r.id) AS total
+    FROM hiyari_reports r
+    LEFT JOIN locations l ON r.location_id = l.id
+    LEFT JOIN departments d ON r.department_id = d.id
+    WHERE r.category = 'near_miss' $area_where
+    GROUP BY r.location_id
+    ORDER BY total DESC
+    LIMIT 10
+")->fetchAll();
 
 // ── Reports by Department (Hiyari) ────────────
 $dept_data = $pdo->query("
@@ -356,11 +361,45 @@ $trend_dir = $hiyari_trend['dir'];
         <section class="charts">
           <div class="chart-box" style="--delay:0.25s">
             <div class="chart-box__header">
-              <h2 class="chart-box__title">Category Distribution</h2>
-              <span class="chart-box__badge">All Time</span>
+              <h2 class="chart-box__title">Most Reported Area</h2>
+              <span class="chart-box__badge">Top 10</span>
             </div>
-            <div class="chart-box__body">
-              <canvas id="categoryChart"></canvas>
+            <div class="chart-box__body" style="padding:0;">
+              <?php if (empty($most_reported_areas)): ?>
+                <p style="text-align:center;color:#aaa;padding:32px;font-size:14px;">No reports yet</p>
+              <?php else: ?>
+                <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                  <thead>
+                    <tr style="background:#f8f9fa;">
+                      <th style="padding:10px 14px;text-align:left;font-weight:600;color:#555;">#</th>
+                      <th style="padding:10px 14px;text-align:left;font-weight:600;color:#555;">Location</th>
+                      <th style="padding:10px 14px;text-align:left;font-weight:600;color:#555;">Department</th>
+                      <th style="padding:10px 14px;text-align:right;font-weight:600;color:#555;">Reports</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php foreach ($most_reported_areas as $i => $area): ?>
+                      <tr style="border-top:1px solid #f0f0f0;">
+                        <td style="padding:10px 14px;color:#aaa;font-weight:700;">
+                          <?php echo $i + 1; ?>
+                        </td>
+                        <td style="padding:10px 14px;font-weight:600;color:#333;">
+                          <?php echo htmlspecialchars($area['location'] ?? '—'); ?>
+                        </td>
+                        <td style="padding:10px 14px;color:#666;">
+                          <?php echo htmlspecialchars($area['department'] ?? '—'); ?>
+                        </td>
+                        <td style="padding:10px 14px;text-align:right;">
+                          <span
+                            style="background:#fdf2f2;color:#e74c3c;font-weight:700;padding:3px 10px;border-radius:12px;font-size:12px;">
+                            <?php echo $area['total']; ?>
+                          </span>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  </tbody>
+                </table>
+              <?php endif; ?>
             </div>
           </div>
           <div class="chart-box" style="--delay:0.30s">

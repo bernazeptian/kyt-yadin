@@ -111,22 +111,22 @@ $cat_labels = [
 ];
 
 $status_labels = [
-    'pending_review' => 'Pending Review',
-    'active'         => 'Active',
-    'overdue'        => 'Overdue',
-    'completed'      => 'Completed',
-    'closed'         => 'Closed',
-    'open'           => 'Open',
-    'in_progress'    => 'In Progress',
+  'pending_review' => 'Pending Review',
+  'active' => 'Active',
+  'overdue' => 'Overdue',
+  'completed' => 'Completed',
+  'closed' => 'Closed',
+  'open' => 'Open',
+  'in_progress' => 'In Progress',
 ];
 $status_badges = [
-    'pending_review' => 'badge--pending',
-    'active'         => 'badge--open',
-    'overdue'        => 'badge--extreme',
-    'completed'      => 'badge--closed',
-    'closed'         => 'badge--closed',
-    'open'           => 'badge--open',
-    'in_progress'    => 'badge--progress',
+  'pending_review' => 'badge--pending',
+  'active' => 'badge--open',
+  'overdue' => 'badge--extreme',
+  'completed' => 'badge--closed',
+  'closed' => 'badge--closed',
+  'open' => 'badge--open',
+  'in_progress' => 'badge--progress',
 ];
 $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
 ?>
@@ -291,105 +291,188 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
         ══════════════════════════════ -->
         <div class="view-left">
 
-          <!-- ── Gunawan Review Panel (SuperAdmin only, pending_review) ── -->
+          <!-- ── (SuperAdmin only, pending_review) ── -->
           <?php if ($role === 1 && $report['status'] === 'pending_review'): ?>
-          <div class="view-card" style="border:2px solid #e74c3c;">
-            <div class="view-card__header" style="background:#fdf2f2;">
-              <div class="view-card__icon view-card__icon--red">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            <div class="view-card" style="border:2px solid #e74c3c;">
+              <div class="view-card__header" style="background:#fdf2f2;">
+                <div class="view-card__icon view-card__icon--red">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                    <path d="M9 11l3 3L22 4" />
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                  </svg>
+                </div>
+                <h2 class="view-card__title" style="color:#e74c3c;">⏳ Pending Review & Approval</h2>
               </div>
-              <h2 class="view-card__title" style="color:#e74c3c;">⏳ Pending Your Review & Approval</h2>
+              <div class="view-card__body">
+                <p style="font-size:13px;color:#666;margin:0 0 16px;">Review and edit the report if needed, set the due
+                  date, then approve or reject it.</p>
+                <form method="POST" action="approve" id="reviewForm">
+                  <?php echo csrf_field(); ?>
+                  <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
+                  <input type="hidden" name="action" id="reviewAction" value="approve" />
+                  <div class="form-group" style="margin-bottom:14px;">
+                    <label class="form-label" style="font-size:13px;font-weight:600;">Change Category (optional)</label>
+                    <select name="category" class="form-select" style="font-size:13px;">
+                      <option value="">— Keep current
+                        (<?php echo $cat_labels[$report['category']] ?? $report['category']; ?>) —</option>
+                      <option value="near_miss" <?php echo $report['category'] === 'near_miss' ? 'selected' : ''; ?>>Near
+                        Miss →
+                        Hiyari Hatto (auto Extreme)</option>
+                      <option value="unsafe_action" <?php echo $report['category'] === 'unsafe_action' ? 'selected' : ''; ?>>
+                        Unsafe Act → Kiken Yochi</option>
+                      <option value="unsafe_condition" <?php echo $report['category'] === 'unsafe_condition' ? 'selected' : ''; ?>>Unsafe Condition → Kiken Yochi</option>
+                    </select>
+                  </div>
+                  <div id="matrixPanel" style="display:none;margin-bottom:14px;">
+                    <div
+                      style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 16px;font-size:13px;color:#856404;margin-bottom:12px;">
+                      ⚠️ You changed to Kiken Yochi. Please set the risk matrix below.
+                    </div>
+                    <div class="form-group" style="margin-bottom:10px;">
+                      <label class="form-label" style="font-size:13px;font-weight:600;">Likelihood</label>
+                      <select name="likelihood" id="likelihoodSel" class="form-select" style="font-size:13px;">
+                        <option value="">-- Select --</option>
+                        <option value="A">A — Almost Certain</option>
+                        <option value="B">B — Likely</option>
+                        <option value="C">C — Moderate</option>
+                        <option value="D">D — Unlikely</option>
+                        <option value="E">E — Rare</option>
+                      </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom:10px;">
+                      <label class="form-label" style="font-size:13px;font-weight:600;">Severity</label>
+                      <select name="severity" id="severitySel" class="form-select" style="font-size:13px;">
+                        <option value="">-- Select --</option>
+                        <option value="1">1 — Insignificant</option>
+                        <option value="2">2 — Minor</option>
+                        <option value="3">3 — Moderate</option>
+                        <option value="4">4 — Major</option>
+                        <option value="5">5 — Catastrophic</option>
+                      </select>
+                    </div>
+                    <input type="hidden" name="risk_level" id="riskLevelHidden" value="" />
+                    <div id="riskPreview"
+                      style="display:none;padding:10px 16px;border-radius:8px;text-align:center;font-weight:700;font-size:14px;margin-top:8px;">
+                    </div>
+                  </div>
+                  <script>
+                    const matrixMap = {
+                      A: { 1: 'extreme', 2: 'extreme', 3: 'extreme', 4: 'extreme', 5: 'extreme' },
+                      B: { 1: 'medium', 2: 'high', 3: 'high', 4: 'extreme', 5: 'extreme' },
+                      C: { 1: 'low', 2: 'medium', 3: 'high', 4: 'extreme', 5: 'extreme' },
+                      D: { 1: 'low', 2: 'low', 3: 'medium', 4: 'high', 5: 'extreme' },
+                      E: { 1: 'low', 2: 'low', 3: 'medium', 4: 'high', 5: 'high' },
+                    };
+                    const riskColors = { extreme: '#c0392b', high: '#e67e22', medium: '#f39c12', low: '#27ae60' };
+
+                    document.getElementById('category')?.addEventListener('change', function () {
+                      const panel = document.getElementById('matrixPanel');
+                      const isKiken = this.value === 'unsafe_action' || this.value === 'unsafe_condition';
+                      panel.style.display = isKiken ? 'block' : 'none';
+                    });
+
+                    function updateRiskLevel() {
+                      const l = document.getElementById('likelihoodSel').value;
+                      const s = document.getElementById('severitySel').value;
+                      if (!l || !s) return;
+                      const risk = matrixMap[l]?.[parseInt(s)] ?? 'low';
+                      document.getElementById('riskLevelHidden').value = risk;
+                      const preview = document.getElementById('riskPreview');
+                      preview.style.display = 'block';
+                      preview.style.background = riskColors[risk] + '22';
+                      preview.style.color = riskColors[risk];
+                      preview.style.border = '1px solid ' + riskColors[risk];
+                      preview.textContent = 'Risk Level: ' + risk.toUpperCase();
+                    }
+                    document.getElementById('likelihoodSel')?.addEventListener('change', updateRiskLevel);
+                    document.getElementById('severitySel')?.addEventListener('change', updateRiskLevel);
+                  </script>
+                  <div class="form-group" style="margin-bottom:14px;">
+                    <label class="form-label" style="font-size:13px;font-weight:600;">Edit Description (optional)</label>
+                    <textarea name="description" class="form-textarea" rows="3" style="font-size:13px;"
+                      placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['description']); ?></textarea>
+                  </div>
+                  <?php if (!empty($report['safe_action'])): ?>
+                    <div class="form-group" style="margin-bottom:14px;">
+                      <label class="form-label" style="font-size:13px;font-weight:600;">Edit Safe Action (optional)</label>
+                      <textarea name="safe_action" class="form-textarea" rows="3" style="font-size:13px;"
+                        placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['safe_action']); ?></textarea>
+                    </div>
+                  <?php endif; ?>
+                  <?php
+                  $risk_configs = $pdo->query("SELECT risk_level, due_days FROM risk_config")->fetchAll(PDO::FETCH_KEY_PAIR);
+                  $preview_risk = $report['category'] === 'near_miss' ? 'extreme' : ($report['risk_level'] ?? 'medium');
+                  $preview_days = $risk_configs[$preview_risk] ?? 7;
+                  $preview_due = date('d F Y', strtotime('+' . $preview_days . ' days'));
+                  ?>
+                  <div
+                    style="background:#f0f4ff;padding:12px 16px;border-radius:8px;border-left:4px solid #2563eb;font-size:13px;color:#333;margin-bottom:14px;">
+                    📅 Due date will be auto-set to <strong><?php echo $preview_due; ?></strong>
+                    (<?php echo $preview_days; ?> days for <strong><?php echo strtoupper($preview_risk); ?></strong> risk)
+                  </div>
+                  <div class="form-group" style="margin-bottom:16px;display:none;" id="rejectReasonGroup">
+                    <label class="form-label" style="font-size:13px;font-weight:600;">Reject Reason <span
+                        style="color:#e74c3c;">*</span></label>
+                    <textarea name="reject_reason" id="rejectReason" class="form-textarea" rows="3"
+                      placeholder="Explain why this report is being rejected..."></textarea>
+                  </div>
+                  <div style="display:flex;gap:10px;">
+                    <button type="button" onclick="submitApprove()"
+                      style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#27ae60;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                        <path d="M9 11l3 3L22 4" />
+                      </svg>
+                      Approve & Release
+                    </button>
+                    <button type="button" onclick="showReject()"
+                      style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                      Reject Report
+                    </button>
+                  </div>
+                  <div style="display:none;margin-top:12px;" id="rejectSubmitGroup">
+                    <button type="button" onclick="submitReject()"
+                      style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;">
+                      Confirm Rejection
+                    </button>
+                  </div>
+                </form>
+                <script>
+                  function submitApprove() {
+                    if (!confirm('Approve and release this report? All parties will be notified.')) return;
+                    document.getElementById('reviewAction').value = 'approve';
+                    document.getElementById('reviewForm').submit();
+                  }
+                  function showReject() {
+                    document.getElementById('dueDateGroup').style.display = 'none';
+                    document.getElementById('rejectReasonGroup').style.display = 'block';
+                    document.getElementById('rejectSubmitGroup').style.display = 'block';
+                  }
+                  function submitReject() {
+                    const reason = document.getElementById('rejectReason').value.trim();
+                    if (!reason) { alert('Please provide a reason for rejection.'); return; }
+                    if (!confirm('Reject this report? The reporter will be notified.')) return;
+                    document.getElementById('reviewAction').value = 'reject';
+                    document.getElementById('reviewForm').submit();
+                  }
+                </script>
+              </div>
             </div>
-            <div class="view-card__body">
-              <p style="font-size:13px;color:#666;margin:0 0 16px;">Review and edit the report if needed, set the due date, then approve or reject it.</p>
-              <form method="POST" action="approve" id="reviewForm">
-                <?php echo csrf_field(); ?>
-                <input type="hidden" name="report_id" value="<?php echo $id; ?>" />
-                <input type="hidden" name="action" id="reviewAction" value="approve" />
-                <div class="form-group" style="margin-bottom:14px;">
-                  <label class="form-label" style="font-size:13px;font-weight:600;">Change Category (optional)</label>
-                  <select name="category" class="form-select" style="font-size:13px;">
-                    <option value="">— Keep current (<?php echo $cat_labels[$report['category']] ?? $report['category']; ?>) —</option>
-                    <option value="near_miss" <?php echo $report['category']==='near_miss'?'selected':''; ?>>Near Miss → Hiyari Hatto (auto Extreme)</option>
-                    <option value="unsafe_action" <?php echo $report['category']==='unsafe_action'?'selected':''; ?>>Unsafe Act → Kiken Yochi</option>
-                    <option value="unsafe_condition" <?php echo $report['category']==='unsafe_condition'?'selected':''; ?>>Unsafe Condition → Kiken Yochi</option>
-                  </select>
-                </div>
-                <div class="form-group" style="margin-bottom:14px;">
-                  <label class="form-label" style="font-size:13px;font-weight:600;">Edit Description (optional)</label>
-                  <textarea name="description" class="form-textarea" rows="3" style="font-size:13px;"
-                    placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['description']); ?></textarea>
-                </div>
-                <?php if (!empty($report['safe_action'])): ?>
-                <div class="form-group" style="margin-bottom:14px;">
-                  <label class="form-label" style="font-size:13px;font-weight:600;">Edit Safe Action (optional)</label>
-                  <textarea name="safe_action" class="form-textarea" rows="3" style="font-size:13px;"
-                    placeholder="Leave blank to keep original..."><?php echo htmlspecialchars($report['safe_action']); ?></textarea>
-                </div>
-                <?php endif; ?>
-                <div class="form-group" style="margin-bottom:14px;" id="dueDateGroup">
-                  <label class="form-label" style="font-size:13px;font-weight:600;">Due Date <span style="color:#e74c3c;">*</span></label>
-                  <input type="date" name="due_date" id="dueDateInput" class="form-input" min="<?php echo date('Y-m-d'); ?>" />
-                  <span style="font-size:12px;color:#888;">Deadline for corrective actions</span>
-                </div>
-                <div class="form-group" style="margin-bottom:16px;display:none;" id="rejectReasonGroup">
-                  <label class="form-label" style="font-size:13px;font-weight:600;">Reject Reason <span style="color:#e74c3c;">*</span></label>
-                  <textarea name="reject_reason" id="rejectReason" class="form-textarea" rows="3"
-                    placeholder="Explain why this report is being rejected..."></textarea>
-                </div>
-                <div style="display:flex;gap:10px;">
-                  <button type="button" onclick="submitApprove()"
-                    style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#27ae60;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M9 11l3 3L22 4"/></svg>
-                    Approve & Release
-                  </button>
-                  <button type="button" onclick="showReject()"
-                    style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    Reject Report
-                  </button>
-                </div>
-                <div style="display:none;margin-top:12px;" id="rejectSubmitGroup">
-                  <button type="button" onclick="submitReject()"
-                    style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#e74c3c;color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;">
-                    Confirm Rejection
-                  </button>
-                </div>
-              </form>
-              <script>
-              function submitApprove() {
-                const due = document.getElementById('dueDateInput').value;
-                if (!due) { alert('Please set a due date before approving.'); return; }
-                if (!confirm('Approve and release this report? All parties will be notified.')) return;
-                document.getElementById('reviewAction').value = 'approve';
-                document.getElementById('reviewForm').submit();
-              }
-              function showReject() {
-                document.getElementById('dueDateGroup').style.display = 'none';
-                document.getElementById('rejectReasonGroup').style.display = 'block';
-                document.getElementById('rejectSubmitGroup').style.display = 'block';
-              }
-              function submitReject() {
-                const reason = document.getElementById('rejectReason').value.trim();
-                if (!reason) { alert('Please provide a reason for rejection.'); return; }
-                if (!confirm('Reject this report? The reporter will be notified.')) return;
-                document.getElementById('reviewAction').value = 'reject';
-                document.getElementById('reviewForm').submit();
-              }
-              </script>
-            </div>
-          </div>
           <?php endif; ?>
 
           <!-- Pending Review Notice for non-superadmin -->
           <?php if ($role > 1 && $report['status'] === 'pending_review'): ?>
-          <div class="view-card" style="border:1px solid #f39c12;">
-            <div class="view-card__body" style="padding:16px 20px;">
-              <p style="margin:0;font-size:13px;color:#856404;background:#fff3cd;padding:12px 16px;border-radius:8px;">
-                ⏳ This report is currently <strong>Pending Review</strong> by management. It will be released once approved.
-              </p>
+            <div class="view-card" style="border:1px solid #f39c12;">
+              <div class="view-card__body" style="padding:16px 20px;">
+                <p style="margin:0;font-size:13px;color:#856404;background:#fff3cd;padding:12px 16px;border-radius:8px;">
+                  ⏳ This report is currently <strong>Pending Review</strong> by management. It will be released once
+                  approved.
+                </p>
+              </div>
             </div>
-          </div>
           <?php endif; ?>
 
           <!-- Report Info Card -->
@@ -422,7 +505,8 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                     <?php echo htmlspecialchars($report['dept_name'] ?? '—'); ?>
                     <?php if (!empty($report['pic_dept_name'])): ?>
                       <br><small style="color:#888;font-size:12px;">
-                        PIC: <?php echo htmlspecialchars($report['pic_dept_emp_id']); ?> — <?php echo htmlspecialchars($report['pic_dept_name']); ?>
+                        PIC: <?php echo htmlspecialchars($report['pic_dept_emp_id']); ?> —
+                        <?php echo htmlspecialchars($report['pic_dept_name']); ?>
                       </small>
                     <?php endif; ?>
                   </span>
@@ -433,7 +517,8 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                     <?php echo htmlspecialchars($report['loc_name'] ?? '—'); ?>
                     <?php if (!empty($report['pic_area_name'])): ?>
                       <br><small style="color:#888;font-size:12px;">
-                        PIC: <?php echo htmlspecialchars($report['pic_area_emp_id']); ?> — <?php echo htmlspecialchars($report['pic_area_name']); ?>
+                        PIC: <?php echo htmlspecialchars($report['pic_area_emp_id']); ?> —
+                        <?php echo htmlspecialchars($report['pic_area_name']); ?>
                       </small>
                     <?php endif; ?>
                   </span>
@@ -461,30 +546,44 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                 <span class="info-label" style="display:flex;align-items:center;justify-content:space-between;">
                   Description
                   <span style="display:flex;gap:6px;">
-                    <button type="button" onclick="translateText('descText','en')" class="translate-btn" title="Translate to English">🇬🇧 EN</button>
-                    <button type="button" onclick="translateText('descText','ja')" class="translate-btn" title="Translate to Japanese">🇯🇵 JP</button>
-                    <button type="button" onclick="resetText('descText','<?php echo addslashes(htmlspecialchars($report['description'])); ?>')" class="translate-btn translate-btn--reset" title="Reset">↺</button>
+                    <button type="button" onclick="translateText('descText','en')" class="translate-btn"
+                      title="Translate to English">🇬🇧 EN</button>
+                    <button type="button" onclick="translateText('descText','ja')" class="translate-btn"
+                      title="Translate to Japanese">🇯🇵 JP</button>
+                    <button type="button"
+                      onclick="resetText('descText','<?php echo addslashes(htmlspecialchars($report['description'])); ?>')"
+                      class="translate-btn translate-btn--reset" title="Reset">↺</button>
                   </span>
                 </span>
                 <p class="info-desc" id="descText"><?php echo nl2br(htmlspecialchars($report['description'])); ?></p>
               </div>
               <?php if (!empty($report['safe_action'])): ?>
-              <div class="info-item info-item--full">
-                <span class="info-label" style="display:flex;align-items:center;justify-content:space-between;">
-                  <span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="vertical-align:middle;margin-right:4px;color:#27ae60"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                    Safe Action (Tindakan Karantina)
+                <div class="info-item info-item--full">
+                  <span class="info-label" style="display:flex;align-items:center;justify-content:space-between;">
+                    <span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"
+                        style="vertical-align:middle;margin-right:4px;color:#27ae60">
+                        <path d="M9 11l3 3L22 4" />
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                      </svg>
+                      Safe Action (Tindakan Karantina)
+                    </span>
+                    <span style="display:flex;gap:6px;">
+                      <button type="button" onclick="translateText('safeText','en')" class="translate-btn"
+                        title="Translate to English">🇬🇧 EN</button>
+                      <button type="button" onclick="translateText('safeText','ja')" class="translate-btn"
+                        title="Translate to Japanese">🇯🇵 JP</button>
+                      <button type="button"
+                        onclick="resetText('safeText','<?php echo addslashes(htmlspecialchars($report['safe_action'])); ?>')"
+                        class="translate-btn translate-btn--reset" title="Reset">↺</button>
+                    </span>
                   </span>
-                  <span style="display:flex;gap:6px;">
-                    <button type="button" onclick="translateText('safeText','en')" class="translate-btn" title="Translate to English">🇬🇧 EN</button>
-                    <button type="button" onclick="translateText('safeText','ja')" class="translate-btn" title="Translate to Japanese">🇯🇵 JP</button>
-                    <button type="button" onclick="resetText('safeText','<?php echo addslashes(htmlspecialchars($report['safe_action'])); ?>')" class="translate-btn translate-btn--reset" title="Reset">↺</button>
-                  </span>
-                </span>
-                <div style="background:#f0fff4;padding:12px 16px;border-radius:8px;border-left:4px solid #27ae60;font-size:14px;color:#333;line-height:1.6;margin-top:6px;" id="safeText">
-                  <?php echo nl2br(htmlspecialchars($report['safe_action'])); ?>
+                  <div
+                    style="background:#f0fff4;padding:12px 16px;border-radius:8px;border-left:4px solid #27ae60;font-size:14px;color:#333;line-height:1.6;margin-top:6px;"
+                    id="safeText">
+                    <?php echo nl2br(htmlspecialchars($report['safe_action'])); ?>
+                  </div>
                 </div>
-              </div>
               <?php endif; ?>
             </div>
           </div>
@@ -814,58 +913,84 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
   </script>
   <style>
     .translate-btn {
-      font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;
-      border:1px solid #ddd;background:#fff;cursor:pointer;color:#555;
-      display:inline-flex;align-items:center;gap:3px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      color: #555;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
     }
-    .translate-btn:hover { background:#f0f4ff;border-color:#2563eb;color:#2563eb; }
-    .translate-btn--reset { color:#888;border-color:#e0e0e0; }
-    .translate-btn--reset:hover { background:#fff3cd;border-color:#f39c12;color:#f39c12; }
-    .translate-btn.loading { opacity:0.6;pointer-events:none; }
+
+    .translate-btn:hover {
+      background: #f0f4ff;
+      border-color: #2563eb;
+      color: #2563eb;
+    }
+
+    .translate-btn--reset {
+      color: #888;
+      border-color: #e0e0e0;
+    }
+
+    .translate-btn--reset:hover {
+      background: #fff3cd;
+      border-color: #f39c12;
+      color: #f39c12;
+    }
+
+    .translate-btn.loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
   </style>
   <script>
-  const originalTexts = {};
+    const originalTexts = {};
 
-  async function translateText(elementId, targetLang) {
-    const el = document.getElementById(elementId);
-    if (!el) return;
+    async function translateText(elementId, targetLang) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
 
-    // Store original
-    if (!originalTexts[elementId]) {
-      originalTexts[elementId] = el.innerHTML;
-    }
-
-    const text = el.innerText;
-    if (!text.trim()) return;
-
-    // Find and disable button
-    const btns = el.closest('.info-item')?.querySelectorAll('.translate-btn');
-    btns?.forEach(b => b.classList.add('loading'));
-
-    try {
-      // Use MyMemory free translation API
-      const langMap = { 'en': 'en-GB', 'ja': 'ja-JP' };
-      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=id|${langMap[targetLang] || targetLang}`;
-      const res  = await fetch(url);
-      const data = await res.json();
-
-      if (data.responseStatus === 200 && data.responseData?.translatedText) {
-        el.innerHTML = data.responseData.translatedText.replace(/\n/g, '<br>');
-      } else {
-        alert('Translation failed. Please try again.');
+      // Store original
+      if (!originalTexts[elementId]) {
+        originalTexts[elementId] = el.innerHTML;
       }
-    } catch (e) {
-      alert('Translation service unavailable. Please try again later.');
-    } finally {
-      btns?.forEach(b => b.classList.remove('loading'));
-    }
-  }
 
-  function resetText(elementId, original) {
-    const el = document.getElementById(elementId);
-    if (el) el.innerHTML = original;
-    delete originalTexts[elementId];
-  }
+      const text = el.innerText;
+      if (!text.trim()) return;
+
+      // Find and disable button
+      const btns = el.closest('.info-item')?.querySelectorAll('.translate-btn');
+      btns?.forEach(b => b.classList.add('loading'));
+
+      try {
+        // Use MyMemory free translation API
+        const langMap = { 'en': 'en-GB', 'ja': 'ja-JP' };
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=id|${langMap[targetLang] || targetLang}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.responseStatus === 200 && data.responseData?.translatedText) {
+          el.innerHTML = data.responseData.translatedText.replace(/\n/g, '<br>');
+        } else {
+          alert('Translation failed. Please try again.');
+        }
+      } catch (e) {
+        alert('Translation service unavailable. Please try again later.');
+      } finally {
+        btns?.forEach(b => b.classList.remove('loading'));
+      }
+    }
+
+    function resetText(elementId, original) {
+      const el = document.getElementById(elementId);
+      if (el) el.innerHTML = original;
+      delete originalTexts[elementId];
+    }
   </script>
 </body>
 
