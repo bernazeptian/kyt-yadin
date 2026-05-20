@@ -312,7 +312,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                   <input type="hidden" name="action" id="reviewAction" value="approve" />
                   <div class="form-group" style="margin-bottom:14px;">
                     <label class="form-label" style="font-size:13px;font-weight:600;">Change Category (optional)</label>
-                    <select name="category" class="form-select" style="font-size:13px;">
+                    <select name="category" id="category" class="form-select" style="font-size:13px;">
                       <option value="">— Keep current
                         (<?php echo $cat_labels[$report['category']] ?? $report['category']; ?>) —</option>
                       <option value="near_miss" <?php echo $report['category'] === 'near_miss' ? 'selected' : ''; ?>>Near
@@ -447,9 +447,8 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                     document.getElementById('reviewForm').submit();
                   }
                   function showReject() {
-                    document.getElementById('dueDateGroup').style.display = 'none';
-                    document.getElementById('rejectReasonGroup').style.display = 'block';
-                    document.getElementById('rejectSubmitGroup').style.display = 'block';
+    document.getElementById('rejectReasonGroup').style.display = 'block';
+    document.getElementById('rejectSubmitGroup').style.display = 'block';
                   }
                   function submitReject() {
                     const reason = document.getElementById('rejectReason').value.trim();
