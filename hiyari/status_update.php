@@ -15,8 +15,16 @@ if (!$report_id || !in_array($status, $allowed)) {
 }
 
 try {
+    // Get old status first
+    $old = $pdo->prepare("SELECT status, report_number FROM hiyari_reports WHERE id = :id");
+    $old->execute([':id' => $report_id]);
+    $old = $old->fetch();
+
     $pdo->prepare("UPDATE hiyari_reports SET status = :status, updated_at = NOW() WHERE id = :id")
         ->execute([':status' => $status, ':id' => $report_id]);
+
+    auditLog($pdo, 'STATUS_CHANGED', 'hiyari', $report_id, $old['report_number'] ?? '', $old['status'] ?? '', $status);
+
     header('Location: view?id=' . $report_id . '&success=status_updated');
 } catch (PDOException $e) {
     header('Location: view?id=' . $report_id . '&error=1');
