@@ -39,6 +39,8 @@ try {
     $pdo->prepare("UPDATE users SET password = :password, updated_at = NOW() WHERE id = :id")
         ->execute([':password' => $hashed, ':id' => $uid]);
 
+        auditLog($pdo, 'PASSWORD_CHANGED', 'auth', $uid, $_SESSION['name'] ?? '', '', ''); // ← add here
+
     header('Location: profile?success=password_changed');
 } catch (PDOException $e) {
     header('Location: profile?error=update_failed');

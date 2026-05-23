@@ -117,7 +117,10 @@ try {
         sendMail($r['reporter_email'], 'New Comment on Report ' . $r['report_number'], $email_body);
     }
 
+        auditLog($pdo, 'COMMENT_ADDED', 'hiyari', $report_id, $r['report_number'] ?? 'Report #' . $report_id, '', substr($comment, 0, 100));
+        
     header('Location: view?id=' . $report_id . '&success=comment_added');
+
 } catch (PDOException $e) {
     header('Location: view?id=' . $report_id . '&error=1');
 }

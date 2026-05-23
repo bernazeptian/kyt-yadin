@@ -100,6 +100,8 @@ try {
         }
     }
 
+auditLog($pdo, 'ACTION_ADDED', 'hiyari', $report_id, 'Report #' . $report_id . ': ' . substr($description, 0, 50), '', '');
+
     header('Location: view?id=' . $report_id . '&success=action_added');
 } catch (PDOException $e) {
     error_log('action_store error: ' . $e->getMessage());
