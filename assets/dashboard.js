@@ -129,12 +129,12 @@ document.addEventListener("DOMContentLoaded", () => {
         datasets: [{
           label: "Reports",
           data: hiyariData.dept_values,
-          backgroundColor: "#e8f0fe",
-          borderColor: "#1a73e8",
-          borderWidth: 2,
-          borderRadius: 6,
-          borderSkipped: false,
-          hoverBackgroundColor: "#1a73e8",
+          backgroundColor: "#fdf2f2",
+borderColor: "#e74c3c",
+borderWidth: 2,
+borderRadius: 6,
+borderSkipped: false,
+hoverBackgroundColor: "#e74c3c",
         }]
       },
       options: {
@@ -193,12 +193,12 @@ document.addEventListener("DOMContentLoaded", () => {
         datasets: [{
           label: "Activities",
           data: kytData.dept_values,
-          backgroundColor: "#e6f4ea",
-          borderColor: "#1e8e3e",
-          borderWidth: 2,
-          borderRadius: 6,
-          borderSkipped: false,
-          hoverBackgroundColor: "#1e8e3e",
+          backgroundColor: "#fef9f0",
+borderColor: "#f39c12",
+borderWidth: 2,
+borderRadius: 6,
+borderSkipped: false,
+hoverBackgroundColor: "#f39c12",
         }]
       },
       options: {
