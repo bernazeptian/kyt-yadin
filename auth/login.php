@@ -36,7 +36,7 @@ $errors = [
       <div class="login-logo">
         <img src="../assets/logo.png" alt="Yanmar" />
         <div>
-          <div class="login-logo__text">KYT Yadin</div>
+          <div class="login-logo__text">Safety Form Yadin</div>
           <div class="login-logo__sub">Yanmar Safety System</div>
         </div>
       </div>
