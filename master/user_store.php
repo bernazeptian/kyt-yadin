@@ -52,9 +52,6 @@ try {
         VALUES (:employee_id, :name, :email, NULL, :position, :role, :is_active, :setup_token, :token_expires, NOW(), NOW())
     ");
 
-  auditLog($pdo, 'USER_CREATED', 'master', $new_user_id, $name);
-
-
   $stmt->execute([
     ':employee_id' => $employee_id,
     ':name' => $name,
@@ -65,6 +62,9 @@ try {
     ':setup_token' => $setup_token,
     ':token_expires' => $token_expires,
   ]);
+
+  auditLog($pdo, 'USER_CREATED', 'master', (int)$pdo->lastInsertId(), $name . ' (' . $employee_id . ')', '', $email);
+
 
   // ── Send welcome email with direct setup link ─
   $setup_url = APP_URL . '/auth/set_password?token=' . $setup_token;

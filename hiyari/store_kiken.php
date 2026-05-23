@@ -69,6 +69,8 @@ try {
 
     $report_id = $pdo->lastInsertId();
 
+    auditLog($pdo, 'REPORT_CREATED', 'kiken', $report_id, $report_number, '', 'pending_review');
+
     // ── Photo uploads ─────────────────────────────
     if (!empty($_FILES['photos']['name'][0])) {
         $upload_dir = dirname(__DIR__) . '/uploads/hiyari/';

@@ -47,24 +47,24 @@ try {
              'pending_review', :created_by, NOW(), NOW())
     ");
 
-    auditLog($pdo, 'REPORT_CREATED', 'hiyari', $report_id, $report_number);
-
     $stmt->execute([
-        ':report_type' => $report_type,
+        ':report_type'   => $report_type,
         ':report_number' => $report_number,
-        ':report_date' => $report_date,
+        ':report_date'   => $report_date,
         ':department_id' => $department_id,
-        ':location_id' => $location_id,
-        ':category' => $category,
-        ':description' => $description,
-        ':safe_action' => $safe_action,
-        ':likelihood' => $likelihood,
-        ':severity' => $severity,
-        ':risk_level' => $risk_level,
-        ':created_by' => $created_by,
+        ':location_id'   => $location_id,
+        ':category'      => $category,
+        ':description'   => $description,
+        ':safe_action'   => $safe_action,
+        ':likelihood'    => $likelihood,
+        ':severity'      => $severity,
+        ':risk_level'    => $risk_level,
+        ':created_by'    => $created_by,
     ]);
 
-    $report_id = $pdo->lastInsertId();
+    $report_id = $pdo->lastInsertId(); // ← $report_id is now available
+
+    auditLog($pdo, 'REPORT_CREATED', 'hiyari', (int)$report_id, $report_number, '', 'pending_review'); // ← AFTER lastInsertId
 
     // ── Photo uploads ─────────────────────────────
     if (!empty($_FILES['photos']['name'][0])) {

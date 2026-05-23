@@ -57,6 +57,9 @@ try {
         ':is_active' => $is_active,
         ':id' => $id,
     ]);
+
+    auditLog($pdo, 'USER_UPDATED', 'master', $id, $name . ' (' . $employee_id . ')', '', '');
+
     header('Location: index?tab=users&success=user_updated');
 } catch (PDOException $e) {
     header('Location: index?tab=users&error=failed');
