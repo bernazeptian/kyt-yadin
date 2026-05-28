@@ -101,7 +101,7 @@ try {
       </div>
     </div>";
 
-  sendMail($email, 'Welcome to YADIN Safety — Set Your Password', $welcome_body);
+  //sendMail($email, 'Welcome to YADIN Safety — Set Your Password', $welcome_body);
 
   header('Location: index?tab=users&success=user_added');
 } catch (PDOException $e) {

@@ -38,7 +38,7 @@ $locations = $pdo->query("
 $users = $pdo->query("SELECT id, name, employee_id FROM users WHERE is_active = 1 ORDER BY name")->fetchAll();
 
 // ── ALL USERS for users tab ────────────────────────
-$all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, is_active, created_at FROM users ORDER BY created_at DESC")->fetchAll();
+$all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, is_active, email_sent, setup_token, created_at FROM users ORDER BY created_at DESC")->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -171,6 +171,9 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
             'user_updated' => 'User updated successfully!',
             'user_deleted' => 'User deleted successfully!',
             'pw_reset' => 'Password reset to Welcome@1234 successfully!',
+            'email_sent'   => 'Welcome email sent successfully!',
+'already_sent' => 'Email already sent to this user.',
+'email_failed' => 'Failed to send email. Please try again.',
           ];
           echo $msgs[$success] ?? 'Saved successfully!';
           ?>
@@ -625,8 +628,21 @@ $all_users = $pdo->query("SELECT id, employee_id, name, email, position, role, i
                               class="badge <?php echo $u['is_active'] ? 'badge--closed' : 'badge--open'; ?>"><?php echo $u['is_active'] ? 'Active' : 'Inactive'; ?></span>
                           </td>
                           <td class="td-actions">
-                            <button class="action-btn action-btn--edit"
-                              onclick="openEditUser(<?php echo htmlspecialchars(json_encode($u)); ?>)" title="Edit">
+    <?php if (!$u['email_sent'] && $u['setup_token']): ?>
+        <a href="user_send_email?id=<?php echo $u['id']; ?>"
+           class="action-btn" style="color:#2563eb;"
+           onclick="return confirm('Send welcome email to <?php echo htmlspecialchars($u['name']); ?>?')"
+           title="Send Welcome Email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,12 2,6"/>
+            </svg>
+        </a>
+    <?php elseif ($u['email_sent']): ?>
+        <span style="font-size:11px;color:#27ae60;padding:3px 6px;font-weight:600;">✓ Sent</span>
+    <?php endif; ?>
+    <button class="action-btn action-btn--edit"
+      onclick="openEditUser(<?php echo htmlspecialchars(json_encode($u)); ?>)" title="Edit">
                               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"
                                 height="15">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
