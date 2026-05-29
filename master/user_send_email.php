@@ -37,7 +37,7 @@ $role_label = $role_names[$user['role']] ?? 'User';
 $welcome_body = "
 <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
   <div style='background:#2563eb;padding:24px 32px'>
-    <h1 style='color:#fff;margin:0;font-size:18px'>👋 Welcome to YADIN Safety Report System</h1>
+    <h1 style='color:#fff;margin:0;font-size:18px'>Welcome to YADIN Safety Report System</h1>
     <p style='color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:13px'>Your account has been created by the administrator</p>
   </div>
   <div style='padding:28px 32px'>
@@ -50,7 +50,7 @@ $welcome_body = "
       <tr><td style='padding:10px 14px;font-weight:bold'>Role</td><td style='padding:10px 14px'>{$role_label}</td></tr>
     </table>
     <p style='color:#555;font-size:13px;background:#fff3cd;padding:12px 16px;border-radius:8px;border-left:3px solid #f39c12;margin-bottom:20px;'>
-      ⚠️ This link will expire in <strong>7 days</strong>. Please set your password before it expires.
+      This link will expire in <strong>7 days</strong>. Please set your password before it expires.
     </p>
     <a href='{$setup_url}' style='display:inline-block;background:#2563eb;color:#fff;padding:14px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:15px;'>
       Set My Password →

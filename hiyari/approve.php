@@ -69,7 +69,7 @@ if ($action === 'reject') {
             $body = "
             <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
               <div style='background:#e74c3c;padding:24px 32px'>
-                <h1 style='color:#fff;margin:0;font-size:18px'>❌ Report Rejected</h1>
+                <h1 style='color:#fff;margin:0;font-size:18px'>Report Rejected</h1>
                 <p style='color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:13px'>YADIN Safety Report Management System</p>
               </div>
               <div style='padding:28px 32px'>
@@ -151,7 +151,7 @@ try {
     $email_body = "
     <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
       <div style='background:{$type_color};padding:24px 32px'>
-        <h1 style='color:#fff;margin:0;font-size:18px'>📋 {$type_label} Report Released — Action Required</h1>
+        <h1 style='color:#fff;margin:0;font-size:18px'>{$type_label} Report Released — Action Required</h1>
         <p style='color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:13px'>YADIN Safety Report Management System</p>
       </div>
       <div style='padding:28px 32px'>
@@ -169,7 +169,7 @@ try {
       <div style='background:#f7f7f7;padding:16px 32px;font-size:12px;color:#999;border-top:1px solid #e0e0e0'>YADIN Safety Report Management System</div>
     </div>";
 
-    $subject      = '📋 [' . strtoupper($final_type === 'hiyari' ? 'HIYARI HATTO' : 'KIKEN YOCHI') . '] Report ' . $report['report_number'] . ' Released';
+    $subject      = '[' . strtoupper($final_type === 'hiyari' ? 'HIYARI HATTO' : 'KIKEN YOCHI') . '] Report ' . $report['report_number'] . ' Released';
     $notified_ids = [];
 
     // 1. Admins

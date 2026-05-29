@@ -119,7 +119,7 @@ try {
     $email_body = "
     <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
       <div style='background:#f39c12;padding:24px 32px'>
-        <h1 style='color:#fff;margin:0;font-size:18px'>⚠️ New Kiken Yochi Report Submitted</h1>
+        <h1 style='color:#fff;margin:0;font-size:18px'>New Kiken Yochi Report Submitted</h1>
         <p style='color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:13px'>YADIN Safety Report Management System</p>
       </div>
       <div style='padding:28px 32px'>
@@ -141,7 +141,7 @@ try {
     </div>";
 
     // ── Only notify SuperAdmin (Gunawan) on submit ───
-    $subject = '⚠️ [PENDING REVIEW] New Kiken Yochi Report ' . $report_data['report_number'];
+    $subject = '[PENDING REVIEW] New Kiken Yochi Report ' . $report_data['report_number'];
     $superadmins = $pdo->query("SELECT id, name, email FROM users WHERE role = 1 AND is_active = 1 AND email IS NOT NULL")->fetchAll();
     foreach ($superadmins as $sa) {
         sendMail($sa['email'], $subject, $email_body);

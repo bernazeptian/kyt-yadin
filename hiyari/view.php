@@ -326,7 +326,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                   <div id="matrixPanel" style="display:none;margin-bottom:14px;">
                     <div
                       style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 16px;font-size:13px;color:#856404;margin-bottom:12px;">
-                      ⚠️ You changed to Kiken Yochi. Please set the risk matrix below.
+                      You changed to Kiken Yochi. Please set the risk matrix below.
                     </div>
                     <div class="form-group" style="margin-bottom:10px;">
                       <label class="form-label" style="font-size:13px;font-weight:600;">Likelihood</label>
@@ -407,7 +407,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                   ?>
                   <div
                     style="background:#f0f4ff;padding:12px 16px;border-radius:8px;border-left:4px solid #2563eb;font-size:13px;color:#333;margin-bottom:14px;">
-                    📅 Due date will be auto-set to <strong><?php echo $preview_due; ?></strong>
+                    Due date will be auto-set to <strong><?php echo $preview_due; ?></strong>
                     (<?php echo $preview_days; ?> days for <strong><?php echo strtoupper($preview_risk); ?></strong> risk)
                   </div>
                   <div class="form-group" style="margin-bottom:16px;display:none;" id="rejectReasonGroup">
@@ -467,7 +467,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
             <div class="view-card" style="border:1px solid #f39c12;">
               <div class="view-card__body" style="padding:16px 20px;">
                 <p style="margin:0;font-size:13px;color:#856404;background:#fff3cd;padding:12px 16px;border-radius:8px;">
-                  ⏳ This report is currently <strong>Pending Review</strong> by management. It will be released once
+                  This report is currently <strong>Pending Review</strong> by management. It will be released once
                   approved.
                 </p>
               </div>

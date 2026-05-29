@@ -100,7 +100,7 @@ function sendExtremeRiskAlert(PDO $pdo, array $report): void
   $body = "
     <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
       <div style='background:#c0392b;padding:24px 32px'>
-        <h1 style='color:#fff;margin:0;font-size:20px'>🚨 EXTREME RISK — Immediate Action Required</h1>
+        <h1 style='color:#fff;margin:0;font-size:20px'>EXTREME RISK — Immediate Action Required</h1>
         <p style='color:#f8c6c0;margin:6px 0 0;font-size:14px'>KYT Yadin Safety Management System</p>
       </div>
       <div style='padding:28px 32px'>

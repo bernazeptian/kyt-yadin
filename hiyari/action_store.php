@@ -80,7 +80,7 @@ try {
             $email_body = "
             <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
               <div style='background:#e67e22;padding:24px 32px'>
-                <h1 style='color:#fff;margin:0;font-size:18px'>📋 Corrective Action Assigned to You</h1>
+                <h1 style='color:#fff;margin:0;font-size:18px'>Corrective Action Assigned to You</h1>
                 <p style='color:rgba(255,255,255,0.85);margin:6px 0 0;font-size:13px'>YADIN Safety Report Management System</p>
               </div>
               <div style='padding:28px 32px'>
