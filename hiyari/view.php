@@ -698,10 +698,10 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                       </div>
                       <p class="action-item__desc"><?php echo nl2br(htmlspecialchars($a['description'])); ?></p>
                       <?php if (!empty($a['image_path'])): ?>
-                        <a href="javascript:void(0)" onclick="openPhotoModal('../<?php echo htmlspecialchars($a['image_path']); ?>')">
-                          <img src="../<?php echo htmlspecialchars($a['image_path']); ?>" alt="Action Image" ... />
-                        </a>
-                        <?php endif; ?>
+  <a href="javascript:void(0)" onclick="openPhotoModal('../<?php echo htmlspecialchars($a['image_path']); ?>')">
+    <img src="../<?php echo htmlspecialchars($a['image_path']); ?>" alt="Action Image" style="max-width:100%;max-height:120px;width:auto;height:auto;margin-top:8px;border-radius:8px;border:1px solid #e0e0e0;display:block;object-fit:contain;cursor:pointer;" />
+  </a>
+<?php endif; ?>
                       <?php if ($a['assigned_name']): ?>
                         <span class="action-item__assign">Assigned to:
                           <strong><?php echo htmlspecialchars($a['assigned_name']); ?></strong></span>
