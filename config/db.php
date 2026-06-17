@@ -63,4 +63,44 @@ function auditLog(PDO $pdo, string $action, string $module, int $target_id = 0, 
                 ':ua' => $ua,
             ]);
 }
+function markCorrectiveActionsOverdue(PDO $pdo): void {
+    try {
+        // 1️⃣ Mark overdue corrective actions
+        $pdo->prepare("
+            UPDATE corrective_actions
+            SET status = 'overdue', updated_at = NOW()
+            WHERE status IN ('open', 'progress')
+              AND due_date IS NOT NULL
+              AND DATE(due_date) < CURDATE()
+        ")->execute();
+
+        // 2️⃣ Find reports where ALL actions are overdue
+        $stmt = $pdo->prepare("
+            SELECT r.id
+            FROM hiyari_reports r
+            WHERE r.status != 'closed'
+              AND EXISTS (SELECT 1 FROM corrective_actions WHERE report_id = r.id)
+              AND NOT EXISTS (
+                  SELECT 1 FROM corrective_actions 
+                  WHERE report_id = r.id 
+                  AND status IN ('open', 'progress', 'done')
+              )
+        ");
+        $stmt->execute();
+        $overdue_reports = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        // 3️⃣ Mark those reports as overdue
+        if (!empty($overdue_reports)) {
+            foreach ($overdue_reports as $report_id) {
+                $pdo->prepare("
+                    UPDATE hiyari_reports
+                    SET status = 'overdue', updated_at = NOW()
+                    WHERE id = :id AND status != 'closed'
+                ")->execute([':id' => $report_id]);
+            }
+        }
+    } catch (PDOException $e) {
+        error_log('markCorrectiveActionsOverdue error: ' . $e->getMessage());
+    }
+}
 ?>

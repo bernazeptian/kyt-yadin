@@ -2,6 +2,8 @@
 session_start();
 require_once '../config/db.php';
 
+markCorrectiveActionsOverdue($pdo);
+
 if (!isset($_SESSION['user_id'])) {
   header('Location: ../auth/login');
   exit;

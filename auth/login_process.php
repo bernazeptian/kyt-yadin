@@ -84,13 +84,7 @@ $_SESSION['employee_id'] = $user['employee_id'];
 $_SESSION['name'] = $user['name'];
 $_SESSION['email'] = $user['email'];
 $_SESSION['role'] = (int) $user['role'];
-
-// ── Check first login ──────────────────────────
-if (!$user['first_login_seen'] && (int)$user['role'] <= 2) {  // Role 1-2 = admins
-    $_SESSION['show_overdue_modal'] = true;
-    $pdo->prepare("UPDATE users SET first_login_seen = 1 WHERE id = :id")
-        ->execute([':id' => $user['id']]);
-}
+$_SESSION['position'] = $user['position'];
 
 auditLog($pdo, 'LOGIN_SUCCESS', 'auth', $user['id'], $user['name']);
 

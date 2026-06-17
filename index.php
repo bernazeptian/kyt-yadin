@@ -1,6 +1,9 @@
 <?php
-$overdue_reports = [];
-if (!empty($_SESSION['show_overdue_modal']) && (int)$_SESSION['role'] <= 2) {
+session_start();
+require_once 'config/db.php';
+
+// ── Fetch overdue reports for first login modal ────
+if (isset($_SESSION['user_id']) && ((int)($_SESSION['role'] ?? 0) <= 2 || in_array($_SESSION['position'] ?? '', ['President Director', 'Director', 'General Manager']))) {
     $stmt = $pdo->prepare("
         SELECT r.*,
                d.name AS dept_name,
@@ -10,19 +13,13 @@ if (!empty($_SESSION['show_overdue_modal']) && (int)$_SESSION['role'] <= 2) {
         LEFT JOIN departments d ON r.department_id = d.id
         LEFT JOIN locations l ON r.location_id = l.id
         LEFT JOIN users u ON r.created_by = u.id
-        WHERE r.status != 'closed' 
-          AND DATE(r.created_at) + INTERVAL 30 DAY < CURDATE()
+        WHERE r.status = 'overdue'
         ORDER BY r.created_at DESC
         LIMIT 10
     ");
     $stmt->execute();
     $overdue_reports = $stmt->fetchAll();
-    
-    // Clear the flag so modal only shows once
-    unset($_SESSION['show_overdue_modal']);
 }
-session_start();
-require_once 'config/db.php';
 
 $role = (int) ($_SESSION['role'] ?? 0);
 
@@ -651,34 +648,30 @@ $trend_dir = $hiyari_trend['dir'];
   <script src="assets/dashboard.js"></script>
   <!-- Overdue Reports Modal — First Login -->
 <?php if (!empty($overdue_reports)): ?>
-<div id="overdueModal" class="modal-overlay show">
-  <div class="modal">
-    <div class="modal__header">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="width:40px;height:40px;border-radius:50%;background:#f39c12;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;">
-          ⚠️
-        </div>
-        <h3 class="modal__title">Overdue Reports Alert</h3>
+<div style="display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;width:90%;max-width:500px;box-shadow:0 20px 60px rgba(0,0,0,0.3);max-height:90vh;display:flex;flex-direction:column;overflow:hidden;">
+    <!-- Header -->
+    <div style="padding:20px;border-bottom:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:#f39c12;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px;">⚠️</div>
+        <h3 style="margin:0;font-size:16px;font-weight:600;color:#333;">Overdue Reports Alert</h3>
       </div>
-      <button class="modal__close" onclick="closeOverdueModal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
+      <button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;cursor:pointer;font-size:28px;color:#999;padding:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;">×</button>
     </div>
-    <div class="modal__body" style="max-height:400px;overflow-y:auto;">
-      <p style="color:#f39c12;font-weight:600;margin:0 0 16px;">
+    
+    <!-- Body -->
+    <div style="padding:20px;overflow-y:auto;flex:1;">
+      <p style="color:#f39c12;font-weight:600;margin:0 0 16px;font-size:14px;">
         You have <?php echo count($overdue_reports); ?> report(s) that are overdue for review:
       </p>
       <div style="display:flex;flex-direction:column;gap:10px;">
         <?php foreach ($overdue_reports as $report): ?>
           <a href="hiyari/view?id=<?php echo $report['id']; ?>" 
-             style="display:block;padding:12px;background:#fff3e0;border:1px solid #ffe0b2;border-radius:8px;text-decoration:none;color:#333;transition:all 0.2s;">
-            <div style="font-weight:600;color:#e67e22;margin-bottom:4px;">
+             style="display:block;padding:12px;background:#fff3e0;border:1px solid #ffe0b2;border-radius:8px;text-decoration:none;color:#333;transition:all 0.2s;cursor:pointer;">
+            <div style="font-weight:600;color:#e67e22;margin-bottom:4px;font-size:14px;">
               <?php echo htmlspecialchars($report['report_number']); ?>
             </div>
-            <div style="font-size:13px;color:#666;">
+            <div style="font-size:12px;color:#666;">
               <?php echo htmlspecialchars($report['dept_name'] ?? '—'); ?> • 
               <?php echo date('d M Y', strtotime($report['created_at'])); ?>
             </div>
@@ -686,18 +679,14 @@ $trend_dir = $hiyari_trend['dir'];
         <?php endforeach; ?>
       </div>
     </div>
-    <div class="modal__actions">
-      <button type="button" class="btn-cancel" onclick="closeOverdueModal()">Close</button>
-      <a href="hiyari/index" class="btn-submit" style="text-decoration:none;">Review All</a>
+    
+    <!-- Footer -->
+    <div style="padding:16px 20px;border-top:1px solid #e0e0e0;display:flex;gap:10px;justify-content:flex-end;flex-shrink:0;">
+      <button onclick="this.closest('div[style*=fixed]').remove()" style="padding:10px 20px;background:#f5f5f5;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-weight:500;font-size:14px;">Close</button>
+      <a href="hiyari/index" style="padding:10px 20px;background:#1a73e8;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:500;text-decoration:none;display:inline-block;font-size:14px;">Review All</a>
     </div>
   </div>
 </div>
-
-<script>
-function closeOverdueModal() {
-  document.getElementById('overdueModal').classList.remove('show');
-}
-</script>
 <?php endif; ?>
 </body>
 
