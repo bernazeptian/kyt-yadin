@@ -322,10 +322,12 @@ body {
 .badge--high     { background: var(--red-light);    color: var(--red); }
 .badge--medium   { background: var(--orange-light); color: var(--orange); }
 .badge--low      { background: var(--green-light);  color: var(--green); }
-.badge--open     { background: var(--red-light);    color: var(--red); }
+.badge--open     { background: var(--blue-light);   color: var(--blue); }
 .badge--progress { background: var(--yellow-light); color: var(--orange); }
 .badge--closed   { background: var(--green-light);  color: var(--green); }
-
+.badge--red      { background: var(--red-light);    color: var(--red); }
+.badge--orange   { background: var(--orange-light); color: var(--orange); }
+.badge--blue     { background: var(--primary-light); color: var(--primary); }
 /* ── Avatar Dropdown ── */
 .topbar__right { position: relative; }
 

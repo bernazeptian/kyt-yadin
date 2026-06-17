@@ -80,15 +80,6 @@ if ($filter_date_to) {
   $params[':date_to'] = $filter_date_to;
 }
 
-// Users can only see their own reports OR reports assigned to them
-if ($role >= 3) {
-  $where[] = "(r.created_by = :uid OR r.id IN (
-        SELECT report_id FROM corrective_actions WHERE pic_user_id = :uid2
-    ))";
-  $params[':uid'] = $uid;
-  $params[':uid2'] = $uid;
-}
-
 $whereStr = implode(" AND ", $where);
 
 // Total count for pagination
@@ -354,7 +345,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
           <span class="mini-card__label">Total</span>
         </a>
         <a href="?type=<?php echo $filter_type; ?>&status=open"
-          class="mini-card mini-card--red <?php echo $filter_status === 'open' ? 'mini-card--active' : ''; ?>">
+          class="mini-card mini-card--blue <?php echo $filter_status === 'open' ? 'mini-card--active' : ''; ?>">
           <span class="mini-card__val"><?php echo $summary['open']; ?></span>
           <span class="mini-card__label">Open</span>
         </a>
@@ -378,6 +369,15 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
           <span class="mini-card__val"><?php echo $summary['high']; ?></span>
           <span class="mini-card__label">High Risk</span>
         </a>
+        <a href="?type=<?php echo $filter_type; ?>&status=overdue" class="mini-card mini-card--red">
+  <span class="mini-card__val">
+    <?php 
+    $overdue = $pdo->query("SELECT COUNT(*) FROM hiyari_reports WHERE status = 'overdue'")->fetchColumn();
+    echo $overdue;
+    ?>
+  </span>
+  <span class="mini-card__label">Overdue</span>
+</a>
       </div>
 
       <!-- ── Search & Filters ── -->
@@ -400,6 +400,7 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
               <option value="in_progress" <?php echo $filter_status === 'in_progress' ? 'selected' : '' ?>>In Progress
               </option>
               <option value="closed" <?php echo $filter_status === 'closed' ? 'selected' : '' ?>>Closed</option>
+              <option value="overdue" <?php echo $filter_status === 'overdue' ? 'selected' : '' ?>>Overdue</option>
             </select>
             <select name="risk" class="filter-select" onchange="this.form.submit()">
               <option value="">All Risk</option>
@@ -519,8 +520,8 @@ $success = isset($_GET['success']) && $_GET['success'] == '1';
                     </td>
                     <td>
                       <?php
-                      $statusClass = ['open' => 'badge--open', 'in_progress' => 'badge--progress', 'closed' => 'badge--closed'];
-                      $statusLabel = ['open' => 'Open', 'in_progress' => 'In Progress', 'closed' => 'Closed'];
+                      $statusClass = ['open' => 'badge--blue', 'in_progress' => 'badge--progress', 'closed' => 'badge--closed', 'overdue' => 'badge--red'];
+                      $statusLabel = ['open' => 'Open', 'in_progress' => 'In Progress', 'closed' => 'Closed', 'overdue' => 'Overdue'];
                       ?>
                       <span class="badge <?php echo $statusClass[$r['status']] ?? ''; ?>">
                         <?php echo $statusLabel[$r['status']] ?? ucfirst($r['status']); ?>

@@ -8,7 +8,7 @@ csrf_verify();
 
 $report_id = (int)($_POST['report_id'] ?? 0);
 $status    = $_POST['status'] ?? '';
-$allowed   = ['open', 'in_progress', 'closed'];
+$allowed   = ['open', 'in_progress', 'closed', 'overdue'];
 
 if (!$report_id || !in_array($status, $allowed)) {
     header('Location: view?id=' . $report_id . '&error=1'); exit;

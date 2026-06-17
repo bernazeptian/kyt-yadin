@@ -361,3 +361,14 @@
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
+/* Fix image preview stretching */
+#actionImagePreview {
+  object-fit: contain !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+}
+
+.photo-thumb img {
+  object-fit: cover; /* This is already there, keep it */
+}

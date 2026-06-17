@@ -1,4 +1,26 @@
 <?php
+$overdue_reports = [];
+if (!empty($_SESSION['show_overdue_modal']) && (int)$_SESSION['role'] <= 2) {
+    $stmt = $pdo->prepare("
+        SELECT r.*,
+               d.name AS dept_name,
+               l.name AS loc_name,
+               u.name AS reporter_name
+        FROM hiyari_reports r
+        LEFT JOIN departments d ON r.department_id = d.id
+        LEFT JOIN locations l ON r.location_id = l.id
+        LEFT JOIN users u ON r.created_by = u.id
+        WHERE r.status != 'closed' 
+          AND DATE(r.created_at) + INTERVAL 30 DAY < CURDATE()
+        ORDER BY r.created_at DESC
+        LIMIT 10
+    ");
+    $stmt->execute();
+    $overdue_reports = $stmt->fetchAll();
+    
+    // Clear the flag so modal only shows once
+    unset($_SESSION['show_overdue_modal']);
+}
 session_start();
 require_once 'config/db.php';
 
@@ -439,8 +461,8 @@ $trend_dir = $hiyari_trend['dir'];
                 <?php else: ?>
                   <?php foreach ($reports as $r):
                     $catLabels = ['near_miss' => 'Near Miss', 'unsafe_action' => 'Unsafe Act', 'unsafe_condition' => 'Unsafe Condition'];
-                    $statusClass = ['open' => 'badge--open', 'in_progress' => 'badge--progress', 'closed' => 'badge--closed'];
-                    $statusLabel = ['open' => 'Open', 'in_progress' => 'In Progress', 'closed' => 'Closed'];
+                    $statusClass = ['open' => 'badge--blue', 'in_progress' => 'badge--progress', 'closed' => 'badge--closed', 'overdue' => 'badge--red'];
+                    $statusLabel = ['open' => 'Open', 'in_progress' => 'In Progress', 'closed' => 'Closed', 'overdue' => 'Overdue'];
                     ?>
                     <tr>
                       <td><span class="report-num"><?php echo htmlspecialchars($r['report_number']); ?></span></td>
@@ -627,6 +649,56 @@ $trend_dir = $hiyari_trend['dir'];
   <script src="assets/avatar.js"></script>
   <script src="assets/notifications.js"></script>
   <script src="assets/dashboard.js"></script>
+  <!-- Overdue Reports Modal — First Login -->
+<?php if (!empty($overdue_reports)): ?>
+<div id="overdueModal" class="modal-overlay show">
+  <div class="modal">
+    <div class="modal__header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:40px;height:40px;border-radius:50%;background:#f39c12;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;">
+          ⚠️
+        </div>
+        <h3 class="modal__title">Overdue Reports Alert</h3>
+      </div>
+      <button class="modal__close" onclick="closeOverdueModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+    <div class="modal__body" style="max-height:400px;overflow-y:auto;">
+      <p style="color:#f39c12;font-weight:600;margin:0 0 16px;">
+        You have <?php echo count($overdue_reports); ?> report(s) that are overdue for review:
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <?php foreach ($overdue_reports as $report): ?>
+          <a href="hiyari/view?id=<?php echo $report['id']; ?>" 
+             style="display:block;padding:12px;background:#fff3e0;border:1px solid #ffe0b2;border-radius:8px;text-decoration:none;color:#333;transition:all 0.2s;">
+            <div style="font-weight:600;color:#e67e22;margin-bottom:4px;">
+              <?php echo htmlspecialchars($report['report_number']); ?>
+            </div>
+            <div style="font-size:13px;color:#666;">
+              <?php echo htmlspecialchars($report['dept_name'] ?? '—'); ?> • 
+              <?php echo date('d M Y', strtotime($report['created_at'])); ?>
+            </div>
+          </a>
+        <?php endforeach; ?>
+      </div>
+    </div>
+    <div class="modal__actions">
+      <button type="button" class="btn-cancel" onclick="closeOverdueModal()">Close</button>
+      <a href="hiyari/index" class="btn-submit" style="text-decoration:none;">Review All</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function closeOverdueModal() {
+  document.getElementById('overdueModal').classList.remove('show');
+}
+</script>
+<?php endif; ?>
 </body>
 
 </html>

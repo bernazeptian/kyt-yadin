@@ -34,6 +34,8 @@ if ($check->fetch()) {
 try {
     $stmt = $pdo->prepare("INSERT INTO departments (code, name, head_id, description, is_active, created_at, updated_at) VALUES (:code, :name, :head_id, :description, :is_active, NOW(), NOW())");
     $stmt->execute([':code' => $code, ':name' => $name, ':head_id' => $head_id, ':description' => $description, ':is_active' => $is_active]);
+     $new_id = (int)$pdo->lastInsertId();
+    auditLog($pdo, 'DEPT_CREATED', 'master', $new_id, $name . ' (' . $code . ')', '', '');
     header('Location: index?tab=departments&success=dept_added');
 } catch (PDOException $e) {
     header('Location: index?tab=departments&error=failed');

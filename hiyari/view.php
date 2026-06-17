@@ -122,10 +122,10 @@ $status_labels = [
 $status_badges = [
   'pending_review' => 'badge--pending',
   'active' => 'badge--open',
-  'overdue' => 'badge--extreme',
+  'overdue' => 'badge--red',
   'completed' => 'badge--closed',
   'closed' => 'badge--closed',
-  'open' => 'badge--open',
+  'open' => 'badge--blue',
   'in_progress' => 'badge--progress',
 ];
 $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
@@ -201,7 +201,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
         </a>
         <div>
           <h1 class="topbar__title"><?php echo htmlspecialchars($report['report_number']); ?></h1>
-          <p class="topbar__sub">Hiyari Hatto Report</p>
+          <p class="topbar__sub">Details Report</p>
         </div>
       </div>
       <div class="topbar__right">
@@ -611,29 +611,29 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
           </div>
 
           <!-- Photos Card -->
-          <?php if (!empty($photos)): ?>
-            <div class="view-card">
-              <div class="view-card__header">
-                <div class="view-card__icon view-card__icon--yellow">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <circle cx="8.5" cy="8.5" r="1.5" />
-                    <polyline points="21 15 16 10 5 21" />
-                  </svg>
-                </div>
-                <h2 class="view-card__title">Photos <span class="table-count"><?php echo count($photos); ?></span></h2>
-              </div>
-              <div class="view-card__body">
-                <div class="photo-grid">
-                  <?php foreach ($photos as $p): ?>
-                    <a href="../<?php echo htmlspecialchars($p['file_path']); ?>" target="_blank" class="photo-thumb-link">
-                      <img src="../<?php echo htmlspecialchars($p['file_path']); ?>" alt="Photo" class="photo-thumb-img" />
-                    </a>
-                  <?php endforeach; ?>
-                </div>
-              </div>
-            </div>
-          <?php endif; ?>
+<?php if (!empty($photos)): ?>
+  <div class="view-card">
+    <div class="view-card__header">
+      <div class="view-card__icon view-card__icon--yellow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <circle cx="8.5" cy="8.5" r="1.5" />
+          <polyline points="21 15 16 10 5 21" />
+        </svg>
+      </div>
+      <h2 class="view-card__title">Photos <span class="table-count"><?php echo count($photos); ?></span></h2>
+    </div>
+    <div class="view-card__body">
+      <div class="photo-grid">
+        <?php foreach ($photos as $p): ?>
+          <a href="javascript:void(0)" onclick="openPhotoModal('../<?php echo htmlspecialchars($p['file_path']); ?>')" class="photo-thumb-link">
+            <img src="../<?php echo htmlspecialchars($p['file_path']); ?>" alt="Photo" class="photo-thumb-img" />
+          </a>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </div>
+<?php endif; ?>
 
           <!-- Corrective Actions Card -->
           <div class="view-card">
@@ -740,7 +740,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                     <input type="file" name="action_image" class="form-input"
                       accept="image/jpeg,image/png,image/gif,image/webp" onchange="previewActionImage(this)" />
                     <img id="actionImagePreview" src="" alt="Preview"
-                      style="display:none;margin-top:8px;max-height:160px;border-radius:6px;border:1px solid #ddd;" />
+  style="display:none;margin-top:8px;max-width:100%;max-height:160px;width:auto;height:auto;object-fit:contain;border-radius:6px;border:1px solid #ddd;" />
                   </div>
                   <button type="submit" class="btn-add">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
@@ -792,7 +792,7 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                   <?php echo csrf_field(); ?>
                   <div class="status-btns">
                     <button type="submit" name="status" value="open"
-                      class="status-btn <?php echo $report['status'] === 'open' ? 'status-btn--active status-btn--red' : ''; ?>">
+                      class="status-btn <?php echo $report['status'] === 'open' ? 'status-btn--active status-btn--blue' : ''; ?>">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                         <circle cx="12" cy="12" r="10" />
                         <line x1="12" y1="8" x2="12" y2="12" />
@@ -815,6 +815,14 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                       Closed
+                    </button>
+                    <button type="submit" name="status" value="overdue"
+                      class="status-btn <?php echo $report['status'] === 'overdue' ? 'status-btn--active status-btn--red' : ''; ?>">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                      </svg>
+                      Overdue
                     </button>
                   </div>
                 </form>
@@ -991,6 +999,38 @@ $role_labels = [1 => 'Super Admin', 2 => 'Admin', 3 => 'User'];
       delete originalTexts[elementId];
     }
   </script>
+  <!-- Photo Modal -->
+<div id="photoModal" class="photo-modal">
+  <div class="photo-modal__overlay" onclick="closePhotoModal()"></div>
+  <div class="photo-modal__container">
+    <button class="photo-modal__close" onclick="closePhotoModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+    <img id="modalPhotoImg" src="" alt="Photo" class="photo-modal__img" />
+  </div>
+</div>
+
+<script>
+function openPhotoModal(photoPath) {
+  const modal = document.getElementById('photoModal');
+  const img = document.getElementById('modalPhotoImg');
+  img.src = photoPath;
+  modal.style.display = 'flex';
+}
+
+function closePhotoModal() {
+  const modal = document.getElementById('photoModal');
+  modal.style.display = 'none';
+}
+
+// Close modal on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePhotoModal();
+});
+</script>
 </body>
 
 </html>

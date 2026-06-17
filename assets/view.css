@@ -280,3 +280,86 @@
 .action-status-btn--progress { background: var(--yellow-light); color: var(--orange); }
 .action-status-btn--done     { background: var(--green-light);  color: var(--green); }
 .action-status-btn--reopen   { background: var(--red-light);    color: var(--red); }
+/* Photo Modal */
+.photo-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-modal__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  cursor: pointer;
+}
+
+.photo-modal__container {
+  position: relative;
+  z-index: 1;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.photo-modal__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+.photo-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  z-index: 2;
+}
+
+.photo-modal__close:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+.status-btn--blue { 
+  color: var(--primary); 
+  border-color: var(--primary); 
+}
+.status-btn--active.status-btn--blue { 
+  background: var(--primary-light); 
+  color: var(--primary); 
+  border-color: var(--primary); 
+}
+.badge--red {
+  background: #ffebee;
+  color: #d32f2f;
+  border: 1px solid #ffcdd2;
+}
+
+.badge--blue {
+  background: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid #bbdefb;
+}
