@@ -95,7 +95,7 @@ function sendExtremeRiskAlert(PDO $pdo, array $report): void
   $reporter = htmlspecialchars($report['reporter_name'] ?? '—');
   $view_url = APP_URL . '/hiyari/view?id=' . (int) ($report['id'] ?? 0);
 
-  $subject = '🚨 [EXTREME RISK] Hiyari Hatto Report ' . $report_number . ' Requires Immediate Attention';
+  $subject = '[EXTREME RISK] Hiyari Hatto Report ' . $report_number . ' Requires Immediate Attention';
 
   $body = "
     <div style='font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#fff;border:1px solid #e0e0e0;border-radius:8px;overflow:hidden'>
